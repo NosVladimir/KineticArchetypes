@@ -42,53 +42,54 @@ using Kingmaker.RuleSystem.Rules;
 using Kingmaker.Utility;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
 using BlueprintCore.Actions.Builder;
+using Kingmaker.Blueprints.Root;
 
 namespace KineticArchetypes
 {
     internal class KineticDuelist
     {
-        private const string ArchetypeName = "KineticDuelist";
+        internal const string ArchetypeName = "KineticDuelist";
         internal const string ArchetypeDisplayName = "KineticDuelist.Name";
-        private const string ArchetypeDescription = "KineticDuelist.Description";
-        private const string ArchetypeGuid = "179E8E47-35B8-48EF-84AE-10C6C0A067D3";
+        internal const string ArchetypeDescription = "KineticDuelist.Description";
+        internal const string ArchetypeGuid = "179E8E47-35B8-48EF-84AE-10C6C0A067D3";
 
-        private const string ProficienciesDisplayName = "KineticDuelist.Proficiencies";
-        private const string ProficienciesDescription = "KineticDuelist.Proficiencies.Description";
-        private const string ProficienciesGuid = "B41F957B-5905-411E-B22F-DD6BED8BFB6E";
+        internal const string ProficienciesDisplayName = "KineticDuelist.Proficiencies";
+        internal const string ProficienciesDescription = "KineticDuelist.Proficiencies.Description";
+        internal const string ProficienciesGuid = "B41F957B-5905-411E-B22F-DD6BED8BFB6E";
 
-        private const string KDKineticBladeName = "KineticDuelist.KineticBlade";
-        private const string KDKineticBladeGuid = "4C91D695-D84E-4AD5-AED4-0BDD3FD15CEA";
-        private const string KDKineticBladeDescription = "KineticDuelist.KineticBlade.Description";
+        internal const string KDKineticBladeName = "KineticDuelist.KineticBlade";
+        internal const string KDKineticBladeGuid = "4C91D695-D84E-4AD5-AED4-0BDD3FD15CEA";
+        internal const string KDKineticBladeDescription = "KineticDuelist.KineticBlade.Description";
 
-        private const string KineticDualBladesFeatureName = "KineticDuelist.KineticDualBladesFeature";
-        private const string KineticDualBladesFeatureGuid = "062A5F9E-493E-473D-B0D5-CA4CEAC0A29A";
-        private const string KineticDualBladesFeatureDescription = "KineticDuelist.KineticDualBladesFeature.Description";
+        internal const string KineticDualBladesFeatureName = "KineticDuelist.KineticDualBladesFeature";
+        internal const string KineticDualBladesFeatureGuid = "062A5F9E-493E-473D-B0D5-CA4CEAC0A29A";
+        internal const string KineticDualBladesFeatureDescription = "KineticDuelist.KineticDualBladesFeature.Description";
 
-        private const string ImprovedKineticDualBladesName = "KineticDuelist.ImprovedKineticDualBlades";
-        private const string ImprovedKineticDualBladesGuid = "7DB4530F-7B21-4301-9F8D-99F405D1048D";
-        private const string ImprovedKineticDualBladesDescription = "KineticDuelist.ImprovedKineticDualBlades.Description";
+        internal const string ImprovedKineticDualBladesName = "KineticDuelist.ImprovedKineticDualBlades";
+        internal const string ImprovedKineticDualBladesGuid = "7DB4530F-7B21-4301-9F8D-99F405D1048D";
+        internal const string ImprovedKineticDualBladesDescription = "KineticDuelist.ImprovedKineticDualBlades.Description";
 
-        private const string SynchronousChargeFeatureName = "KineticDuelist.SynchronousChargeFeature";
-        private const string SynchronousChargeFeatureGuid = "124E9629-F53D-48F3-BB69-308AF29F80F2";
-        private const string SynchronousChargeFeatureDescription = "KineticDuelist.SynchronousChargeFeature.Description";
+        internal const string SynchronousChargeFeatureName = "KineticDuelist.SynchronousChargeFeature";
+        internal const string SynchronousChargeFeatureGuid = "124E9629-F53D-48F3-BB69-308AF29F80F2";
+        internal const string SynchronousChargeFeatureDescription = "KineticDuelist.SynchronousChargeFeature.Description";
 
-        private const string KineticAssaultFeatureName = "KineticDuelist.KineticAssaultFeature";
-        private const string KineticAssaultFeatureGuid = "74FDA391-BF63-4F36-8666-84DEBE7C70F2";
-        private const string KineticAssaultFeatureDescription = "KineticDuelist.KineticAssaultFeature.Description";
+        internal const string KineticAssaultFeatureName = "KineticDuelist.KineticAssaultFeature";
+        internal const string KineticAssaultFeatureGuid = "74FDA391-BF63-4F36-8666-84DEBE7C70F2";
+        internal const string KineticAssaultFeatureDescription = "KineticDuelist.KineticAssaultFeature.Description";
 
-        private const string GreaterKineticDualBladesName = "KineticDuelist.GreaterKineticDualBlades";
-        private const string GreaterKineticDualBladesGuid = "E9D7BB7A-A4E4-4CE2-BC83-5A63F50CC869";
-        private const string GreaterKineticDualBladesDescription = "KineticDuelist.GreaterKineticDualBlades.Description";
+        internal const string GreaterKineticDualBladesName = "KineticDuelist.GreaterKineticDualBlades";
+        internal const string GreaterKineticDualBladesGuid = "E9D7BB7A-A4E4-4CE2-BC83-5A63F50CC869";
+        internal const string GreaterKineticDualBladesDescription = "KineticDuelist.GreaterKineticDualBlades.Description";
 
-        private const string DualBlades2ndAttackBuffName = "KineticDuelist.DualBlades2ndAttackBuff";
-        private const string DualBlades2ndAttackBuffGuid = "2DC5E636-E9B7-402D-9D1F-0A821D836E32";
-        private const string DualBlades2ndAttackBuffDescription = "KineticDuelist.DualBlades2ndAttackBuff.Description";
+        internal const string DualBlades2ndAttackBuffName = "KineticDuelist.DualBlades2ndAttackBuff";
+        internal const string DualBlades2ndAttackBuffGuid = "2DC5E636-E9B7-402D-9D1F-0A821D836E32";
+        internal const string DualBlades2ndAttackBuffDescription = "KineticDuelist.DualBlades2ndAttackBuff.Description";
 
-        private const string DualBlades3rdAttackBuffName = "KineticDuelist.DualBlades3rdAttackBuff";
-        private const string DualBlades3rdAttackBuffGuid = "44BE1F78-BCFD-4C4D-B6BA-874B725F5BDE";
-        private const string DualBlades3rdAttackBuffDescription = "KineticDuelist.DualBlades3rdAttackBuff.Description";
+        internal const string DualBlades3rdAttackBuffName = "KineticDuelist.DualBlades3rdAttackBuff";
+        internal const string DualBlades3rdAttackBuffGuid = "44BE1F78-BCFD-4C4D-B6BA-874B725F5BDE";
+        internal const string DualBlades3rdAttackBuffDescription = "KineticDuelist.DualBlades3rdAttackBuff.Description";
 
-        private static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes");
+        internal static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes.KineticDuelist");
 
         internal static void Configure()
         {
@@ -284,7 +285,7 @@ namespace KineticArchetypes
     [HarmonyPatch(typeof(AddKineticistBlade))]
     public class Patch_AddKineticistBlade
     {
-        private static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes");
+        private static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes.AddKineticistBlade");
 
         [HarmonyPostfix]
         [HarmonyPatch(nameof(AddKineticistBlade.OnActivate))]
@@ -293,12 +294,11 @@ namespace KineticArchetypes
             Kingmaker.EntitySystem.Entities.UnitEntityData owner = __instance.Owner;
 
             // Allow AoO if having KD blade feature
-            if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>("4C91D695-D84E-4AD5-AED4-0BDD3FD15CEA")) != null)
+            if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.KDKineticBladeGuid)) != null)
                 owner.State.RemoveCondition(UnitCondition.DisableAttacksOfOpportunity);
 
             // Spawn off-hand blade if having dual blade feature
-            /*if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>("062A5F9E-493E-473D-B0D5-CA4CEAC0A29A")) != null)*/
-            if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>("4C91D695-D84E-4AD5-AED4-0BDD3FD15CEA")) != null)
+            if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.KDKineticBladeGuid)) != null)
             {
                 Logger.Info("Try to insert kinetic blade to off hand");
                 var bladeOffHand = (ResourcesLibrary.TryGetBlueprint(__instance.m_Blade.Guid) as BlueprintItemWeapon).CreateEntity<ItemEntityWeapon>();
@@ -311,13 +311,17 @@ namespace KineticArchetypes
                 {
                     owner.Body.SecondaryHand.InsertItem(bladeOffHand);
                     Logger.Info("Inserted kinetic blade to off hand");
+                }
 
-                    // Add extra offhand attacks if having improved/greater dual blade features
-                    /*if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>("4C91D695-D84E-4AD5-AED4-0BDD3FD15CEA")) != null)
-                    {
-                        //owner.AddBuff(BlueprintTools.GetBlueprint<BlueprintBuff>("2DC5E636-E9B7-402D-9D1F-0A821D836E32"), owner);
-                        //owner.AddBuff(BlueprintTools.GetBlueprint<BlueprintBuff>("44BE1F78-BCFD-4C4D-B6BA-874B725F5BDE"), owner);
-                    }*/
+                // Add extra offhand attacks if having improved/greater dual blade features and no TWF features
+                var TWFRank = owner.GetFeature(FeatureRefs.TwoWeaponFightingBasicMechanics.Reference.Get()).GetRank();
+                if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.KDKineticBladeGuid)) != null &&  TWFRank < 3)
+                {
+                    owner.AddBuff(BlueprintTools.GetBlueprint<BlueprintBuff>(KineticDuelist.DualBlades2ndAttackBuffGuid), owner);
+                }
+                if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.KDKineticBladeGuid)) != null && TWFRank < 4)
+                {
+                    owner.AddBuff(BlueprintTools.GetBlueprint<BlueprintBuff>(KineticDuelist.DualBlades3rdAttackBuffGuid), owner);
                 }
             }
         }
@@ -334,6 +338,7 @@ namespace KineticArchetypes
                 var offhand = handsSet.SecondaryHand;
                 if (offhand.HasWeapon)
                 {
+                    // This variable is ESSENTIAL!!!
                     var weapon = offhand.Weapon;
                     if (weapon.Blueprint.Type.Category == WeaponCategory.KineticBlast)
                     {
@@ -347,6 +352,16 @@ namespace KineticArchetypes
                         Logger.Info($"Dispose garbage entity {offhand.Weapon}");
                         weapon.Dispose();
                     }
+                }
+            }
+
+            // Remove dual blade extra attack buffs
+            foreach (var buff in owner.Buffs)
+            {
+                if (buff.Blueprint.ToString().Equals(KineticDuelist.DualBlades2ndAttackBuffName) || 
+                    buff.Blueprint.ToString().Equals(KineticDuelist.DualBlades3rdAttackBuffName))
+                {
+                    buff.SetDuration(TimeSpan.FromSeconds(0));
                 }
             }
         }
