@@ -1,0 +1,10 @@
+{
+  "Id": "KineticArchetypes",
+  "DisplayName": "Kinetic Archetypes",
+  "Author": "NosVladimir",
+  "Version": "0.1",
+  "ManagerVersion": "0.21.3",
+  "Requirements": [],
+  "AssemblyName": "KineticArchetypes.dll",
+  "EntryMethod": "KineticArchetypes.Main.Load"
+}

@@ -1,0 +1,142 @@
+[
+  {
+    "Key": "KineticDuelist.Name",
+    "ProcessTemplates": false,
+    "enGB": "Kinetic Duelist",
+    "zhCN": "斗念使"
+  },
+
+  {
+    "Key": "KineticDuelist.Description",
+    "enGB": "In the more martial minded parts of the world, the way of the kinetic duelist is drilled into the training regimens of any potential kineticist, wanting to train them for conflict as soon as possible. Their training often emphasizes their fondness for individual combat. The art of the kinetic duelist can also be sneaky and swift, as a warrior who can carry a blade at all times without suspicion is a valuable soldier. Kinetic duelists themselves are more prone to fighting a single opponent, and abstain from larger combat whenever possible.",
+    "zhCN": "在尚武的地区，斗念之道被深深刻进了每一位潜在操念使的训练方案中，以便尽快为冲突做好准备。他们的训练往往热衷于单打独斗。作为能够随时携带武器而不引起怀疑的战士，斗念使也能展现出狡猾而迅速的武艺。斗念使本身更倾向于与单个对手战斗，并尽可能避免参与大规模的作战。"
+  },
+
+  {
+    "Key": "KineticDuelist.Proficiencies",
+    "ProcessTemplates": false,
+    "enGB": "Kinetic Duelist Proficiencies",
+    "zhCN": "斗念使擅长"
+  },
+
+  {
+    "Key": "KineticDuelist.Proficiencies.Description",
+    "enGB": "Kinetic duelists are proficient with all simple weapons, light armor, medium armor, and bucklers.",
+    "zhCN": "斗念使擅长使用所有简易武器、轻型盔甲、中型盔甲和小圆盾。"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticBlade",
+    "ProcessTemplates": false,
+    "enGB": "Kinetic Blade",
+    "zhCN": "念力之刃"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticBlade.Description",
+    "enGB": "At 1st level, a kinetic duelist begins along their martial path. As a free action costing 0 point of burn, they can channel their power into one of their hands for as long as they wish, dismissing it as a free action. A kinetic duelist may attack with this energy as though using the kinetic blade infusion, as well as being able to make attacks of opportunity with it. This ability is considered as kinetic blast as well as kinetic blade for all effects relating to it. When choosing an infusion, a kinetic duelist cannot choose form infusions that are beyond 1st level and do not list kinetic blade as a prerequisite.",
+    "zhCN": "1级时，斗念使便踏上了武斗之路。以一个消耗0点超载值的自由动作，他们可以将自己的能量引导到其中一只手中，持续时间无限，以自由动作解除。斗念使可以像使用念刃一样用这股能量攻击，也可以用其发动借机攻击。对于相关的所有效果，这个能力被同时视为念袭和念刃。斗念使在选择注能时，不能选择等级超过1级且不以念刃为前置的塑形注能。"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticDualBladesFeature",
+    "ProcessTemplates": false,
+    "enGB": "Kinetic Dual Blades",
+    "zhCN": "斗念双刃"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticDualBladesFeature.Description",
+    "enGB": "At 3rd level, a kinetic duelist receives Two-Weapon Fighting as a bonus feat.\nWhen using the kinetic blade form infusion, a kinetic duelist can form a second kinetic blade in their off hand by increasing the burn cost by 1, and treating both blades as light weapons for the purpose of two-weapon fighting. A kinetic duelist can only make one attack with this second kinetic blade, regardless of how many off-hand attacks they would normally receive.\nThis ability replaces the 3rd-level infusion.",
+    "zhCN": "3级时，斗念使获得双武器战斗奖励专长。\n通过在使用念刃塑形注能时将超载值提高1点，斗念使可以在副手中形成第二把念刃，并在双武器战斗时将两把念刃都视为轻型武器。斗念使只能用第二把念刃进行一次攻击，无论一般情况下他们可以进行多少次副手攻击。\n此能力替换了3级时获得的注能。"
+  },
+
+  {
+    "Key": "KineticDuelist.ImprovedKineticDualBlades",
+    "ProcessTemplates": false,
+    "enGB": "Improved Kinetic Dual Blades",
+    "zhCN": "精通斗念双刃"
+  },
+
+  {
+    "Key": "KineticDuelist.ImprovedKineticDualBlades.Description",
+    "enGB": "At 9th level, a kinetic duelist gains a second attack at BAB-5 with the second kinetic blade when using kinetic dual blades.\nThis ability replaces the 9th-level infusion.",
+    "zhCN": "9级起，斗念使可以在使用斗念双刃时，用第二把念刃以BAB-5进行第二次攻击。\n此能力替换了9级时获得的注能。"
+  },
+
+  {
+    "Key": "KineticDuelist.SynchronousChargeFeature",
+    "ProcessTemplates": false,
+    "enGB": "Synchronous Charge",
+    "zhCN": "以劳代逸"
+  },
+
+  {
+    "Key": "KineticDuelist.SynchronousChargeFeature.Description",
+    "enGB": "At 11th level, a kinetic duelist can recover 1 point of burn at the start of their next turn if they hit at least once during a full-round attack.",
+    "zhCN": "11级起，如果斗念使发动整轮攻击并至少命中一次，在下一轮开始时可以恢复1点超载值。"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticAssaultFeature",
+    "ProcessTemplates": false,
+    "enGB": "Kinetic Assault",
+    "zhCN": "念力突袭"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticAssaultFeature.Description",
+    "enGB": "At 13th level, a kinetic duelist gains the Kinetic Assault form infusion. \nThis ability replaces  metakinesis (quicken).",
+    "zhCN": "13级时，斗念使获得念力突袭塑形注能。\n此能力替换了超念（瞬发）。"
+  },
+
+  {
+    "Key": "KineticDuelist.GreaterKineticDualBlades",
+    "ProcessTemplates": false,
+    "enGB": "Greater Kinetic Dual Blades",
+    "zhCN": "高等斗念双刃"
+  },
+
+  {
+    "Key": "KineticDuelist.GreaterKineticDualBlades.Description",
+    "enGB": "At 15th level, a kinetic duelist gains a third attack at BAB-10 with the second kinetic blade when using kinetic dual blades.",
+    "zhCN": "15级起，斗念使可以在使用斗念双刃时，用第二把念刃以BAB-10进行第三次攻击。"
+  },
+
+  {
+    "Key": "KineticDuelist.DualBlades2ndAttackBuff",
+    "ProcessTemplates": false,
+    "enGB": "Improved Kinetic Dual Blades",
+    "zhCN": "精通斗念双刃"
+  },
+
+  {
+    "Key": "KineticDuelist.DualBlades2ndAttackBuff.Description",
+    "enGB": "At 15th level, a kinetic duelist gains a third attack at BAB-10 with the second kinetic blade when using kinetic dual blades.",
+    "zhCN": "9级起，斗念使可以在使用斗念双刃时，用第二把念刃以BAB-5进行第二次攻击。"
+  },
+
+  {
+    "Key": "KineticDuelist.DualBlades3rdAttackBuff",
+    "ProcessTemplates": false,
+    "enGB": "Greater Kinetic Dual Blades",
+    "zhCN": "高等斗念双刃"
+  },
+
+  {
+    "Key": "KineticDuelist.DualBlades3rdAttackBuff.Description",
+    "enGB": "At 15th level, a kinetic duelist gains a third attack at BAB-10 with the second kinetic blade when using kinetic dual blades.",
+    "zhCN": "15级起，斗念使可以在使用斗念双刃时，用第二把念刃以BAB-10进行第三次攻击。"
+  }
+
+
+
+  /*
+  {
+    "Key": "",
+    "enGB": "",
+    "zhCN": ""
+  }
+
+  */
+]
