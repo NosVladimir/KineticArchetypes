@@ -43,6 +43,7 @@ using Kingmaker.Utility;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
 using BlueprintCore.Actions.Builder;
 using Kingmaker.Blueprints.Root;
+using Kingmaker.UnitLogic.ActivatableAbilities;
 
 namespace KineticArchetypes
 {
@@ -64,6 +65,10 @@ namespace KineticArchetypes
         internal const string KineticDualBladesFeatureName = "KineticDuelist.KineticDualBladesFeature";
         internal const string KineticDualBladesFeatureGuid = "062A5F9E-493E-473D-B0D5-CA4CEAC0A29A";
         internal const string KineticDualBladesFeatureDescription = "KineticDuelist.KineticDualBladesFeature.Description";
+
+        internal const string KineticDualBladesActivatableName = "KineticDuelist.KineticDualBladesActivatable";
+        internal const string KineticDualBladesActivatableGuid = "11EAB799-7E33-45B1-A006-5A48A9ADAB5E";
+        internal const string KineticDualBladesActivatableDescription = "KineticDuelist.KineticDualBladesActivatable.Description";
 
         internal const string ImprovedKineticDualBladesName = "KineticDuelist.ImprovedKineticDualBlades";
         internal const string ImprovedKineticDualBladesGuid = "7DB4530F-7B21-4301-9F8D-99F405D1048D";
@@ -121,6 +126,7 @@ namespace KineticArchetypes
                 ;
 
             // Add features
+            var kdprof = ProficienciesFeature();
             var blade0 = KDKineticBladeFeature();
             var blade1 = KineticDualBladesFeature();
             var blade2 = ImprovedKineticDualBladesFeature();
@@ -128,7 +134,7 @@ namespace KineticArchetypes
             var kinAss = KineticAssaultFeature();
             var blade3 = GreaterKineticDualBladesFeature();
             archetype
-                .AddToAddFeatures(1, ProficienciesFeature())
+                .AddToAddFeatures(1, kdprof)
                 .AddToAddFeatures(1, blade0)
                 .AddToAddFeatures(3, blade1)
                 .AddToAddFeatures(9, blade2)
@@ -194,8 +200,27 @@ namespace KineticArchetypes
 
         private static BlueprintFeature KineticDualBladesFeature()
         {
+            var increaseBladeCost = new AddKineticistBurnModifier();
+            increaseBladeCost.Value = 1;
+            increaseBladeCost.BurnType = KineticistBurnType.Infusion;
+            increaseBladeCost.m_AppliableTo = new BlueprintAbilityReference[]
+            {
+                // This seems enough to apply to all kinetic blades
+                ActivatableAbilityRefs.KineticBladeAirBlastAbility.Cast<BlueprintAbilityReference>().Reference
+            };
+            var ability = ActivatableAbilityConfigurator.New(KineticDualBladesActivatableName, KineticDualBladesActivatableGuid)
+                .SetDisplayName(KineticDualBladesActivatableName)
+                .SetDescription(KineticDualBladesActivatableDescription)
+                .SetIcon(FeatureRefs.TwoWeaponFighting.Reference.Get().Icon)
+                .Configure();
+            ability.Buff.AddComponent(increaseBladeCost);
+            ability.Buff.m_Flags = BlueprintBuff.Flags.HiddenInUi;
+
             var addFact = new AddFacts();
-            addFact.m_Facts = new BlueprintUnitFactReference[] { FeatureRefs.TwoWeaponFighting.Cast<BlueprintUnitFactReference>().Reference };
+            addFact.m_Facts = new BlueprintUnitFactReference[] {
+                FeatureRefs.TwoWeaponFighting.Cast<BlueprintUnitFactReference>().Reference,
+                ability.ToReference<BlueprintUnitFactReference>()
+            } ;
             return FeatureConfigurator.New(KineticDualBladesFeatureName, KineticDualBladesFeatureGuid)
                 .SetDisplayName(KineticDualBladesFeatureName)
                 .SetDescription(KineticDualBladesFeatureDescription)
@@ -251,7 +276,7 @@ namespace KineticArchetypes
                 .SetDisplayName(DualBlades2ndAttackBuffName)
                 .SetDescription(DualBlades2ndAttackBuffDescription)
                 .SetIcon(FeatureRefs.TwoWeaponFightingImproved.Reference.Get().Icon)
-                //.SetFlags(new BlueprintBuff.Flags[] { BlueprintBuff.Flags.HiddenInUi })
+                .SetFlags(new BlueprintBuff.Flags[] { BlueprintBuff.Flags.HiddenInUi })
                 .AddComponent(new BuffExtraOffhandBladeAttack())
                 .Configure();
         }
@@ -262,7 +287,7 @@ namespace KineticArchetypes
                 .SetDisplayName(DualBlades3rdAttackBuffName)
                 .SetDescription(DualBlades3rdAttackBuffDescription)
                 .SetIcon(FeatureRefs.TwoWeaponFightingGreater.Reference.Get().Icon)
-                //.SetFlags(new BlueprintBuff.Flags[] { BlueprintBuff.Flags.HiddenInUi })
+                .SetFlags(new BlueprintBuff.Flags[] { BlueprintBuff.Flags.HiddenInUi })
                 .AddComponent(new BuffExtraOffhandBladeAttack())
                 .Configure();
         }
