@@ -47,8 +47,34 @@
 
   {
     "Key": "KineticDuelist.KineticDualBladesFeature.Description",
-    "enGB": "At 3rd level, a kinetic duelist receives Two-Weapon Fighting as a bonus feat.\nWhen using the kinetic blade form infusion, a kinetic duelist can form a second kinetic blade in their off hand by increasing the burn cost by 1, and treating both blades as light weapons for the purpose of two-weapon fighting. A kinetic duelist can only make one attack with this second kinetic blade, regardless of how many off-hand attacks they would normally receive.\nThis ability replaces the 3rd-level infusion.",
-    "zhCN": "3级时，斗念使获得双武器战斗奖励专长。\n通过在使用念刃塑形注能时将超载值提高1点，斗念使可以在副手中形成第二把念刃，并在双武器战斗时将两把念刃都视为轻型武器。斗念使只能用第二把念刃进行一次攻击，无论一般情况下他们可以进行多少次副手攻击。\n此能力替换了3级时获得的注能。"
+    "enGB": "At 3rd level, a kinetic duelist receives Two-Weapon Fighting as a bonus feat.\nWhen using the kinetic blade form infusion, a kinetic duelist can form a second kinetic blade in their off hand by increasing the burn cost by 1, and treating both blades as light weapons for the purpose of two-weapon fighting.\nThis ability replaces the 3rd-level infusion.",
+    "zhCN": "3级时，斗念使获得双武器战斗奖励专长。\n通过在使用念刃塑形注能时将超载值提高1点，斗念使可以在副手中形成第二把念刃，并在双武器战斗时将两把念刃都视为轻型武器。\n此能力替换了3级时获得的注能。"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticDualBladesAbility",
+    "ProcessTemplates": false,
+    "enGB": "Kinetic Dual Blades",
+    "zhCN": "斗念双刃"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticDualBladesAbility.Description",
+    "enGB": "You increase the burn cost of kinetic blade by 1 to make a second blade in your off hand.\n(Note: the burn cost increase resets after dismissing kinetic blades.)",
+    "zhCN": "你将念刃的超载值提高1点以在副手中形成第二把念刃。\n（注：超载值的增加在解除念刃后重置。）"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticDualBladesBuff",
+    "ProcessTemplates": false,
+    "enGB": "Kinetic Dual Blades",
+    "zhCN": "斗念双刃"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticDualBladesBuff.Description",
+    "enGB": "Kinetic dual blade activated.",
+    "zhCN": "斗念双刃已启用。"
   },
 
   {
@@ -60,8 +86,8 @@
 
   {
     "Key": "KineticDuelist.ImprovedKineticDualBlades.Description",
-    "enGB": "At 9th level, a kinetic duelist gains a second attack at their full base attack bonus -5 with the second kinetic blade when using kinetic dual blades. If a kinetic duelist had already gained a second off-hand attacks from similar abilities such as Improved Two-Weapon Fighting, this ability does not stack with those.\nThis ability replaces the 9th-level infusion.",
-    "zhCN": "9级起，斗念使可以在使用斗念双刃时，用第二把念刃以最高基础攻击加值-5进行第二次攻击。如果斗念使已经通过其他类似的能力获得了第二次副手攻击，例如精通双武器战斗，此能力不与其叠加。\n此能力替换了9级时获得的注能。"
+    "enGB": "At 9th level, a kinetic duelist gains a second attack at their full base attack bonus -5 with the second kinetic blade when using kinetic dual blades.\nIf a kinetic duelist had already gained a second off-hand attack from similar abilities such as Improved Two-Weapon Fighting, this ability does not stack with those.\nThis ability replaces the 9th-level infusion.",
+    "zhCN": "9级起，斗念使可以在使用斗念双刃时，用第二把念刃以最高基础攻击加值-5进行第二次攻击。\n如果斗念使已经通过其他类似的能力获得了第二次副手攻击，例如精通双武器战斗，此能力不与其叠加。\n此能力替换了9级时获得的注能。"
   },
 
   {
@@ -99,8 +125,8 @@
 
   {
     "Key": "KineticDuelist.GreaterKineticDualBlades.Description",
-    "enGB": "At 15th level, a kinetic duelist gains a third attack at their full base attack bonus -10 with the second kinetic blade when using kinetic dual blades. If a kinetic duelist had already gained a third off-hand attacks from similar abilities such as Greater Two-Weapon Fighting, this ability does not stack with those.",
-    "zhCN": "15级起，斗念使可以在使用斗念双刃时，用第二把念刃以最高基础攻击加值-10进行第三次攻击。如果斗念使已经通过其他类似的能力获得了第三次副手攻击，例如高等双武器战斗，此能力不与其叠加。"
+    "enGB": "At 15th level, a kinetic duelist gains a third attack at their full base attack bonus -10 with the second kinetic blade when using kinetic dual blades.\nIf a kinetic duelist had already gained a third off-hand attack from similar abilities such as Greater Two-Weapon Fighting, this ability does not stack with those.",
+    "zhCN": "15级起，斗念使可以在使用斗念双刃时，用第二把念刃以最高基础攻击加值-10进行第三次攻击。\n如果斗念使已经通过其他类似的能力获得了第三次副手攻击，例如高等双武器战斗，此能力不与其叠加。"
   },
 
   {

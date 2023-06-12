@@ -52,6 +52,32 @@
   },
 
   {
+    "Key": "KineticDuelist.KineticDualBladesAbility",
+    "ProcessTemplates": false,
+    "enGB": "Kinetic Dual Blades",
+    "zhCN": "斗念双刃"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticDualBladesAbility.Description",
+    "enGB": "You increase the burn cost of kinetic blade by 1 to make a second blade in your off hand.\n(Note: the burn cost increase resets after dismissing kinetic blades.)",
+    "zhCN": "你将念刃的超载值提高1点以在副手中形成第二把念刃。\n（注：超载值的增加在消解念刃后重置。）"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticDualBladesBuff",
+    "ProcessTemplates": false,
+    "enGB": "Kinetic Dual Blades",
+    "zhCN": "斗念双刃"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticDualBladesBuff.Description",
+    "enGB": "Kinetic dual blade activated.",
+    "zhCN": "斗念双刃已启用。"
+  },
+
+  {
     "Key": "KineticDuelist.ImprovedKineticDualBlades",
     "ProcessTemplates": false,
     "enGB": "Improved Kinetic Dual Blades",

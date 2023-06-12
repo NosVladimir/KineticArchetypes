@@ -10,7 +10,7 @@ namespace KineticArchetypes
   public static class Main
   {
     public static bool Enabled;
-    private static readonly LogWrapper Logger = LogWrapper.Get("TestMod2Name");
+    private static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes");
 
     public static bool Load(UnityModManager.ModEntry modEntry)
     {

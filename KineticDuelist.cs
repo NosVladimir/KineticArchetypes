@@ -44,6 +44,10 @@ using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
 using BlueprintCore.Actions.Builder;
 using Kingmaker.Blueprints.Root;
 using Kingmaker.UnitLogic.ActivatableAbilities;
+using BlueprintCore.Actions.Builder.ContextEx;
+using BlueprintCore.Conditions.Builder.ContextEx;
+using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Abilities;
+using BlueprintCore.Conditions.Builder.BasicEx;
 
 namespace KineticArchetypes
 {
@@ -66,9 +70,13 @@ namespace KineticArchetypes
         internal const string KineticDualBladesFeatureGuid = "062A5F9E-493E-473D-B0D5-CA4CEAC0A29A";
         internal const string KineticDualBladesFeatureDescription = "KineticDuelist.KineticDualBladesFeature.Description";
 
-        internal const string KineticDualBladesActivatableName = "KineticDuelist.KineticDualBladesActivatable";
-        internal const string KineticDualBladesActivatableGuid = "11EAB799-7E33-45B1-A006-5A48A9ADAB5E";
-        internal const string KineticDualBladesActivatableDescription = "KineticDuelist.KineticDualBladesActivatable.Description";
+        internal const string KineticDualBladesAbilityName = "KineticDuelist.KineticDualBladesAbility";
+        internal const string KineticDualBladesAbilityGuid = "11EAB799-7E33-45B1-A006-5A48A9ADAB5E";
+        internal const string KineticDualBladesAbilityDescription = "KineticDuelist.KineticDualBladesAbility.Description";
+
+        internal const string KineticDualBladesBuffName = "KineticDuelist.KineticDualBladesBuff";
+        internal const string KineticDualBladesBuffGuid = "93CB0B72-368D-4C07-B4DC-B9509719CD1F";
+        internal const string KineticDualBladesBuffDescription = "KineticDuelist.KineticDualBladesBuff.Description";
 
         internal const string ImprovedKineticDualBladesName = "KineticDuelist.ImprovedKineticDualBlades";
         internal const string ImprovedKineticDualBladesGuid = "7DB4530F-7B21-4301-9F8D-99F405D1048D";
@@ -191,7 +199,7 @@ namespace KineticArchetypes
             return FeatureConfigurator.New(KDKineticBladeName, KDKineticBladeGuid)
                 .SetDisplayName(KDKineticBladeName)
                 .SetDescription(KDKineticBladeDescription)
-                .SetIcon(AbilityRefs.MagicWeaponGreater.Reference.Get().Icon)
+                .SetIcon(AbilityRefs.BlessWeapon.Reference.Get().Icon)
                 .SetIsClassFeature(true)
                 .AddComponent(addFact)
                 .AddComponent(reduceBladeCost)
@@ -200,6 +208,7 @@ namespace KineticArchetypes
 
         private static BlueprintFeature KineticDualBladesFeature()
         {
+            // Dual blade buff
             var increaseBladeCost = new AddKineticistBurnModifier();
             increaseBladeCost.Value = 1;
             increaseBladeCost.BurnType = KineticistBurnType.Infusion;
@@ -208,19 +217,31 @@ namespace KineticArchetypes
                 // This seems enough to apply to all kinetic blades
                 ActivatableAbilityRefs.KineticBladeAirBlastAbility.Cast<BlueprintAbilityReference>().Reference
             };
-            var ability = ActivatableAbilityConfigurator.New(KineticDualBladesActivatableName, KineticDualBladesActivatableGuid)
-                .SetDisplayName(KineticDualBladesActivatableName)
-                .SetDescription(KineticDualBladesActivatableDescription)
-                .SetIcon(FeatureRefs.TwoWeaponFighting.Reference.Get().Icon)
+
+            var buff = BuffConfigurator.New(KineticDualBladesBuffName, KineticDualBladesBuffGuid)
+                .SetDisplayName(KineticDualBladesBuffName)
+                .SetDescription(KineticDualBladesBuffDescription)
+                .SetIcon(AbilityRefs.DivineFavor.Reference.Get().Icon)
+                .AddComponent(increaseBladeCost)
                 .Configure();
-            ability.Buff.AddComponent(increaseBladeCost);
-            ability.Buff.m_Flags = BlueprintBuff.Flags.HiddenInUi;
+
+            // Dual blade ability
+            var ability = AbilityConfigurator.New(KineticDualBladesAbilityName, KineticDualBladesAbilityGuid)
+                .SetDisplayName(KineticDualBladesAbilityName)
+                .SetDescription(KineticDualBladesAbilityDescription)
+                .SetIcon(AbilityRefs.DivineFavor.Reference.Get().Icon)
+                .AddAbilityEffectRunAction(ActionsBuilder.New().ApplyBuffPermanent(buff, isNotDispelable: true))
+                .SetType(AbilityType.Special)
+                .SetRange(AbilityRange.Personal)
+                .SetActionType(Kingmaker.UnitLogic.Commands.Base.UnitCommand.CommandType.Free)
+                .Configure();
 
             var addFact = new AddFacts();
             addFact.m_Facts = new BlueprintUnitFactReference[] {
                 FeatureRefs.TwoWeaponFighting.Cast<BlueprintUnitFactReference>().Reference,
                 ability.ToReference<BlueprintUnitFactReference>()
             } ;
+
             return FeatureConfigurator.New(KineticDualBladesFeatureName, KineticDualBladesFeatureGuid)
                 .SetDisplayName(KineticDualBladesFeatureName)
                 .SetDescription(KineticDualBladesFeatureDescription)
@@ -322,8 +343,12 @@ namespace KineticArchetypes
             if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.KDKineticBladeGuid)) != null)
                 owner.State.RemoveCondition(UnitCondition.DisableAttacksOfOpportunity);
 
-            // Spawn off-hand blade if having dual blade feature
-            if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.KDKineticBladeGuid)) != null)
+            // Spawn off-hand blade if dual blade activated
+            bool dualbuff = false;
+            foreach (var buff in owner.Buffs)
+                if (buff.Blueprint.ToString().Equals(KineticDuelist.KineticDualBladesBuffName))
+                    dualbuff = true;
+            if (dualbuff)
             {
                 Logger.Info("Try to insert kinetic blade to off hand");
                 var bladeOffHand = (ResourcesLibrary.TryGetBlueprint(__instance.m_Blade.Guid) as BlueprintItemWeapon).CreateEntity<ItemEntityWeapon>();
@@ -342,11 +367,13 @@ namespace KineticArchetypes
                 var TWFRank = owner.GetFeature(FeatureRefs.TwoWeaponFightingBasicMechanics.Reference.Get()).GetRank();
                 if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.KDKineticBladeGuid)) != null &&  TWFRank < 3)
                 {
-                    owner.AddBuff(BlueprintTools.GetBlueprint<BlueprintBuff>(KineticDuelist.DualBlades2ndAttackBuffGuid), owner);
+                    var buff1 = owner.AddBuff(BlueprintTools.GetBlueprint<BlueprintBuff>(KineticDuelist.DualBlades2ndAttackBuffGuid), owner);
+                    buff1.IsNotDispelable = true; 
                 }
                 if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.KDKineticBladeGuid)) != null && TWFRank < 4)
                 {
-                    owner.AddBuff(BlueprintTools.GetBlueprint<BlueprintBuff>(KineticDuelist.DualBlades3rdAttackBuffGuid), owner);
+                    var buff2 = owner.AddBuff(BlueprintTools.GetBlueprint<BlueprintBuff>(KineticDuelist.DualBlades3rdAttackBuffGuid), owner);
+                    buff2.IsNotDispelable = true;
                 }
             }
         }
@@ -380,10 +407,11 @@ namespace KineticArchetypes
                 }
             }
 
-            // Remove dual blade extra attack buffs
+            // Remove dual blade buff and extra attack buffs
             foreach (var buff in owner.Buffs)
             {
-                if (buff.Blueprint.ToString().Equals(KineticDuelist.DualBlades2ndAttackBuffName) || 
+                if (buff.Blueprint.ToString().Equals(KineticDuelist.KineticDualBladesBuffName)   ||
+                    buff.Blueprint.ToString().Equals(KineticDuelist.DualBlades2ndAttackBuffName) || 
                     buff.Blueprint.ToString().Equals(KineticDuelist.DualBlades3rdAttackBuffName))
                 {
                     buff.SetDuration(TimeSpan.FromSeconds(0));
