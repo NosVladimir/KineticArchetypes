@@ -21,7 +21,7 @@ A kineticist archetype that allows legit two-weapon fighting with kinetic blades
 - Kinetic dual blades activatable ability at 3rd level that allows for creating a second kinetic blade in off hand by increasing the burn of kinetic blade by 1
 - One more attack with the off-hand blade at 9th level with BAB-5, another one at 15th level with BAB-10
 - Recovers 1 burn if scored at least 1 hit in a full-round attack using kinetic blade(s) from 11th level
-- Kinetic assault special dash that costs 3 burn, attacking with both blades and auto maximise and increase infusion DC by 2
+- Kinetic assault special charge that costs 3 burn, attacking with both blades and auto maximise and increase infusion DC by 2
 
 ## Planned contents
 ### [Cinder Adept](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/paizo-llc-kineticist-archetypes/cinder-adept-kineticist-archetype/)
