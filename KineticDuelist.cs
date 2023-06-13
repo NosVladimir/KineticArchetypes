@@ -49,6 +49,10 @@ using BlueprintCore.Conditions.Builder.ContextEx;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Abilities;
 using BlueprintCore.Conditions.Builder.BasicEx;
 using BlueprintCore.Blueprints.ModReferences;
+using Kingmaker.UnitLogic.Class.Kineticist.Actions;
+using Kingmaker.UnitLogic.Mechanics.Actions;
+using Kingmaker.UnitLogic.Mechanics;
+using Kingmaker.UnitLogic.Buffs;
 
 namespace KineticArchetypes
 {
@@ -103,7 +107,20 @@ namespace KineticArchetypes
         internal const string DualBlades3rdAttackBuffGuid = "44BE1F78-BCFD-4C4D-B6BA-874B725F5BDE";
         internal const string DualBlades3rdAttackBuffDescription = "KineticDuelist.DualBlades3rdAttackBuff.Description";
 
-        internal static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes.KineticDuelist");
+        internal const string SynchronousChargeBuffName = "KineticDuelist.SynchronousChargeBuff";
+        internal const string SynchronousChargeBuffGuid = "2EE6C1C4-CA44-41B6-B6ED-93F5EA6A21E1";
+        internal const string SynchronousChargeBuffDescription = "KineticDuelist.SynchronousChargeBuff.Description";
+
+        internal const string SupressBladeBurnBuffName = "KineticDuelist.SupressBladeBurnBuff";
+        internal const string SupressBladeBurnBuffGuid = "5DA2EB59-8D41-4D03-94FD-F7BFD8DD77F1";
+        internal const string SupressBladeBurnBuffDescription = "KineticDuelist.SupressBladeBurnBuff.Description";
+
+        internal static readonly BlueprintAbilityReference[] allBlades = {
+                // This seems enough to apply to all kinetic blades
+                ActivatableAbilityRefs.KineticBladeAirBlastAbility.Cast<BlueprintAbilityReference>().Reference
+            };
+
+    internal static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes.KineticDuelist");
 
         internal static void Configure()
         {
@@ -159,6 +176,7 @@ namespace KineticArchetypes
             var atk3rd = DualBlades3rdAttackBuff();
 
             RestrictFormInfusionSelections();
+            SupressBladeBurnOnFullAttack();
         }
 
         private static BlueprintFeature ProficienciesFeature()
@@ -193,11 +211,7 @@ namespace KineticArchetypes
             var reduceBladeCost = new AddKineticistBurnModifier();
             reduceBladeCost.Value = -1;
             reduceBladeCost.BurnType = KineticistBurnType.Infusion;
-            reduceBladeCost.m_AppliableTo = new BlueprintAbilityReference[]
-            {
-                // This seems enough to apply to all kinetic blades
-                ActivatableAbilityRefs.KineticBladeAirBlastAbility.Cast<BlueprintAbilityReference>().Reference
-            };
+            reduceBladeCost.m_AppliableTo = allBlades;
 
             return FeatureConfigurator.New(KDKineticBladeName, KDKineticBladeGuid)
                 .SetDisplayName(KDKineticBladeName)
@@ -215,11 +229,7 @@ namespace KineticArchetypes
             var increaseBladeCost = new AddKineticistBurnModifier();
             increaseBladeCost.Value = 1;
             increaseBladeCost.BurnType = KineticistBurnType.Infusion;
-            increaseBladeCost.m_AppliableTo = new BlueprintAbilityReference[]
-            {
-                // This seems enough to apply to all kinetic blades
-                ActivatableAbilityRefs.KineticBladeAirBlastAbility.Cast<BlueprintAbilityReference>().Reference
-            };
+            increaseBladeCost.m_AppliableTo = allBlades;
 
             var buff = BuffConfigurator.New(KineticDualBladesBuffName, KineticDualBladesBuffGuid)
                 .SetDisplayName(KineticDualBladesBuffName)
@@ -270,6 +280,14 @@ namespace KineticArchetypes
                 .SetDisplayName(SynchronousChargeFeatureName)
                 .SetDescription(SynchronousChargeFeatureDescription)
                 .SetIcon(AbilityRefs.JoyfulRapture.Reference.Get().Icon)
+                .AddInitiatorAttackWithWeaponTrigger(
+                    action: ActionsBuilder.New().Add(new ContextActionHeal1Burn()),
+                    triggerBeforeAttack: false,
+                    onlyHit: true,
+                    onlyOnFirstHit: true,
+                    onlyOnFullAttack: true,
+                    checkWeaponCategory: true,
+                    category: WeaponCategory.KineticBlast)
                 .SetIsClassFeature(true)
                 .Configure();
         }
@@ -302,6 +320,7 @@ namespace KineticArchetypes
                 .SetIcon(FeatureRefs.TwoWeaponFightingImproved.Reference.Get().Icon)
                 .SetFlags(new BlueprintBuff.Flags[] { BlueprintBuff.Flags.HiddenInUi })
                 .AddComponent(new BuffExtraOffhandBladeAttack())
+                .AddNotDispelable()
                 .Configure();
         }
 
@@ -313,18 +332,9 @@ namespace KineticArchetypes
                 .SetIcon(FeatureRefs.TwoWeaponFightingGreater.Reference.Get().Icon)
                 .SetFlags(new BlueprintBuff.Flags[] { BlueprintBuff.Flags.HiddenInUi })
                 .AddComponent(new BuffExtraOffhandBladeAttack())
+                .AddNotDispelable()
                 .Configure();
         }
-
-        /*private static BlueprintBuff SynchronousChargeBuff()
-        {
-            var buff = BuffConfigurator.New(SynchronousChargeFeatureName, SynchronousChargeFeatureGuid)
-                .SetDisplayName(SynchronousChargeFeatureName)
-                .SetDescription(SynchronousChargeFeatureDescription)
-                .AddMechanicsFeature(feature: )
-                .Configure();
-            return null;
-        }*/
 
         private static void RestrictFormInfusionSelections()
         {
@@ -347,6 +357,45 @@ namespace KineticArchetypes
                     .Configure();
             }
         }
+
+        private static void SupressBladeBurnOnFullAttack()
+        {
+            // Temporarily supress kinetic blade burn cost
+            // so it won't deactivate itself after 1st attack due to no burn left
+            var supressBlastBurn = new AddKineticistBurnModifier();
+            supressBlastBurn.Value = -100;
+            supressBlastBurn.BurnType = KineticistBurnType.Blast;
+            supressBlastBurn.m_AppliableTo = allBlades;
+
+            var supressInfusionBurn = new AddKineticistBurnModifier();
+            supressInfusionBurn.Value = -100;
+            supressInfusionBurn.BurnType = KineticistBurnType.Infusion;
+            supressInfusionBurn.m_AppliableTo = allBlades;
+
+            var supressMetakinesisBurn = new AddKineticistBurnModifier();
+            supressMetakinesisBurn.Value = -100;
+            supressMetakinesisBurn.BurnType = KineticistBurnType.Metakinesis;
+            supressMetakinesisBurn.m_AppliableTo = allBlades;
+
+            var buff = BuffConfigurator.New(SupressBladeBurnBuffName, SupressBladeBurnBuffGuid)
+                .SetDisplayName(SupressBladeBurnBuffName)
+                .SetDescription(SupressBladeBurnBuffDescription)
+                .SetFlags(new BlueprintBuff.Flags[] { BlueprintBuff.Flags.HiddenInUi })
+                // IMMEDIATELY REMOVES ITSELF, but works 
+                .AddRemoveBuffOnTurnOn()
+                .AddNotDispelable()
+                .AddComponent(supressBlastBurn)
+                .AddComponent(supressInfusionBurn)
+                .AddComponent(supressMetakinesisBurn)
+                .Configure();
+            
+            FeatureConfigurator.For(FeatureRefs.KineticBladeInfusion)
+                .AddInitiatorAttackWithWeaponTrigger(
+                    action: ActionsBuilder.New().Add(new SupressBladeBurn(buff: buff)),
+                    triggerBeforeAttack: true,
+                    onlyHit: false)
+                .Configure();
+        }
     }
 
     public class BuffExtraOffhandBladeAttack : UnitFactComponentDelegate, IInitiatorRulebookHandler<RuleCalculateAttacksCount>, IRulebookHandler<RuleCalculateAttacksCount>, ISubscriber, IInitiatorRulebookSubscriber
@@ -360,6 +409,59 @@ namespace KineticArchetypes
 
         public void OnEventDidTrigger(RuleCalculateAttacksCount evt)
         {
+        }
+    }
+
+    public class SupressBladeBurn : ContextAction
+    {
+        public BlueprintBuff buff;
+
+        public SupressBladeBurn(BlueprintBuff buff)
+        {
+            this.buff = buff;
+        }
+
+        public override string GetCaption()
+        {
+            return "Kineticist supressing blade burn";
+        }
+
+        public override void RunAction()
+        {
+            KineticDuelist.Logger.Info("Supressing blade burn");
+            UnitPartKineticist unitPartKineticist = Context.MaybeCaster?.Get<UnitPartKineticist>();
+            if (!unitPartKineticist)
+            {
+                KineticDuelist.Logger.Error("Caster is not kineticist");
+            }
+            else
+            {
+                //unitPartKineticist.HealBurn(1);
+                if (buff != null)
+                    unitPartKineticist.Owner.AddBuff(buff, unitPartKineticist.Owner);
+            }
+        }
+    }
+
+    public class ContextActionHeal1Burn : ContextAction
+    {
+        public override string GetCaption()
+        {
+            return "Kineticist heal 1 burn";
+        }
+
+        public override void RunAction()
+        {
+            KineticDuelist.Logger.Info("Healing 1 burn");
+            UnitPartKineticist unitPartKineticist = Context.MaybeCaster?.Get<UnitPartKineticist>();
+            if (!unitPartKineticist)
+            {
+                KineticDuelist.Logger.Error("Caster is not kineticist");
+            }
+            else
+            {
+                unitPartKineticist.HealBurn(1);
+            }
         }
     }
 
@@ -403,12 +505,10 @@ namespace KineticArchetypes
                 if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.KDKineticBladeGuid)) != null &&  TWFRank < 3)
                 {
                     var buff1 = owner.AddBuff(BlueprintTools.GetBlueprint<BlueprintBuff>(KineticDuelist.DualBlades2ndAttackBuffGuid), owner);
-                    buff1.IsNotDispelable = true; 
                 }
                 if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.KDKineticBladeGuid)) != null && TWFRank < 4)
                 {
                     var buff2 = owner.AddBuff(BlueprintTools.GetBlueprint<BlueprintBuff>(KineticDuelist.DualBlades3rdAttackBuffGuid), owner);
-                    buff2.IsNotDispelable = true;
                 }
             }
         }
