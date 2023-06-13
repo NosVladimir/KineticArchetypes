@@ -48,12 +48,13 @@ using BlueprintCore.Actions.Builder.ContextEx;
 using BlueprintCore.Conditions.Builder.ContextEx;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Abilities;
 using BlueprintCore.Conditions.Builder.BasicEx;
+using BlueprintCore.Blueprints.ModReferences;
 
 namespace KineticArchetypes
 {
     internal class KineticDuelist
     {
-        internal const string ArchetypeName = "KineticDuelist";
+        internal const string ArchetypeName = "KineticDuelistArchetype";
         internal const string ArchetypeDisplayName = "KineticDuelist.Name";
         internal const string ArchetypeDescription = "KineticDuelist.Description";
         internal const string ArchetypeGuid = "179E8E47-35B8-48EF-84AE-10C6C0A067D3";
@@ -146,7 +147,7 @@ namespace KineticArchetypes
                 .AddToAddFeatures(1, blade0)
                 .AddToAddFeatures(3, blade1)
                 .AddToAddFeatures(9, blade2)
-                .AddToAddFeatures(11, synCha)
+                .AddToAddFeatures(2, synCha)
                 .AddToAddFeatures(13, kinAss)
                 .AddToAddFeatures(15, blade3)
                 .Configure();
@@ -156,6 +157,8 @@ namespace KineticArchetypes
 
             var atk2nd = DualBlades2ndAttackBuff();
             var atk3rd = DualBlades3rdAttackBuff();
+
+            RestrictFormInfusionSelections();
         }
 
         private static BlueprintFeature ProficienciesFeature()
@@ -311,6 +314,38 @@ namespace KineticArchetypes
                 .SetFlags(new BlueprintBuff.Flags[] { BlueprintBuff.Flags.HiddenInUi })
                 .AddComponent(new BuffExtraOffhandBladeAttack())
                 .Configure();
+        }
+
+        /*private static BlueprintBuff SynchronousChargeBuff()
+        {
+            var buff = BuffConfigurator.New(SynchronousChargeFeatureName, SynchronousChargeFeatureGuid)
+                .SetDisplayName(SynchronousChargeFeatureName)
+                .SetDescription(SynchronousChargeFeatureDescription)
+                .AddMechanicsFeature(feature: )
+                .Configure();
+            return null;
+        }*/
+
+        private static void RestrictFormInfusionSelections()
+        {
+            var formInfusions = new Blueprint<BlueprintReference<BlueprintFeature>>[]
+            {
+                FeatureRefs.CloudInfusion,
+                FeatureRefs.EruptionInfusion,
+                FeatureRefs.SprayInfusion,
+                FeatureRefs.FragmentationInfusion,
+                FeatureRefs.DeadlyEarthInfusion,
+                FeatureRefs.CycloneInfusion,
+                FeatureRefs.DetonationInfusion,
+                FeatureRefs.WallInfusion,
+                FeatureRefs.SpindleInfusion
+            };
+            foreach (var infusion in formInfusions) 
+            {
+                FeatureConfigurator.For(infusion)
+                    .AddPrerequisiteNoArchetype(ArchetypeGuid, CharacterClassRefs.KineticistClass.Reference.Get())
+                    .Configure();
+            }
         }
     }
 

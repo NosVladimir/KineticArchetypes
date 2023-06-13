@@ -99,7 +99,7 @@
 
   {
     "Key": "KineticDuelist.SynchronousChargeFeature.Description",
-    "enGB": "At 11th level, a kinetic duelist can recover 1 point of burn at the start of their next turn if they hit at least once during a full-round attack.",
+    "enGB": "At 11th level, a kinetic duelist can recover 1 point of burn at the start of their next turn if they hit at least once during a full attack.",
     "zhCN": "11级起，如果斗念使发动整轮攻击并至少命中一次，在下一轮开始时可以恢复1点超载值。"
   },
 
