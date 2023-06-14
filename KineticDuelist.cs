@@ -107,10 +107,6 @@ namespace KineticArchetypes
         internal const string DualBlades3rdAttackBuffGuid = "44BE1F78-BCFD-4C4D-B6BA-874B725F5BDE";
         internal const string DualBlades3rdAttackBuffDescription = "KineticDuelist.DualBlades3rdAttackBuff.Description";
 
-        internal const string SynchronousChargeBuffName = "KineticDuelist.SynchronousChargeBuff";
-        internal const string SynchronousChargeBuffGuid = "2EE6C1C4-CA44-41B6-B6ED-93F5EA6A21E1";
-        internal const string SynchronousChargeBuffDescription = "KineticDuelist.SynchronousChargeBuff.Description";
-
         internal const string SupressBladeBurnBuffName = "KineticDuelist.SupressBladeBurnBuff";
         internal const string SupressBladeBurnBuffGuid = "5DA2EB59-8D41-4D03-94FD-F7BFD8DD77F1";
         internal const string SupressBladeBurnBuffDescription = "KineticDuelist.SupressBladeBurnBuff.Description";
@@ -148,6 +144,7 @@ namespace KineticArchetypes
                 .AddToRemoveFeatures(1, FeatureRefs.KineticistProficiencies.ToString())
                 .AddToRemoveFeatures(3, FeatureSelectionRefs.InfusionSelection.ToString())
                 .AddToRemoveFeatures(9, FeatureSelectionRefs.InfusionSelection.ToString())
+                .AddToRemoveFeatures(11, FeatureRefs.Supercharge.ToString())
                 .AddToRemoveFeatures(13, FeatureRefs.MetakinesisQuickenFeature.ToString())
                 ;
 
@@ -164,7 +161,7 @@ namespace KineticArchetypes
                 .AddToAddFeatures(1, blade0)
                 .AddToAddFeatures(3, blade1)
                 .AddToAddFeatures(9, blade2)
-                .AddToAddFeatures(2, synCha)
+                .AddToAddFeatures(11, synCha)
                 .AddToAddFeatures(13, kinAss)
                 .AddToAddFeatures(15, blade3)
                 .Configure();
@@ -281,7 +278,7 @@ namespace KineticArchetypes
                 .SetDescription(SynchronousChargeFeatureDescription)
                 .SetIcon(AbilityRefs.JoyfulRapture.Reference.Get().Icon)
                 .AddInitiatorAttackWithWeaponTrigger(
-                    action: ActionsBuilder.New().Add(new ContextActionHeal1Burn()),
+                    action: ActionsBuilder.New().Add(new Heal1BurnAcceptedThisTurn()),
                     triggerBeforeAttack: false,
                     onlyHit: true,
                     onlyOnFirstHit: true,
@@ -381,7 +378,7 @@ namespace KineticArchetypes
                 .SetDisplayName(SupressBladeBurnBuffName)
                 .SetDescription(SupressBladeBurnBuffDescription)
                 .SetFlags(new BlueprintBuff.Flags[] { BlueprintBuff.Flags.HiddenInUi })
-                // IMMEDIATELY REMOVES ITSELF, but works 
+                // IMMEDIATELY REMOVES ITSELF, but still works like a charm
                 .AddRemoveBuffOnTurnOn()
                 .AddNotDispelable()
                 .AddComponent(supressBlastBurn)
@@ -443,11 +440,11 @@ namespace KineticArchetypes
         }
     }
 
-    public class ContextActionHeal1Burn : ContextAction
+    public class Heal1BurnAcceptedThisTurn : ContextAction
     {
         public override string GetCaption()
         {
-            return "Kineticist heal 1 burn";
+            return "Kineticist heal 1 burn accepted this turn";
         }
 
         public override void RunAction()
@@ -460,7 +457,8 @@ namespace KineticArchetypes
             }
             else
             {
-                unitPartKineticist.HealBurn(1);
+                if (unitPartKineticist.AcceptedBurnThisRound > 0)
+                    unitPartKineticist.HealBurn(1);
             }
         }
     }
@@ -502,11 +500,11 @@ namespace KineticArchetypes
 
                 // Add extra offhand attacks if having improved/greater dual blade features and no TWF features
                 var TWFRank = owner.GetFeature(FeatureRefs.TwoWeaponFightingBasicMechanics.Reference.Get()).GetRank();
-                if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.KDKineticBladeGuid)) != null &&  TWFRank < 3)
+                if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.ImprovedKineticDualBladesGuid)) != null &&  TWFRank < 3)
                 {
                     var buff1 = owner.AddBuff(BlueprintTools.GetBlueprint<BlueprintBuff>(KineticDuelist.DualBlades2ndAttackBuffGuid), owner);
                 }
-                if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.KDKineticBladeGuid)) != null && TWFRank < 4)
+                if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.GreaterKineticDualBladesGuid)) != null && TWFRank < 4)
                 {
                     var buff2 = owner.AddBuff(BlueprintTools.GetBlueprint<BlueprintBuff>(KineticDuelist.DualBlades3rdAttackBuffGuid), owner);
                 }

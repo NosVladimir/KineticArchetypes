@@ -60,8 +60,8 @@
 
   {
     "Key": "KineticDuelist.KineticDualBladesAbility.Description",
-    "enGB": "You increase the burn cost of kinetic blade by 1 to make a second blade in your off hand.\n(Note: the burn cost increase resets after dismissing kinetic blades.)",
-    "zhCN": "你将念刃的超载值提高1点以在副手中形成第二把念刃。\n（注：超载值的增加在解除念刃后重置。）"
+    "enGB": "You increase the burn cost of kinetic blade by 1 to make a second blade in your off hand.\n(Note: this effect resets after dismissing kinetic blades.)",
+    "zhCN": "你将念刃的超载值提高1点以在副手中形成第二把念刃。\n（注：此效果在解除念刃后重置。）"
   },
 
   {
@@ -94,13 +94,13 @@
     "Key": "KineticDuelist.SynchronousChargeFeature",
     "ProcessTemplates": false,
     "enGB": "Synchronous Charge",
-    "zhCN": "以劳代逸"
+    "zhCN": "同调聚合"
   },
 
   {
     "Key": "KineticDuelist.SynchronousChargeFeature.Description",
-    "enGB": "At 11th level, a kinetic duelist can recover 1 point of burn at the start of their next turn if they hit at least once during a full attack.",
-    "zhCN": "11级起，如果斗念使发动整轮攻击并至少命中一次，在下一轮开始时可以恢复1点超载值。"
+    "enGB": "At 11th level, a kinetic duelist can recover 1 point of burn they accepted this turn upon their first hit during a full attack using kinetic blades.\nThis ability replaces supercharge.",
+    "zhCN": "11级起，斗念使可以在念刃整轮攻击首次命中时，恢复本轮中已承受的1点超载值。\n此能力替换了超聚合。"
   },
 
   {
@@ -156,23 +156,10 @@
   },
 
   {
-    "Key": "KineticDuelist.SynchronousChargeBuff",
-    "ProcessTemplates": false,
-    "enGB": "Synchronous Charge",
-    "zhCN": "以劳待逸"
-  },
-
-  {
-    "Key": "KineticDuelist.SynchronousChargeBuff.Description",
-    "enGB": "You recover 1 burn.",
-    "zhCN": "回复1点超载值。"
-  },
-
-  {
     "Key": "KineticDuelist.SupressBladeBurnBuff",
     "ProcessTemplates": false,
     "enGB": "Supress Blade Burn",
-    "zhCN": "无消耗念刃"
+    "zhCN": "压制念刃超载"
   },
 
   {
