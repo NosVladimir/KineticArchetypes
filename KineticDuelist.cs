@@ -95,6 +95,10 @@ namespace KineticArchetypes
         internal const string KineticAssaultFeatureGuid = "74FDA391-BF63-4F36-8666-84DEBE7C70F2";
         internal const string KineticAssaultFeatureDescription = "KineticDuelist.KineticAssaultFeature.Description";
 
+        internal const string KineticAssaultAbilityName = "KineticDuelist.KineticAssaultAbility";
+        internal const string KineticAssaultAbilityGuid = "97380822-0A27-47A0-88D2-45115754D4F0";
+        internal const string KineticAssaultAbilityDescription = "KineticDuelist.KineticAssaultAbility.Description";
+
         internal const string GreaterKineticDualBladesName = "KineticDuelist.GreaterKineticDualBlades";
         internal const string GreaterKineticDualBladesGuid = "E9D7BB7A-A4E4-4CE2-BC83-5A63F50CC869";
         internal const string GreaterKineticDualBladesDescription = "KineticDuelist.GreaterKineticDualBlades.Description";
