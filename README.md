@@ -1,27 +1,33 @@
 # KineticArchetypes
-
 A mod for Pathfinder: Wrath of the Righteous, focused on making more kineticist archetypes and other class archetypes that uses kinetic blasts.
 
 ## How to install
 
-Download the zip file and drag into ModFinder.
+Download the zip file and drag it into ModFinder or UnityModManager.
 
 ## Cross-mod compatibility
 
 Should be compatible with DarkCodex and KineticistElementsExpanded.
 
+For DarkCodex, there is a minor known issue - see below for more details. 
+
 ## Contents
-### [Kinetic Duelist](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/kinetic-duelist/) (WIP)
+### [Kinetic Duelist](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/kinetic-duelist/)
 
 A kineticist archetype that allows legit two-weapon fighting with kinetic blades. Heavily homebrewed since gaining dual blades at 17th level is not very appealing.
 - Cannot choose form infusions that are beyond 1st level and do not list kinetic blade as a prerequisite (so no ranged form infusions apart from very basic ones)
-- No infusions at 3rd and 9th levels
-- No metakinesis quicken
-- Bonus kinetic blade infusion at 1st level that costs 0 burn
+- No infusions at 3rd and 9th levels, no supercharge, no metakinesis quicken
+- Bonus kinetic blade infusion at 1st level that costs 0 burn and can AoO
 - Kinetic dual blades activatable ability at 3rd level that allows for creating a second kinetic blade in off hand by increasing the burn of kinetic blade by 1
 - One more attack with the off-hand blade at 9th level with BAB-5, another one at 15th level with BAB-10
-- Recovers 1 burn if scored at least 1 hit in a full-round attack using kinetic blade(s) from 11th level
-- Kinetic assault special charge that costs 3 burn, attacking with both blades and auto maximise and increase infusion DC by 2
+- Recovers 1 burn that has been accepted in the same round if scored at least 1 hit in a full-attack using kinetic blade(s) from 11th level
+- Kinetic assault special charge that costs 3 burn, attacking with both blades and auto maximise
+
+## Known issues
+Conflict with DarkCodex's Patch_KineticistAllowOpportunityAttack (referered to as the patch in below):
+- If the patch is enabled, anything else other than a kinetic blade will allow AoOs. E.g. if you're dual-wielding a kinetic blade with a dagger, the dagger can AoO. This patch also enables kinetic whip to re-enable AoOs for kinetic blades. However, its code is written to a lower level than mine, causing the patch to disable AoOs for a kinetic duelist with the 1st level feature that is meant be enabling AoOs for kinetic blades.
+- If the patch is not enabled, the base game rule follows, so as long as a kinetic blade is equipped, AoOs are prohibited. E.g. if you are dual-wielding a kinetic blade with a dagger, neither can perform AoO. This also makes kinetic whip to lose its functionality of re-enabling AoO for a kinetic blade. However, for a kinetic duelist with the 1st level feature, AoOs are properly re-enabled as the feature describes.
+- **TLDR:** If you are not playing kinetic duelist, enable the patch. If you are playing kinetic duelist, disable the patch. If you have both a kinetic duelist and another kineticist in your party, you have to choose who can AoO with kinetic blades.
 
 ## Planned contents
 ### [Cinder Adept](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/paizo-llc-kineticist-archetypes/cinder-adept-kineticist-archetype/)
@@ -31,17 +37,14 @@ Fire-only kineticist with a horse.
 (Rough idea) A fighter archetype that trades some bonus feats for elemental focus and kinetic blades, trades weapon training for special weapon training for kinetic blades, and trades advanced weapon training for maybe kinetic dual blades. Maybe also trades armor training with something but I feel like that would be too much and won't make a huge distinction from a kinetic duelist.
 
 ### [Kinetic Lancer](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/kinetic-lancer/)
-Using kinetic lance instead of blade, leaping (essentially teleporting) around the battlefield to full-attack foes.
+Using kinetic lance instead of blade, leaping around the battlefield to full-attack foes.
 
 ## Technically challenging planned contents
 ### [Elemental Annihilator](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/paizo-llc-kineticist-archetypes/elemental-annihilator-kineticist-archetype/)
-Features Devastating Infusion that can full-round attack foes at 120 feet, but only deals a fixed 1d8+ConModifier dmg. Trades all wild talents for extra combat feats. Has a very powerful capstone at 20th level that's a composite infusion at 4 burn dealing 5*(10d6+10) bludgeoning+cold+electricity+fire+force dmg. I suppose it can also be used together with form infusions.
-
-### [Elemental Ascetic](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/elemental-ascetic/)
-Kinetic fists and flurry. DarkCodex seems to have implemented this archetype already, but it cannot be seen in-game.
+Features Devastating Infusion that can full-attack foes at 120 feet, but only deals a fixed 1d8+ConModifier dmg. Trades all wild talents for extra combat feats. Has a very powerful capstone at 20th level that's a composite infusion at 4 burn dealing 5*(10d6+10) bludgeoning+cold+electricity+fire+force dmg. I suppose it can also be used together with form infusions.
 
 ### [Onslaught Blaster](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/onslaught-blaster/)
-Convert every single dice increase of kinetic blasts into an additional blast fired. Maybe also works with AOE form infusions but it will be a disaster to my pc.
+Convert every single dice increase of kinetic blasts into an additional blast fired. Maybe also works with AOE form infusions but it will be a disaster to any pc.
 
 ### [Dread Soul](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/dread-soul/)
 Evil only. Forces others to take burn. Drains creatures souls to create soulstones.
