@@ -14,6 +14,7 @@ using Kingmaker.Blueprints.Facts;
 using Kingmaker.Blueprints.Classes.Selection;
 using Kingmaker.Blueprints.Classes.Spells;
 using Kingmaker.Blueprints.Items.Armors;
+using Kingmaker.Blueprints.TurnBasedModifiers;
 using Kingmaker.Designers.Mechanics.Facts;
 using Kingmaker.EntitySystem.Stats;
 using Kingmaker.Enums;
@@ -53,6 +54,19 @@ using Kingmaker.UnitLogic.Class.Kineticist.Actions;
 using Kingmaker.UnitLogic.Mechanics.Actions;
 using Kingmaker.UnitLogic.Mechanics;
 using Kingmaker.UnitLogic.Buffs;
+using Kingmaker.UnitLogic.Abilities.Components.CasterCheckers;
+using Kingmaker.View.Animation;
+using Kingmaker.Controllers;
+using Kingmaker.UnitLogic.Buffs.Components;
+using Kingmaker.RuleSystem.Rules.Abilities;
+using UnityEngine;
+using Kingmaker.Visual;
+using Kingmaker.Visual.Particles;
+using Kingmaker.View;
+using Kingmaker.EntitySystem.Entities;
+using JetBrains.Annotations;
+using Kingmaker.UnitLogic.Class.Kineticist.ActivatableAbility;
+using Epic.OnlineServices;
 
 namespace KineticArchetypes
 {
@@ -94,6 +108,9 @@ namespace KineticArchetypes
         internal const string KineticAssaultFeatureName = "KineticDuelist.KineticAssaultFeature";
         internal const string KineticAssaultFeatureGuid = "74FDA391-BF63-4F36-8666-84DEBE7C70F2";
         internal const string KineticAssaultFeatureDescription = "KineticDuelist.KineticAssaultFeature.Description";
+        internal const string KineticAssaultBuffName = "KineticDuelist.KineticAssaultBuff";
+        internal const string KineticAssaultBuffGuid = "B2F8CEE0-E8AE-4EBA-9457-0F6A47068CD0";
+        internal const string KineticAssaultBuffDescription = "KineticDuelist.KineticAssaultBuff.Description";
 
         internal const string KineticAssaultAbilityName = "KineticDuelist.KineticAssaultAbility";
         internal const string KineticAssaultAbilityGuid = "97380822-0A27-47A0-88D2-45115754D4F0";
@@ -115,10 +132,7 @@ namespace KineticArchetypes
         internal const string SupressBladeBurnBuffGuid = "5DA2EB59-8D41-4D03-94FD-F7BFD8DD77F1";
         internal const string SupressBladeBurnBuffDescription = "KineticDuelist.SupressBladeBurnBuff.Description";
 
-        internal static readonly BlueprintAbilityReference[] allBlades = {
-                // This seems enough to apply to all kinetic blades
-                ActivatableAbilityRefs.KineticBladeAirBlastAbility.Cast<BlueprintAbilityReference>().Reference
-            };
+        internal static BlueprintAbilityReference[] allBlades;
 
     internal static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes.KineticDuelist");
 
@@ -137,6 +151,28 @@ namespace KineticArchetypes
         private static void ConfigureEnabled()
         {
             Logger.Info($"Configuring {ArchetypeName}");
+
+            allBlades = new BlueprintAbilityReference[]
+            {
+                AbilityRefs.KineticBladeAirBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeBlizzardBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeBloodBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeBlueFlameBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeChargeWaterBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeColdBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeEarthBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeElectricBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeFireBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeIceBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeMagmaBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeMetalBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeMudBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladePlasmaBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeSandstormBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeSteamBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeThunderstormBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
+                AbilityRefs.KineticBladeWaterBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference                
+            };
 
             var archetype =
                 ArchetypeConfigurator.New(ArchetypeName, ArchetypeGuid, CharacterClassRefs.KineticistClass)
@@ -173,53 +209,48 @@ namespace KineticArchetypes
             KineticistClass.Progression.UIGroups = KineticistClass.Progression.UIGroups.AppendToArray(
                 Helpers.CreateUIGroup(blade0, blade1, blade2, blade3));
 
-            var atk2nd = DualBlades2ndAttackBuff();
-            var atk3rd = DualBlades3rdAttackBuff();
+            DualBlades2ndAttackBuff();
+            DualBlades3rdAttackBuff();
 
             RestrictFormInfusionSelections();
-            SupressBladeBurnOnFullAttack();
         }
 
         private static BlueprintFeature ProficienciesFeature()
         {
-            var kineticistProfAddFacts = new AddFacts();
-            var newProfFacts = new BlueprintUnitFactReference[] {
+            var proficiencies = new List<Blueprint<BlueprintUnitFactReference>> {
                 FeatureRefs.SimpleWeaponProficiency.Cast<BlueprintUnitFactReference>().Reference,
                 FeatureRefs.LightArmorProficiency.Cast<BlueprintUnitFactReference>().Reference,
                 FeatureRefs.MediumArmorProficiency.Cast<BlueprintUnitFactReference>().Reference,
                 FeatureRefs.BucklerProficiency.Cast<BlueprintUnitFactReference>().Reference,
                 FeatureRefs.RayCalculateFeature.Cast<BlueprintUnitFactReference>().Reference,
             };
-            kineticistProfAddFacts.m_Facts = newProfFacts;
 
             return FeatureConfigurator.New(ProficienciesDisplayName, ProficienciesGuid)
               .SetDisplayName(ProficienciesDisplayName)
               .SetDescription(ProficienciesDescription)
               .SetIcon(FeatureRefs.MediumArmorProficiency.Reference.Get().Icon)
               .SetIsClassFeature(true)
-              .AddComponent(kineticistProfAddFacts)
+              .AddFacts(proficiencies)
               .AddProficiencies(weaponProficiencies: new WeaponCategory[] { WeaponCategory.KineticBlast })
               .Configure();
         }
 
         private static BlueprintFeature KDKineticBladeFeature()
         {
-            // Give kinetic blade as bonus infusion
-            var addFact = new AddFacts();
-            addFact.m_Facts = new BlueprintUnitFactReference[] { FeatureRefs.KineticBladeInfusion.Cast<BlueprintUnitFactReference>().Reference };
-
             // Reduce kinetic blade cost by 1
-            var reduceBladeCost = new AddKineticistBurnModifier();
-            reduceBladeCost.Value = -1;
-            reduceBladeCost.BurnType = KineticistBurnType.Infusion;
-            reduceBladeCost.m_AppliableTo = allBlades;
+            var reduceBladeCost = new AddKineticistBurnModifier
+            {
+                Value = -1,
+                BurnType = KineticistBurnType.Infusion,
+                m_AppliableTo = allBlades
+            };
 
             return FeatureConfigurator.New(KDKineticBladeName, KDKineticBladeGuid)
                 .SetDisplayName(KDKineticBladeName)
                 .SetDescription(KDKineticBladeDescription)
                 .SetIcon(AbilityRefs.BlessWeapon.Reference.Get().Icon)
                 .SetIsClassFeature(true)
-                .AddComponent(addFact)
+                .AddFacts(new List<Blueprint<BlueprintUnitFactReference>> { FeatureRefs.KineticBladeInfusion.Cast<BlueprintUnitFactReference>().Reference })
                 .AddComponent(reduceBladeCost)
                 .Configure();
         }
@@ -227,10 +258,12 @@ namespace KineticArchetypes
         private static BlueprintFeature KineticDualBladesFeature()
         {
             // Dual blade buff
-            var increaseBladeCost = new AddKineticistBurnModifier();
-            increaseBladeCost.Value = 1;
-            increaseBladeCost.BurnType = KineticistBurnType.Infusion;
-            increaseBladeCost.m_AppliableTo = allBlades;
+            var increaseBladeCost = new AddKineticistBurnModifier
+            {
+                Value = 1,
+                BurnType = KineticistBurnType.Infusion,
+                m_AppliableTo = allBlades
+            };
 
             var buff = BuffConfigurator.New(KineticDualBladesBuffName, KineticDualBladesBuffGuid)
                 .SetDisplayName(KineticDualBladesBuffName)
@@ -250,18 +283,14 @@ namespace KineticArchetypes
                 .SetActionType(Kingmaker.UnitLogic.Commands.Base.UnitCommand.CommandType.Free)
                 .Configure();
 
-            var addFact = new AddFacts();
-            addFact.m_Facts = new BlueprintUnitFactReference[] {
-                FeatureRefs.TwoWeaponFighting.Cast<BlueprintUnitFactReference>().Reference,
-                ability.ToReference<BlueprintUnitFactReference>()
-            } ;
-
             return FeatureConfigurator.New(KineticDualBladesFeatureName, KineticDualBladesFeatureGuid)
                 .SetDisplayName(KineticDualBladesFeatureName)
                 .SetDescription(KineticDualBladesFeatureDescription)
                 .SetIcon(FeatureRefs.TwoWeaponFighting.Reference.Get().Icon)
                 .SetIsClassFeature(true)
-                .AddComponent(addFact)
+                .AddFacts(new List<Blueprint<BlueprintUnitFactReference>> {
+                    FeatureRefs.TwoWeaponFighting.Cast<BlueprintUnitFactReference>().Reference,
+                    ability.ToReference<BlueprintUnitFactReference>() })
                 .Configure();
         }
 
@@ -295,11 +324,83 @@ namespace KineticArchetypes
 
         private static BlueprintFeature KineticAssaultFeature()
         {
+            var abilityKineticistComponent = new AbilityKineticist
+            {
+                InfusionBurnCost = 3
+            };
+
+            var weaponCheckComponent = new AbilityCasterMainWeaponCheck
+            {
+                Category = new WeaponCategory[] { WeaponCategory.KineticBlast }
+            };
+
+            // Copy the restrictions of a charge
+            var hasNoConditions = AbilityRefs.ChargeAbility.Reference.Get().GetComponent<AbilityRequirementHasCondition>();
+            var hasNoFacts = AbilityRefs.ChargeAbility.Reference.Get().GetComponent<AbilityCasterHasNoFacts>();
+            var canMove = AbilityRefs.ChargeAbility.Reference.Get().GetComponent<AbilityRequirementCanMove>();
+            var fullRoundTB = new AbilityIsFullRoundInTurnBased { FullRoundIfTurnBased = true };
+
+            // Auto-maximise and immune to AoO buff
+            var buff = BuffConfigurator.New(KineticAssaultBuffName, KineticAssaultBuffGuid)
+                .SetDisplayName(KineticAssaultBuffName)
+                .SetDescription(KineticAssaultBuffDescription)
+                .SetIcon(AbilityRefs.FreedomOfMovement.Reference.Get().Icon)
+                .AddComponent(BuffRefs.MetakinesisMaximizedBuff.Reference.Get().GetComponent<AutoMetamagic>())
+                .AddCondition(UnitCondition.ImmuneToAttackOfOpportunity)
+                // Make an additional off hand attack if kinetic dual blades are active
+                .AddInitiatorAttackWithWeaponTrigger(
+                    action: ActionsBuilder.New().Add(new ExtraAttackWithOffhanBlade()),
+                    triggerBeforeAttack: false,
+                    onlyHit: false,
+                    onlyOnFirstAttack: true,
+                    checkWeaponCategory: true,
+                    category: WeaponCategory.KineticBlast)
+                .Configure();
+
+            var contextActionApplyBuff = new ContextActionApplyBuff()
+            {
+                m_Buff = buff.ToReference<BlueprintBuffReference>(),
+                ToCaster = true,
+                DurationSeconds = 6,
+                IsNotDispelable = true,
+                UseDurationSeconds = true,
+                IsFromSpell = false,
+                AsChild = false,
+            };
+
+            var applyBuffAction = new AbilityExecuteActionOnCast()
+            {
+                Actions = new ActionList() { Actions = new GameAction[] { contextActionApplyBuff } },
+                Conditions = new ConditionsChecker() { Operation = Operation.And, Conditions = Array.Empty<Condition>() }
+            };
+            
+            var ability = AbilityConfigurator.New(KineticAssaultAbilityName, KineticAssaultAbilityGuid)
+                .SetDisplayName(KineticAssaultAbilityName)
+                .SetDescription(KineticAssaultAbilityDescription)
+                .SetIcon(BuffRefs.FreedomOfMovementBuff.Reference.Get().Icon)
+                .SetType(AbilityType.Special)
+                .SetRange(AbilityRange.DoubleMove)
+                .SetCanTargetEnemies()
+                .SetShouldTurnToTarget()
+                .SetEffectOnEnemy(AbilityEffectOnUnit.Harmful)
+                .SetAnimation(Kingmaker.Visual.Animation.Kingmaker.Actions.UnitAnimationActionCastSpell.CastAnimationStyle.Immediate)
+                .SetAvailableMetamagic(new Metamagic[] {Metamagic.Maximize, Metamagic.Quicken})
+                .AddComponent(applyBuffAction)
+                .AddComponent(new AbilityCustomCharge())
+                .AddComponent(weaponCheckComponent)
+                .AddComponent(hasNoConditions)
+                .AddComponent(hasNoFacts)
+                .AddComponent(fullRoundTB)
+                .AddComponent(canMove)
+                .AddComponent(abilityKineticistComponent)
+                .Configure();
+                
             return FeatureConfigurator.New(KineticAssaultFeatureName, KineticAssaultFeatureGuid)
                 .SetDisplayName(KineticAssaultFeatureName)
                 .SetDescription(KineticAssaultFeatureDescription)
                 .SetIcon(BuffRefs.FreedomOfMovementBuff.Reference.Get().Icon)
                 .SetIsClassFeature(true)
+                .AddFacts(new List<Blueprint<BlueprintUnitFactReference>> { ability })
                 .Configure();
         }
 
@@ -320,7 +421,7 @@ namespace KineticArchetypes
                 .SetDescription(DualBlades2ndAttackBuffDescription)
                 .SetIcon(FeatureRefs.TwoWeaponFightingImproved.Reference.Get().Icon)
                 .SetFlags(new BlueprintBuff.Flags[] { BlueprintBuff.Flags.HiddenInUi })
-                .AddComponent(new BuffExtraOffhandBladeAttack())
+                .AddComponent(new GiveExtraOffhandBladeAttack())
                 .AddNotDispelable()
                 .Configure();
         }
@@ -332,7 +433,7 @@ namespace KineticArchetypes
                 .SetDescription(DualBlades3rdAttackBuffDescription)
                 .SetIcon(FeatureRefs.TwoWeaponFightingGreater.Reference.Get().Icon)
                 .SetFlags(new BlueprintBuff.Flags[] { BlueprintBuff.Flags.HiddenInUi })
-                .AddComponent(new BuffExtraOffhandBladeAttack())
+                .AddComponent(new GiveExtraOffhandBladeAttack())
                 .AddNotDispelable()
                 .Configure();
         }
@@ -358,48 +459,9 @@ namespace KineticArchetypes
                     .Configure();
             }
         }
-
-        private static void SupressBladeBurnOnFullAttack()
-        {
-            // Temporarily supress kinetic blade burn cost
-            // so it won't deactivate itself after 1st attack due to no burn left
-            var supressBlastBurn = new AddKineticistBurnModifier();
-            supressBlastBurn.Value = -100;
-            supressBlastBurn.BurnType = KineticistBurnType.Blast;
-            supressBlastBurn.m_AppliableTo = allBlades;
-
-            var supressInfusionBurn = new AddKineticistBurnModifier();
-            supressInfusionBurn.Value = -100;
-            supressInfusionBurn.BurnType = KineticistBurnType.Infusion;
-            supressInfusionBurn.m_AppliableTo = allBlades;
-
-            var supressMetakinesisBurn = new AddKineticistBurnModifier();
-            supressMetakinesisBurn.Value = -100;
-            supressMetakinesisBurn.BurnType = KineticistBurnType.Metakinesis;
-            supressMetakinesisBurn.m_AppliableTo = allBlades;
-
-            var buff = BuffConfigurator.New(SupressBladeBurnBuffName, SupressBladeBurnBuffGuid)
-                .SetDisplayName(SupressBladeBurnBuffName)
-                .SetDescription(SupressBladeBurnBuffDescription)
-                .SetFlags(new BlueprintBuff.Flags[] { BlueprintBuff.Flags.HiddenInUi })
-                // IMMEDIATELY REMOVES ITSELF, but still works like a charm
-                .AddRemoveBuffOnTurnOn()
-                .AddNotDispelable()
-                .AddComponent(supressBlastBurn)
-                .AddComponent(supressInfusionBurn)
-                .AddComponent(supressMetakinesisBurn)
-                .Configure();
-            
-            FeatureConfigurator.For(FeatureRefs.KineticBladeInfusion)
-                .AddInitiatorAttackWithWeaponTrigger(
-                    action: ActionsBuilder.New().Add(new SupressBladeBurn(buff: buff)),
-                    triggerBeforeAttack: true,
-                    onlyHit: false)
-                .Configure();
-        }
     }
 
-    public class BuffExtraOffhandBladeAttack : UnitFactComponentDelegate, IInitiatorRulebookHandler<RuleCalculateAttacksCount>, IRulebookHandler<RuleCalculateAttacksCount>, ISubscriber, IInitiatorRulebookSubscriber
+    public class GiveExtraOffhandBladeAttack : UnitFactComponentDelegate, IInitiatorRulebookHandler<RuleCalculateAttacksCount>, IRulebookHandler<RuleCalculateAttacksCount>, ISubscriber, IInitiatorRulebookSubscriber
     {
         public void OnEventAboutToTrigger(RuleCalculateAttacksCount evt)
         {
@@ -410,37 +472,6 @@ namespace KineticArchetypes
 
         public void OnEventDidTrigger(RuleCalculateAttacksCount evt)
         {
-        }
-    }
-
-    public class SupressBladeBurn : ContextAction
-    {
-        public BlueprintBuff buff;
-
-        public SupressBladeBurn(BlueprintBuff buff)
-        {
-            this.buff = buff;
-        }
-
-        public override string GetCaption()
-        {
-            return "Kineticist supressing blade burn";
-        }
-
-        public override void RunAction()
-        {
-            KineticDuelist.Logger.Info("Supressing blade burn");
-            UnitPartKineticist unitPartKineticist = Context.MaybeCaster?.Get<UnitPartKineticist>();
-            if (!unitPartKineticist)
-            {
-                KineticDuelist.Logger.Error("Caster is not kineticist");
-            }
-            else
-            {
-                //unitPartKineticist.HealBurn(1);
-                if (buff != null)
-                    unitPartKineticist.Owner.AddBuff(buff, unitPartKineticist.Owner);
-            }
         }
     }
 
@@ -467,6 +498,35 @@ namespace KineticArchetypes
         }
     }
 
+    public class ExtraAttackWithOffhanBlade : ContextAction
+    {
+        public override string GetCaption()
+        {
+            return "Kinetic duelist attacks with offhand blade";
+        }
+
+        public override void RunAction()
+        {
+            UnitPartKineticist unitPartKineticist = Context.MaybeCaster?.Get<UnitPartKineticist>();
+            if (!unitPartKineticist)
+            {
+                KineticDuelist.Logger.Error("Caster is not kineticist");
+            }
+            else
+            {
+                var offhandBlade = Context.MaybeOwner?.Body.SecondaryHand.Weapon;
+                if (offhandBlade != null && offhandBlade.Blueprint.Type.Category == WeaponCategory.KineticBlast)
+                {
+                    RuleAttackWithWeapon ruleAttackWithWeapon = new(
+                        Context.MaybeCaster,
+                        Target.Unit, 
+                        offhandBlade, 0);
+                    Context.TriggerRule(ruleAttackWithWeapon);
+                }
+            }
+        }
+    }
+
     [HarmonyPatch(typeof(AddKineticistBlade))]
     public class Patch_AddKineticistBlade
     {
@@ -476,10 +536,10 @@ namespace KineticArchetypes
         [HarmonyPatch(nameof(AddKineticistBlade.OnActivate))]
         public static void Postfix1(AddKineticistBlade __instance)
         {
-            Kingmaker.EntitySystem.Entities.UnitEntityData owner = __instance.Owner;
+            UnitEntityData owner = __instance.Owner;
 
             // Allow AoO if having KD blade feature
-            if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.KDKineticBladeGuid)) != null)
+            if (owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(KineticDuelist.KDKineticBladeGuid)) != null)
                 owner.State.RemoveCondition(UnitCondition.DisableAttacksOfOpportunity);
 
             // Spawn off-hand blade if dual blade activated
@@ -492,25 +552,31 @@ namespace KineticArchetypes
                 Logger.Info("Try to insert kinetic blade to off hand");
                 var bladeOffHand = (ResourcesLibrary.TryGetBlueprint(__instance.m_Blade.Guid) as BlueprintItemWeapon).CreateEntity<ItemEntityWeapon>();
                 bladeOffHand.MakeNotLootable();
+                // Workaround to prevent spamming exception of missing BloodyFaceController
+                bladeOffHand.WeaponVisualParameters.Model.AddComponent<UnitEntityView>();
+
                 if (owner.Body.SecondaryHand.HasItem || !owner.Body.SecondaryHand.CanInsertItem(bladeOffHand))
                 {
                     Logger.Info("Can't insert kineticist blade to off hand");
                 }
                 else
                 {
-                    owner.Body.SecondaryHand.InsertItem(bladeOffHand);
+                    using (ContextData<ItemsCollection.SuppressEvents>.Request())
+                    {
+                        owner.Body.SecondaryHand.InsertItem(bladeOffHand);
+                    }
                     Logger.Info("Inserted kinetic blade to off hand");
                 }
 
                 // Add extra offhand attacks if having improved/greater dual blade features and no TWF features
                 var TWFRank = owner.GetFeature(FeatureRefs.TwoWeaponFightingBasicMechanics.Reference.Get()).GetRank();
-                if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.ImprovedKineticDualBladesGuid)) != null &&  TWFRank < 3)
+                if (owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(KineticDuelist.ImprovedKineticDualBladesGuid)) != null &&  TWFRank < 3)
                 {
-                    var buff1 = owner.AddBuff(BlueprintTools.GetBlueprint<BlueprintBuff>(KineticDuelist.DualBlades2ndAttackBuffGuid), owner);
+                    owner.AddBuff(BlueprintTool.GetRef<BlueprintBuffReference>(KineticDuelist.DualBlades2ndAttackBuffGuid), owner);
                 }
-                if (owner.GetFeature(BlueprintTools.GetBlueprint<BlueprintFeature>(KineticDuelist.GreaterKineticDualBladesGuid)) != null && TWFRank < 4)
+                if (owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(KineticDuelist.GreaterKineticDualBladesGuid)) != null && TWFRank < 4)
                 {
-                    var buff2 = owner.AddBuff(BlueprintTools.GetBlueprint<BlueprintBuff>(KineticDuelist.DualBlades3rdAttackBuffGuid), owner);
+                    owner.AddBuff(BlueprintTool.GetRef<BlueprintBuffReference>(KineticDuelist.DualBlades3rdAttackBuffGuid), owner);
                 }
             }
         }
@@ -525,20 +591,19 @@ namespace KineticArchetypes
             foreach (var handsSet in handsSets)
             {
                 var offhand = handsSet.SecondaryHand;
-                if (offhand.HasWeapon)
+                if (offhand.HasWeapon && offhand.HasItem)
                 {
                     // This variable is ESSENTIAL!!!
-                    var weapon = offhand.Weapon;
+                    var weapon = offhand.Item as ItemEntityWeapon;
                     if (weapon.Blueprint.Type.Category == WeaponCategory.KineticBlast)
                     {
                         Logger.Info("Removing kinetic blade from off hand");
                         weapon.HoldingSlot.Lock.ReleaseAll();
                         weapon.HoldingSlot?.RemoveItem();
                         using (ContextData<ItemsCollection.SuppressEvents>.Request())
-                            weapon.Collection?.Remove(offhand.Weapon);
-                        Logger.Info("Removed kinetic blade from off hand");
+                            weapon.Collection?.Remove(weapon);
 
-                        Logger.Info($"Dispose garbage entity {offhand.Weapon}");
+                        Logger.Info($"Dispose garbage entity {weapon}");
                         weapon.Dispose();
                     }
                 }
@@ -572,6 +637,53 @@ namespace KineticArchetypes
                     }
                 }
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(RestrictionCanUseKineticBlade))]
+    public class Patch_CanUseKineticBlade
+    {
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(RestrictionCanUseKineticBlade.IsAvailable), new Type[] { typeof(UnitDescriptor) })]
+        public static bool Prefix1(RestrictionCanUseKineticBlade __instance, ref bool __result, UnitDescriptor unit)
+        {
+            UnitBody body = unit.Body;
+            if ((body.IsPolymorphed && !body.IsPolymorphKeepSlots) || !body.HandsAreEnabled)
+            {
+                __result = false;
+                return false;
+            }
+            UnitPartKineticist unitPartKineticist = unit.Get<UnitPartKineticist>();
+            if (!unitPartKineticist)
+            {
+                __result = false;
+                return false;
+            }
+            BlueprintItemWeapon blueprintItemWeapon = body.PrimaryHand.MaybeWeapon?.Blueprint;
+            bool flag = blueprintItemWeapon.GetComponent<WeaponKineticBlade>() != null;
+            if (body.PrimaryHand.MaybeItem != null && !flag)
+            {
+                __result = false;
+                return false;
+            }
+            BlueprintItemWeapon blueprintItemWeapon2 = BlueprintComponentExtendAsObject.Or(__instance.Fact.Blueprint.Buff.GetComponent<AddKineticistBlade>(), null)?.Blade;
+            if (blueprintItemWeapon2 == null)
+            {
+                __result = false;
+                return false;
+            }
+
+            // Trace back the burn at the start of round by adding this back to left burn this round
+            // Will create situations of having used burn for other stuff but still passing check for blade
+            var acceptedBurnThisRound = unitPartKineticist.AcceptedBurnThisRound;
+
+            if ((blueprintItemWeapon != blueprintItemWeapon2 || !unitPartKineticist.IsBladeActivated) && (AbilityKineticist.CalculateAbilityBurnCost(BlueprintComponentExtendAsObject.Or(blueprintItemWeapon2.GetComponent<WeaponKineticBlade>(), null)?.GetActivationAbility(unit))?.Total ?? 0) > unitPartKineticist.LeftBurnThisRound + acceptedBurnThisRound)
+            {
+                __result = false;
+                return false;
+            }
+            __result = true;
+            return false;
         }
     }
 }

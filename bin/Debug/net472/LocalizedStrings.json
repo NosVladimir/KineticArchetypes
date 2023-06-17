@@ -60,8 +60,8 @@
 
   {
     "Key": "KineticDuelist.KineticDualBladesAbility.Description",
-    "enGB": "You increase the burn cost of kinetic blade by 1 to make a second blade in your off hand.\n(Note: this effect resets after dismissing kinetic blades.)",
-    "zhCN": "你将念刃的超载值提高1点以在副手中形成第二把念刃。\n（注：此效果在解除念刃后重置。）"
+    "enGB": "You increase the burn cost of kinetic blade by 1 to make a second blade in your off hand.\n(Note: this effect applys when activing kinetic blades, and resets after dismissing kinetic blades.)",
+    "zhCN": "你将念刃的超载值提高1点以在副手中形成第二把念刃。\n（注：此效果在激活念刃时生效，在解除念刃后重置。）"
   },
 
   {
@@ -73,8 +73,8 @@
 
   {
     "Key": "KineticDuelist.KineticDualBladesBuff.Description",
-    "enGB": "Kinetic dual blade activated.",
-    "zhCN": "斗念双刃已启用。"
+    "enGB": "You increase the burn cost of kinetic blade by 1 to make a second blade in your off hand.",
+    "zhCN": "你将念刃的超载值提高1点以在副手中形成第二把念刃。"
   },
 
   {
@@ -117,6 +117,32 @@
   },
 
   {
+    "Key": "KineticDuelist.KineticAssaultAbility",
+    "ProcessTemplates": false,
+    "enGB": "Kinetic Assault",
+    "zhCN": "念力突袭"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticAssaultAbility.Description",
+    "enGB": "Element(s): universal\nType: form infusion\nLevel: 5\nBurn: 3\nPrerequisite(s): kinetic blade, kinetic duelist 13th\nAssociated Blasts: any\nSaving Throw: none\nYou are capable of putting incredible power into a charge. As a full round action, you can make a charge attack using the kinetic blade infusion; the movement from this charge does not provoke an attack of opportunity. If this attack is successful, the damage is automatically maximized. If you are using kinetic dual blades, you can make an additional attack at the end of your charge using your off hand kinetic blade.",
+    "zhCN": "元素：通用\n类别：塑形注能\n等级：5\n超载：3\n前置：念刃，斗念使13级\n关联念袭类别：任意\n豁免检定：无\n你能以惊人的力量发起冲锋。以一个整轮动作，你可以用念刃发动一次冲锋攻击；冲锋过程中的移动不会引发借机攻击。如果攻击成功，伤害自动最大化。如果你正在使用斗念双刃，你可以在冲锋结束后用副手念刃额外攻击一次。"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticAssaultBuff",
+    "ProcessTemplates": false,
+    "enGB": "Kinetic Assault",
+    "zhCN": "念力突袭"
+  },
+
+  {
+    "Key": "KineticDuelist.KineticAssaultBuff.Description",
+    "enGB": "As a full round action, you can make a charge attack using the kinetic blade infusion; the movement from this charge does not provoke an attack of opportunity. If this attack is successful, the damage is automatically maximized. If you are using kinetic dual blades, you can make an additional attack at the end of your charge using your off hand kinetic blade.",
+    "zhCN": "你能以惊人的力量发起冲锋。以一个整轮动作，你可以用念刃发动一次冲锋攻击；冲锋过程中的移动不会引发借机攻击。如果攻击成功，伤害自动最大化。如果你正在使用斗念双刃，你可以在冲锋结束后用副手念刃额外攻击一次。"
+  },
+
+  {
     "Key": "KineticDuelist.GreaterKineticDualBlades",
     "ProcessTemplates": false,
     "enGB": "Greater Kinetic Dual Blades",
@@ -153,19 +179,6 @@
     "Key": "KineticDuelist.DualBlades3rdAttackBuff.Description",
     "enGB": "At 15th level, a kinetic duelist gains a third attack at their full base attack bonus -10 with the second kinetic blade when using kinetic dual blades.",
     "zhCN": "15级起，斗念使可以在使用斗念双刃时，用第二把念刃以最高基础攻击加值-10进行第三次攻击。"
-  },
-
-  {
-    "Key": "KineticDuelist.SupressBladeBurnBuff",
-    "ProcessTemplates": false,
-    "enGB": "Supress Blade Burn",
-    "zhCN": "压制念刃超载"
-  },
-
-  {
-    "Key": "KineticDuelist.SupressBladeBurnBuff.Description",
-    "enGB": "Temporarily reduced the burn cost of kinetic blades after initiating a full-attack to 0, so it does not get automatically cancelled due to not having enough remaining burn after the first attack even though any following attack doesn't actually cost burn.'",
-    "zhCN": "发动整轮攻击时暂时使念刃的超载消耗降为0，这样就不会出现即使后续攻击实际并不消耗超载，由于第一击产生了超载而导致剩余超载值不足从而第一击后直接把念刃取消了的情况。"
   }
 
 
