@@ -1,35 +1,38 @@
 # KineticArchetypes
 A mod for Pathfinder: Wrath of the Righteous, focused on making more kineticist archetypes and other class archetypes that uses kinetic blasts.
 
-## How to install
+# How to install
 
 Download the zip file and drag it into ModFinder or UnityModManager.
 
-## Cross-mod compatibility
+# Cross-mod compatibility
 
 Should be compatible with DarkCodex and KineticistElementsExpanded.
 
 For DarkCodex, there is a minor known issue - see below for more details. 
 
-## Contents
+# Contents
+### Fixes
+Fixed the problem where taking burn from a kinetic blade would deactivate the blade after the first attack due to insufficient remaining burn.
+- Implemented by checking the blade availability using your burn at the start of round and not considering any burn taken during the round, and thus has a side effect that if you spend some burn before doing your first attack, the attacks may not happen when there is indeed no burn left. E.g. you are at 4/5 burn at start of round and your blade would cost 1 burn - you use Shroud of Water to increase AC and accept 1 burn - you're now at 5/5 burn - blade still shows available but you cannot accept the burn to attack.
+
 ### [Kinetic Duelist](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/kinetic-duelist/)
 
 A kineticist archetype that allows legit two-weapon fighting with kinetic blades. Heavily homebrewed since gaining dual blades at 17th level is not very appealing.
-- Cannot choose form infusions that are beyond 1st level and do not list kinetic blade as a prerequisite (so no ranged form infusions apart from very basic ones)
+- Cannot choose form infusions that are >1st level and do not list kinetic blade as prerequisite
 - No infusions at 3rd and 9th levels, no supercharge, no metakinesis quicken
-- Bonus kinetic blade infusion at 1st level that costs 0 burn and can AoO
-- Kinetic dual blades activatable ability at 3rd level that allows for creating a second kinetic blade in off hand by increasing the burn of kinetic blade by 1
-- One more attack with the off-hand blade at 9th level with BAB-5, another one at 15th level with BAB-10
-- Recovers 1 burn that has been accepted in the same round if scored at least 1 hit in a full-attack using kinetic blade(s) from 11th level
-- Kinetic assault special charge that costs 3 burn, attacking with both blades and auto maximise
+- 0 burn kinetic blade at 1st level, can AoO
+- Off-hand kinetic blade at 3rd level, more attacks with it at 9th and 15th level
+- Recovers 1 burn in a burn-accepted round on first hit in a full-attack with kinetic blades from 11th level
+- Kinetic assault special charge. 3 burn, attacks with both blades and auto maximise
 
-## Known issues
+# Known issues
 Conflict with DarkCodex's Patch_KineticistAllowOpportunityAttack (referered to as the patch in below):
 - If the patch is enabled, anything else other than a kinetic blade will allow AoOs. E.g. if you're dual-wielding a kinetic blade with a dagger, the dagger can AoO. This patch also enables kinetic whip to re-enable AoOs for kinetic blades. However, its code is written to a lower level than mine, causing the patch to disable AoOs for a kinetic duelist with the 1st level feature that is meant be enabling AoOs for kinetic blades.
 - If the patch is not enabled, the base game rule follows, so as long as a kinetic blade is equipped, AoOs are prohibited. E.g. if you are dual-wielding a kinetic blade with a dagger, neither can perform AoO. This also makes kinetic whip to lose its functionality of re-enabling AoO for a kinetic blade. However, for a kinetic duelist with the 1st level feature, AoOs are properly re-enabled as the feature describes.
 - **TLDR:** If you are not playing kinetic duelist, enable the patch. If you are playing kinetic duelist, disable the patch. If you have both a kinetic duelist and another kineticist in your party, you have to choose who can AoO with kinetic blades.
 
-## Planned contents
+# Planned contents
 ### [Cinder Adept](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/paizo-llc-kineticist-archetypes/cinder-adept-kineticist-archetype/)
 Fire-only kineticist with a horse.
 
@@ -51,3 +54,8 @@ Evil only. Forces others to take burn. Drains creatures souls to create soulston
 
 ### [Nihilicist](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/nihilicist/)
 Null element - empty blast and zero blast, dealing direct non-lethal damage. Can convert into lethal damage with a standard action, plus some conditions to the target.
+
+# Acknowledgements
+- BPCore and TTT-Core for modding resources
+- CharacterOptionsPlus and DarkCodex for modding examples
+- All people who have helped in the discord channel
