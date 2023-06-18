@@ -14,7 +14,7 @@ For DarkCodex, there is a minor known issue - see below for more details.
 # Contents
 ### Fixes
 Fixed the problem where taking burn from a kinetic blade would deactivate the blade after the first attack due to insufficient remaining burn.
-- Implemented by checking the blade availability using your burn at the start of round and not considering any burn taken during the round, and thus has a side effect that if you spend some burn before doing your first attack, the attacks may not happen when there is indeed no burn left. E.g. you are at 4/5 burn at start of round and your blade would cost 1 burn - you use Shroud of Water to increase AC and accept 1 burn - you're now at 5/5 burn - blade still shows available but you cannot accept the burn to attack.
+- Implemented by checking the blade availability using your burn at the start of round and not considering any burn taken during the round, and thus has a side effect that if you spend some burn before doing your first attack, the attacks may not happen when there is indeed no burn left. E.g. you are at 4/5 burn at start of round and your blade would cost 1 burn - you use Shroud of Water to increase AC and accept 1 burn - you're now at 5/5 burn - blade still shows available but you cannot accept the burn to attack. In turn based this should be a minor issue, but in real time it could lock you out of doing anything. If this ever happens, manually deactivate the blade.
 
 ### [Kinetic Duelist](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/kinetic-duelist/)
 
@@ -56,6 +56,6 @@ Evil only. Forces others to take burn. Drains creatures souls to create soulston
 Null element - empty blast and zero blast, dealing direct non-lethal damage. Can convert into lethal damage with a standard action, plus some conditions to the target.
 
 # Acknowledgements
-- BPCore and TTT-Core for modding resources
-- CharacterOptionsPlus and DarkCodex for modding examples
-- All people who have helped in the discord channel
+- WittleWolfie for BPCore and Vek17 for TTT-Core. I wouldn't have started modding myself without the amazing modding environments thanks to them
+- WittleWolfie (again) for CharacterOptionsPlus and Trunito for DarkCodex. Their code provided the best examples for me to learn and gave me tons of inspirations of how things could be done
+- All people in the discord modding community!

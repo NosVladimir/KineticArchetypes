@@ -1,72 +1,38 @@
-﻿using BlueprintCore.Blueprints.Configurators.Classes;
-using BlueprintCore.Blueprints.Configurators.Classes.Selection;
-using BlueprintCore.Blueprints.Configurators.Classes.Spells;
-using BlueprintCore.Blueprints.Configurators.UnitLogic.ActivatableAbilities;
-using BlueprintCore.Blueprints.CustomConfigurators.Classes;
-using BlueprintCore.Blueprints.CustomConfigurators.Classes.Selection;
-using BlueprintCore.Blueprints.CustomConfigurators.Classes.Spells;
+﻿using BlueprintCore.Blueprints.CustomConfigurators.Classes;
 using BlueprintCore.Blueprints.References;
 using BlueprintCore.Utils;
 using HarmonyLib;
 using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
-using Kingmaker.Blueprints.Facts;
-using Kingmaker.Blueprints.Classes.Selection;
-using Kingmaker.Blueprints.Classes.Spells;
-using Kingmaker.Blueprints.Items.Armors;
 using Kingmaker.Blueprints.TurnBasedModifiers;
 using Kingmaker.Designers.Mechanics.Facts;
-using Kingmaker.EntitySystem.Stats;
 using Kingmaker.Enums;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities;
 using Kingmaker.UnitLogic.Abilities.Blueprints;
-using Kingmaker.UnitLogic.FactLogic;
-using Kingmaker.UnitLogic.Parts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using TabletopTweaks.Core.Utilities;
 using Kingmaker.UnitLogic.Class.Kineticist;
 using Kingmaker.UnitLogic.Abilities.Components;
-using Kingmaker.Controllers.Combat;
 using Kingmaker.ElementsSystem;
 using Kingmaker.Items;
 using Kingmaker.UnitLogic.Buffs.Blueprints;
-using Kingmaker;
-using BlueprintCore.Conditions.Builder;
 using Kingmaker.Blueprints.Items.Weapons;
-using Kingmaker.EntitySystem;
-using Kingmaker.Designers.Mechanics.Buffs;
 using Kingmaker.PubSubSystem;
 using Kingmaker.RuleSystem.Rules;
 using Kingmaker.Utility;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
 using BlueprintCore.Actions.Builder;
-using Kingmaker.Blueprints.Root;
-using Kingmaker.UnitLogic.ActivatableAbilities;
 using BlueprintCore.Actions.Builder.ContextEx;
-using BlueprintCore.Conditions.Builder.ContextEx;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Abilities;
-using BlueprintCore.Conditions.Builder.BasicEx;
-using BlueprintCore.Blueprints.ModReferences;
-using Kingmaker.UnitLogic.Class.Kineticist.Actions;
 using Kingmaker.UnitLogic.Mechanics.Actions;
-using Kingmaker.UnitLogic.Mechanics;
-using Kingmaker.UnitLogic.Buffs;
 using Kingmaker.UnitLogic.Abilities.Components.CasterCheckers;
-using Kingmaker.View.Animation;
-using Kingmaker.Controllers;
-using Kingmaker.UnitLogic.Buffs.Components;
-using Kingmaker.RuleSystem.Rules.Abilities;
-using UnityEngine;
-using Kingmaker.Visual;
-using Kingmaker.Visual.Particles;
 using Kingmaker.View;
 using Kingmaker.EntitySystem.Entities;
-using JetBrains.Annotations;
 using Kingmaker.UnitLogic.Class.Kineticist.ActivatableAbility;
-using Epic.OnlineServices;
+using static UnityModManagerNet.UnityModManager.ModEntry;
 
 namespace KineticArchetypes
 {
@@ -134,7 +100,7 @@ namespace KineticArchetypes
 
         internal static BlueprintAbilityReference[] allBlades;
 
-    internal static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes.KineticDuelist");
+        internal static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes.KineticDuelist");
 
         internal static void Configure()
         {
@@ -450,14 +416,92 @@ namespace KineticArchetypes
                 FeatureRefs.CycloneInfusion,
                 FeatureRefs.DetonationInfusion,
                 FeatureRefs.WallInfusion,
-                FeatureRefs.SpindleInfusion
+                FeatureRefs.SpindleInfusion,
+                FeatureRefs.TorrentInfusionFeature,
             };
-            foreach (var infusion in formInfusions) 
+            for (int i = 0; i < formInfusions.Length; i++) 
             {
+                Blueprint<BlueprintReference<BlueprintFeature>> infusion = formInfusions[i];
                 FeatureConfigurator.For(infusion)
                     .AddPrerequisiteNoArchetype(ArchetypeGuid, CharacterClassRefs.KineticistClass.Reference.Get())
                     .Configure();
             }
+        }
+
+        private static void RestrictModInfusionSelections()
+        {
+            var formInfusions = new List<BlueprintFeature>();
+            var modInfusionGuids = new string[]
+            {
+                        "4b6884729a46432ea9b5e1a873e8efa6", // Chain infusion
+                        "611f666629f7451c98618d62b16ed62e", // Impale infusion
+                        "000706ddb53e468a926a3c36e1889213", // Force hook
+                        "cba7fb8cef0c4160b500850d0c58d1d9", // Foe throw
+                        "ae785f510e4c4ed2991b59b421c0a2e5", // Many throw
+                        "2a8b8823924245aa9c9494679b311866", // Singularity
+            };
+            for (int i = 0; i < modInfusionGuids.Length; i++)
+            {
+                BlueprintFeature bp;
+                bool got = BlueprintTool.TryGet(modInfusionGuids[i], out bp);
+
+                if (got)
+                {
+                    Logger.Info($"Mod infusion {bp} found");
+                    formInfusions.Add(bp);
+                }
+                else
+                    Logger.Info($"Mod infusion {modInfusionGuids[i]} not found");
+            }
+            for (int i = 0; i < formInfusions.Count; i++)
+            {
+                var infusion = formInfusions[i];
+                FeatureConfigurator.For(infusion)
+                    .AddPrerequisiteNoArchetype(ArchetypeGuid, CharacterClassRefs.KineticistClass.Reference.Get())
+                    .Configure();
+            }
+        }
+
+        private static void AddModBladeToFeatures()
+        {
+            var modBladeBurnGuids = new string[]
+            {
+                "5d81270056d24a2e88df79dfb983cbcd", // Telekinetic
+                "0b8bc0ee998a41508052ca7ff31c14f8", // Force
+                "4471efdc8c1440faba7110675ddb31af", // Negative
+                "1ec348ed9dcb437eb601f20b98f25181", // Gravity
+                "6b2bed26fcd847c1a571b5f2ea6cea0a", // Void
+                "e7c2a4e7dcae40b09dda30a879123483", // Wood
+                "22d5001563c74bdfa6e0c5602fd11eef", // Positive
+                "2846063b5b6e4fea9bee612c1e24dd60", // Verdant
+                "9e26ea79e09b4e1b9ee09cbd25ae1405", // Spring
+                "b5c7051ae9c8450da9769c955971f0c2", // Summer
+                "beb6066e7de74ff0a7eb9d0eb0f6ff36", // Autumn
+                "380b9f337f2248dc82d4b1c7af8bd507", // Winter
+            };
+            var modBlades = new List<BlueprintAbilityReference>();
+            for (int i = 0; i < modBladeBurnGuids.Length; i++) 
+            {
+                BlueprintAbility bp;
+                bool got = BlueprintTool.TryGet(modBladeBurnGuids[i], out bp);
+                if (got)
+                {
+                    Logger.Info($"Mod blade {bp} found");
+                    modBlades.Add(bp.ToReference<BlueprintAbilityReference>());
+                }
+                else
+                    Logger.Info($"Mod blade {modBladeBurnGuids[i]} not found");
+            }
+            if (modBlades.Count != 0)
+                allBlades = allBlades.Concat(modBlades).ToArray();
+            BlueprintTool.Get<BlueprintFeature>(KDKineticBladeGuid).GetComponent<AddKineticistBurnModifier>().m_AppliableTo = allBlades;
+            BlueprintTool.Get<BlueprintBuff>(KineticDualBladesBuffGuid).GetComponent<AddKineticistBurnModifier>().m_AppliableTo = allBlades;
+        }
+
+        public static void HandleOtherMods()
+        {
+            RestrictModInfusionSelections();
+            AddModBladeToFeatures();
         }
     }
 
@@ -484,7 +528,6 @@ namespace KineticArchetypes
 
         public override void RunAction()
         {
-            KineticDuelist.Logger.Info("Healing 1 burn");
             UnitPartKineticist unitPartKineticist = Context.MaybeCaster?.Get<UnitPartKineticist>();
             if (!unitPartKineticist)
             {
@@ -549,11 +592,11 @@ namespace KineticArchetypes
                     dualbuff = true;
             if (dualbuff)
             {
-                Logger.Info("Try to insert kinetic blade to off hand");
                 var bladeOffHand = (ResourcesLibrary.TryGetBlueprint(__instance.m_Blade.Guid) as BlueprintItemWeapon).CreateEntity<ItemEntityWeapon>();
                 bladeOffHand.MakeNotLootable();
                 // Workaround to prevent spamming exception of missing BloodyFaceController
-                bladeOffHand.WeaponVisualParameters.Model.AddComponent<UnitEntityView>();
+                try { bladeOffHand.WeaponVisualParameters.Model.AddComponent<UnitEntityView>(); }
+                catch { }
 
                 if (owner.Body.SecondaryHand.HasItem || !owner.Body.SecondaryHand.CanInsertItem(bladeOffHand))
                 {
