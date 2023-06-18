@@ -1,5 +1,5 @@
 # KineticArchetypes
-A mod for Pathfinder: Wrath of the Righteous, focused on making more kineticist archetypes and other class archetypes that uses kinetic blasts.
+A mod for Pathfinder: Wrath of the Righteous, focused on making more kineticist archetypes and other class archetypes that use kinetic blasts.
 
 # How to install
 
