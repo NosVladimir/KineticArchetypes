@@ -3,7 +3,7 @@ A mod for Pathfinder: Wrath of the Righteous, focused on making more kineticist 
 
 # How to install
 
-Download the zip file and drag it into ModFinder or UnityModManager.
+This mod is available in ModFinder. Alternatively, you can download the zip file in the [releases page](https://github.com/NosVladimir/KineticArchetypes/releases/) and drag it into ModFinder or UnityModManager.
 
 # Cross-mod compatibility
 
@@ -27,6 +27,8 @@ A kineticist archetype that allows legit two-weapon fighting with kinetic blades
 - Kinetic assault special charge. 3 burn, attacks with both blades and auto maximise
 
 # Known issues
+**If you encounter any bug, feel free to fire an issue!**
+
 Conflict with DarkCodex's Patch_KineticistAllowOpportunityAttack (referered to as the patch in below):
 - If the patch is enabled, anything else other than a kinetic blade will allow AoOs. E.g. if you're dual-wielding a kinetic blade with a dagger, the dagger can AoO. This patch also enables kinetic whip to re-enable AoOs for kinetic blades. However, its code is written to a lower level than mine, causing the patch to disable AoOs for a kinetic duelist with the 1st level feature that is meant be enabling AoOs for kinetic blades.
 - If the patch is not enabled, the base game rule follows, so as long as a kinetic blade is equipped, AoOs are prohibited. E.g. if you are dual-wielding a kinetic blade with a dagger, neither can perform AoO. This also makes kinetic whip to lose its functionality of re-enabling AoO for a kinetic blade. However, for a kinetic duelist with the 1st level feature, AoOs are properly re-enabled as the feature describes.
