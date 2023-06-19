@@ -179,6 +179,32 @@
     "Key": "KineticDuelist.DualBlades3rdAttackBuff.Description",
     "enGB": "At 15th level, a kinetic duelist gains a third attack at their full base attack bonus -10 with the second kinetic blade when using kinetic dual blades.",
     "zhCN": "15级起，斗念使可以在使用斗念双刃时，用第二把念刃以最高基础攻击加值-10进行第三次攻击。"
+  },
+
+  {
+    "Key": "CinderAdept.Name",
+    "ProcessTemplates": false,
+    "enGB": "Cinder Adept",
+    "zhCN": "薪火驭使"
+  },
+
+  {
+    "Key": "CinderAdept.Description",
+    "enGB": "Among the Sun Clan’s most noted champions are those who can tame the flames and bend them to their will. These kineticists are skilled riders, able to wield both weapons and fire with deadly skill.",
+    "zhCN": "在烈阳部族最出名的勇士中，有些人能够驯服火焰，并将其按自己的意愿驾驭。这些操念使是老练的骑手，能够运用武器和火焰展现致命的技巧。"
+  },
+
+  {
+    "Key": "CinderAdept.FireFocus",
+    "ProcessTemplates": false,
+    "enGB": "Fire Focus",
+    "zhCN": "火焰专攻"
+  },
+
+  {
+    "Key": "CinderAdept.FireFocus.Description",
+    "enGB": "When a Cinder adept gains elemental focus, she must select fire (pyrokinesis) as her chosen element. When she gains the expanded element class feature at 7th level, she must select her primary element of fire and does not learn to use a new element.",
+    "zhCN": "薪火驭使在选择元素专攻时，必须选择火作为她的首要元素。当薪火驭使在7级获得元素扩展时，她必须再次选择火，而不是选择一个新元素。"
   }
 
 

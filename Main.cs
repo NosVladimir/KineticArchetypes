@@ -55,6 +55,7 @@ namespace KineticArchetypes
                     Logger.Info("Configuring blueprints.");
 
                     KineticDuelist.Configure();
+                    CinderAdept.Configure();
                 }
                 catch (Exception e)
                 {
