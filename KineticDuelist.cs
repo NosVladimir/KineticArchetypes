@@ -13,7 +13,6 @@ using Kingmaker.UnitLogic.Abilities.Blueprints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TabletopTweaks.Core.Utilities;
 using Kingmaker.UnitLogic.Class.Kineticist;
 using Kingmaker.UnitLogic.Abilities.Components;
 using Kingmaker.ElementsSystem;
@@ -32,7 +31,6 @@ using Kingmaker.UnitLogic.Abilities.Components.CasterCheckers;
 using Kingmaker.View;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UnitLogic.Class.Kineticist.ActivatableAbility;
-using static UnityModManagerNet.UnityModManager.ModEntry;
 
 namespace KineticArchetypes
 {
@@ -172,8 +170,20 @@ namespace KineticArchetypes
                 .AddToAddFeatures(15, blade3)
                 .Configure();
             var KineticistClass = CharacterClassRefs.KineticistClass.Reference.Get();
-            KineticistClass.Progression.UIGroups = KineticistClass.Progression.UIGroups.AppendToArray(
-                Helpers.CreateUIGroup(blade0, blade1, blade2, blade3));
+            
+            // Create UI group for blades
+            UIGroup uiGroup = new UIGroup();
+            uiGroup.Features.Add(blade0);
+            uiGroup.Features.Add(blade1);
+            uiGroup.Features.Add(blade2);
+            uiGroup.Features.Add(blade3);
+            var oldUIGroup = KineticistClass.Progression.UIGroups;
+            int num = oldUIGroup.Length;
+            var newUIGroup = new UIGroup[num + 1];
+            if(num > 0)
+                Array.Copy(oldUIGroup, newUIGroup, num);
+            newUIGroup[num] = uiGroup;
+            KineticistClass.Progression.UIGroups = newUIGroup;
 
             DualBlades2ndAttackBuff();
             DualBlades3rdAttackBuff();
