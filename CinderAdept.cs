@@ -240,8 +240,28 @@ namespace KineticArchetypes
 
         public static void HandleOtherMods()
         {
-
-            return;
+            var modFocusSelections = new string[]
+            {
+                "6AA8A023-FC1D-4DAD-B6C2-7CC01B7BF48D", // Aether 1st
+                "ff967af2a4634048be9d4beab75d86be", // Aether 2nd
+                "8993ff38adce4d758e9f48cc010b930f", // Void 1st
+                "ace3846cf5324cd080f0e4cfd68b26e7", // Void 2nd
+                "738e456aa18543a88027e4e8459d3b87", // Wood 1st
+                "c8355b680ec040efb4e1e1741df662c3", // Wood 2nd
+            };
+            for (int i = 0; i < modFocusSelections.Length; i++)
+            {
+                bool got = BlueprintTool.TryGet(modFocusSelections[i], out BlueprintProgression bp);
+                if (got)
+                {
+                    Logger.Info($"Mod element {bp} found, adding refs to CinderAdept");
+                    ProgressionConfigurator.For(bp)
+                        .AddPrerequisiteNoArchetype(ArchetypeGuid, CharacterClassRefs.KineticistClass.Reference.Get())
+                        .Configure();
+                }
+                else
+                    Logger.Info($"Mod element {modFocusSelections[i]} not found");
+            }
         }
     }
 

@@ -494,7 +494,7 @@ namespace KineticArchetypes
                 bool got = BlueprintTool.TryGet(modBladeBurnGuids[i], out BlueprintAbility bp);
                 if (got)
                 {
-                    Logger.Info($"Mod blade {bp} found");
+                    Logger.Info($"Mod blade {bp} found, adding refs to KineticDuelist");
                     modBlades.Add(bp.ToReference<BlueprintAbilityReference>());
                 }
                 else
