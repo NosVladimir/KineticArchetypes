@@ -1,21 +1,23 @@
 ﻿using BlueprintCore.Blueprints.CustomConfigurators.Classes;
 using BlueprintCore.Blueprints.CustomConfigurators.Classes.Selection;
+using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
 using BlueprintCore.Blueprints.References;
 using BlueprintCore.Utils;
 using BlueprintCore.Utils.Types;
+using HarmonyLib;
 using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
-using Kingmaker.Blueprints.Classes.Prerequisites;
+using Kingmaker.Designers.EventConditionActionSystem.Actions;
 using Kingmaker.Designers.Mechanics.Facts;
 using Kingmaker.ElementsSystem;
 using Kingmaker.EntitySystem.Stats;
 using Kingmaker.Enums;
+using Kingmaker.UnitLogic.Abilities.Components;
+using Kingmaker.UnitLogic.Mechanics.Actions;
+using Kingmaker.UnitLogic.Mechanics.Conditions;
+using Kingmaker.UnitLogic.Parts;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TabletopTweaks.Core.Utilities;
 using static Kingmaker.Blueprints.Classes.BlueprintProgression;
 
 namespace KineticArchetypes
@@ -34,6 +36,9 @@ namespace KineticArchetypes
         internal const string GallopingSiphonName = "CinderAdept.GallopingSiphon";
         internal const string GallopingSiphonGuid = "0B8452A6-EAD5-45D6-B478-4D3A90789802";
         internal const string GallopingSiphonDescription = "CinderAdept.GallopingSiphon.Description";
+        internal const string GallopingSiphonBuffName = "CinderAdept.GallopingSiphonBuff";
+        internal const string GallopingSiphonBuffGuid = "80CC7EA2-23E0-47BE-B801-61A0D86D07C8";
+        internal const string GallopingSiphonBuffDescription = "CinderAdept.GallopingSiphonBuff.Description";
 
         internal const string MountName = "CinderAdept.Mount";
         internal const string MountGuid = "DB9D88FC-503A-4F30-A4FC-877077ABB24C";
@@ -77,7 +82,7 @@ namespace KineticArchetypes
                 .AddToAddFeatures(4, CreateMount())
                 .Configure();
 
-            RestrictElementalSelection();
+            RestrictElementSelection();
         }
 
         private static BlueprintFeature CreateFireFocus()
@@ -92,7 +97,7 @@ namespace KineticArchetypes
 
         private static BlueprintFeature CreateGallopingSiphon()
         {
-            return FeatureConfigurator.New(GallopingSiphonName, GallopingSiphonGuid)
+            var feature = FeatureConfigurator.New(GallopingSiphonName, GallopingSiphonGuid)
                 .SetReapplyOnLevelUp(true)
                 .SetDisplayName(GallopingSiphonName)
                 .SetDescription(GallopingSiphonDescription)
@@ -102,11 +107,62 @@ namespace KineticArchetypes
                     .ClassLevel(new string[] { CharacterClassRefs.KineticistClass.ToString() })
                     .WithStartPlusDivStepProgression(divisor: 4, start: 0))
                 .AddConcentrationBonus(
-                    checkFact: true, 
-                    value: ContextValues.Rank(), 
+                    checkFact: true,
+                    value: ContextValues.Rank(),
                     requiredFact: BuffRefs.MountedBuff.Cast<BlueprintUnitFactReference>())
                 .SetIsClassFeature(true)
                 .Configure();
+
+            var buff = BuffConfigurator.New(GallopingSiphonBuffName, GallopingSiphonBuffGuid)
+                .SetDisplayName(GallopingSiphonBuffName)
+                .SetDescription(GallopingSiphonBuffDescription)
+                .SetIcon(AbilityRefs.ResistFire.Reference.Get().Icon)
+                .SetStacking(Kingmaker.UnitLogic.Buffs.Blueprints.StackingType.Prolong)
+                .AddContextRankConfig(ContextRankConfigs
+                    .ClassLevel(new string[] { CharacterClassRefs.KineticistClass.ToString() })
+                    .WithCustomProgression((10, 5), (20, 10)))
+                .AddResistEnergy(value: ContextValues.Rank())
+                .Configure();
+
+            var gatherPowerRunActions = AbilityRefs.GatherPower.Reference.Get().GetComponent<AbilityEffectRunAction>();
+            var contexActionApplyBuff = new ContextActionApplyBuff()
+            {
+                m_Buff = buff.ToReference<BlueprintBuffReference>(),
+                UseDurationSeconds = true,
+                DurationSeconds = 6,
+                IsFromSpell = false,
+                IsNotDispelable = true,
+                AsChild = false
+            };
+            var applyBuffAction = new Conditional()
+            {
+                ConditionsChecker = new ConditionsChecker()
+                {
+                    Operation = Operation.And,
+                    Conditions = new Condition[]
+                    {
+                        new ContextConditionHasBuff() { m_Buff = BuffRefs.MountedBuff.Cast<BlueprintBuffReference>().Reference },
+                        new ContextConditionHasFact() { m_Fact = feature.ToReference<BlueprintUnitFactReference>() }
+                    }
+                },
+                IfTrue = new ActionList() { Actions = new GameAction[]
+                { 
+                    contexActionApplyBuff,
+                    new ContextActionsOnPet()
+                    {
+                        PetType = PetType.AnimalCompanion,
+                        Actions = new ActionList() { Actions = new GameAction[] { contexActionApplyBuff} }
+                    }
+                } }
+            };
+            var oldActions = gatherPowerRunActions.Actions.Actions;
+            int num = oldActions.Length;
+            var newActions = new GameAction[num + 1];
+            if (num > 0)
+                Array.Copy(oldActions, newActions, num);
+            newActions[num] = applyBuffAction;
+            gatherPowerRunActions.Actions.Actions = newActions;
+            return feature;
         }
 
         private static BlueprintFeature CreateMount()
@@ -162,7 +218,7 @@ namespace KineticArchetypes
                 .Configure();
         }
 
-        private static void RestrictElementalSelection()
+        private static void RestrictElementSelection()
         {
             var elements = new BlueprintProgression[]
             {
@@ -186,6 +242,29 @@ namespace KineticArchetypes
         {
 
             return;
+        }
+    }
+
+    [HarmonyPatch(typeof(UnitPartRider))]
+    public class Patch_UnitPartRider
+    {
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(UnitPartRider.Dismount), new Type[] { typeof(bool) })]
+        public static void Postfix(UnitPartRider __instance)
+        {
+            var owner = __instance.Owner;
+            foreach (var buff in owner.Buffs)
+                if (buff.Blueprint.ToString().Equals(CinderAdept.GallopingSiphonBuffName))
+                    buff.SetDuration(TimeSpan.FromSeconds(0));
+                
+            for (int i = 0; i < owner.Pets.Count; i++)
+            {
+                var pet = owner.Pets[i].Entity;
+                if (pet != null && (pet.Get<UnitPartPet>()?.Type == PetType.AnimalCompanion))
+                    foreach (var buff in pet.Buffs)
+                        if (buff.Blueprint.ToString().Equals(CinderAdept.GallopingSiphonBuffName))
+                            buff.SetDuration(TimeSpan.FromSeconds(0));
+            }
         }
     }
 }

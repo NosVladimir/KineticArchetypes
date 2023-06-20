@@ -216,8 +216,21 @@
 
   {
     "Key": "CinderAdept.GallopingSiphon.Description",
-    "enGB": "A Cinder adept gains Mounted Combat as a bonus feat and a +1 bonus on concentration checks due to riding. This bonus increases by +1 at 4th level and every 4 levels thereafter (up to a maximum of +6 at 20th level).\nThis alters replaces the infusion gained at 1st level.",
-    "zhCN": "薪火驭者获得额外专长骑乘战斗，且她在骑乘时的专注检定获得+1加值。此加值在4级以及之后每提升4级时提高1点，在20级时最多提高至+6。\n此能力替换了1级时获得的注能。"
+    "enGB": "When a Cinder adept gathers power while mounted, she and her mount gain fire resistance 5 for a number of rounds equal to the total value of the burn cost she reduces. This resistance increases to fire resistance 10 at 11th level. The Cinder adept and her mount lose this resistance if she dismounts before the duration ends.\nIn addition, a Cinder adept gains Mounted Combat as a bonus feat and a +1 bonus on concentration checks due to riding. This bonus increases by +1 at 4th level and every 4 levels thereafter (up to a maximum of +6 at 20th level).\nThis alters replaces the infusion gained at 1st level.",
+    "zhCN": "每当薪火驭者在骑乘时使用念力凝聚，她和她的坐骑都会在相当于超载降低值的轮数内获得5点火焰抗性。此抗性在11级时提高至10点。若薪火驭者在持续时间内下鞍，她和她的坐骑都会失去此抗性。\n此外，薪火驭者获得额外专长骑乘战斗，且她在骑乘时的专注检定获得+1加值。此加值在4级以及之后每提升4级时提高1点，在20级时最多提高至+6。\n此能力替换了1级时获得的注能。"
+  },
+
+  {
+    "Key": "CinderAdept.GallopingSiphonBuff",
+    "ProcessTemplates": false,
+    "enGB": "Galloping Siphon",
+    "zhCN": "奔腾虹吸"
+  },
+
+  {
+    "Key": "CinderAdept.GallopingSiphonBuff.Description",
+    "enGB": "When a Cinder adept gathers power while mounted, she and her mount gain fire resistance 5 for a number of rounds equal to the total value of the burn cost she reduces. This resistance increases to fire resistance 10 at 11th level. The Cinder adept and her mount lose this resistance if she dismounts before the duration ends.",
+    "zhCN": "每当薪火驭者在骑乘时使用念力凝聚，她和她的坐骑都会在相当于超载降低值的轮数内获得5点火焰抗性。此抗性在11级时提高至10点。若薪火驭者在持续时间内下鞍，她和她的坐骑都会失去此抗性。"
   },
 
   {
