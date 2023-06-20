@@ -26,6 +26,13 @@ A kineticist archetype that allows legit two-weapon fighting with kinetic blades
 - Recovers 1 burn in a burn-accepted round on first hit in a full-attack with kinetic blades from 11th level
 - Kinetic assault special charge. 3 burn, attacks with both blades and auto maximise
 
+### [Cinder Adept](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/paizo-llc-kineticist-archetypes/cinder-adept-kineticist-archetype/)
+
+Fire-focused kineticist with a horse.
+- Must choose fire as primary and secondary element. Can still choose a different third element (in base game there is no benefit of choosing the same element except for the composite blast, so the third element is not restricted)
+- Mounted combat bonus feat to replace 1st level infusion
+- A horse animal companion at level -3
+
 # Known issues
 **If you encounter any bug, feel free to fire an issue!**
 
@@ -33,11 +40,9 @@ Conflict with DarkCodex's Patch_KineticistAllowOpportunityAttack (referered to a
 - If the patch is enabled, anything else other than a kinetic blade will allow AoOs. E.g. if you're dual-wielding a kinetic blade with a dagger, the dagger can AoO. This patch also enables kinetic whip to re-enable AoOs for kinetic blades. However, its code is written to a lower level than mine, causing the patch to disable AoOs for a kinetic duelist with the 1st level feature that is meant be enabling AoOs for kinetic blades.
 - If the patch is not enabled, the base game rule follows, so as long as a kinetic blade is equipped, AoOs are prohibited. E.g. if you are dual-wielding a kinetic blade with a dagger, neither can perform AoO. This also makes kinetic whip to lose its functionality of re-enabling AoO for a kinetic blade. However, for a kinetic duelist with the 1st level feature, AoOs are properly re-enabled as the feature describes.
 - **TLDR:** If you are not playing kinetic duelist, enable the patch. If you are playing kinetic duelist, disable the patch. If you have both a kinetic duelist and another kineticist in your party, you have to choose who can AoO with kinetic blades.
+- This issue is planned to be fully addressed.
 
 # Planned contents
-### [Cinder Adept](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/paizo-llc-kineticist-archetypes/cinder-adept-kineticist-archetype/)
-Fire-only kineticist with a horse.
-
 ### Homebrew fighter archetype using kinetic blades
 (Rough idea) A fighter archetype that trades some bonus feats for elemental focus and kinetic blades, trades weapon training for special weapon training for kinetic blades, and trades advanced weapon training for maybe kinetic dual blades. Maybe also trades armor training with something but I feel like that would be too much and won't make a huge distinction from a kinetic duelist.
 
