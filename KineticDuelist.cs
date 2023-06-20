@@ -172,7 +172,7 @@ namespace KineticArchetypes
             var KineticistClass = CharacterClassRefs.KineticistClass.Reference.Get();
             
             // Create UI group for blades
-            UIGroup uiGroup = new UIGroup();
+            UIGroup uiGroup = new();
             uiGroup.Features.Add(blade0);
             uiGroup.Features.Add(blade1);
             uiGroup.Features.Add(blade2);
@@ -452,8 +452,7 @@ namespace KineticArchetypes
             };
             for (int i = 0; i < modInfusionGuids.Length; i++)
             {
-                BlueprintFeature bp;
-                bool got = BlueprintTool.TryGet(modInfusionGuids[i], out bp);
+                bool got = BlueprintTool.TryGet(modInfusionGuids[i], out BlueprintFeature bp);
 
                 if (got)
                 {
@@ -492,8 +491,7 @@ namespace KineticArchetypes
             var modBlades = new List<BlueprintAbilityReference>();
             for (int i = 0; i < modBladeBurnGuids.Length; i++) 
             {
-                BlueprintAbility bp;
-                bool got = BlueprintTool.TryGet(modBladeBurnGuids[i], out bp);
+                bool got = BlueprintTool.TryGet(modBladeBurnGuids[i], out BlueprintAbility bp);
                 if (got)
                 {
                     Logger.Info($"Mod blade {bp} found");

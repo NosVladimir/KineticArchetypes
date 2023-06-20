@@ -96,6 +96,7 @@ namespace KineticArchetypes
                 try
                 {
                     KineticDuelist.HandleOtherMods();
+                    CinderAdept.HandleOtherMods();
                 }
                 catch (Exception e)
                 {

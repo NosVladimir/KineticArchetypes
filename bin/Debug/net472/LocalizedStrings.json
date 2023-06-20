@@ -48,7 +48,7 @@
   {
     "Key": "KineticDuelist.KineticDualBladesFeature.Description",
     "enGB": "At 3rd level, a kinetic duelist receives Two-Weapon Fighting as a bonus feat.\nWhen using the kinetic blade form infusion, a kinetic duelist can form a second kinetic blade in their off hand by increasing the burn cost by 1, and treating both blades as light weapons for the purpose of two-weapon fighting.\nThis ability replaces the 3rd-level infusion.",
-    "zhCN": "3级时，斗念使获得双武器战斗奖励专长。\n通过在使用念刃塑形注能时将超载值提高1点，斗念使可以在副手中形成第二把念刃，并在双武器战斗时将两把念刃都视为轻型武器。\n此能力替换了3级时获得的注能。"
+    "zhCN": "3级时，斗念使获得额外专长双武器战斗。\n通过在使用念刃塑形注能时将超载值提高1点，斗念使可以在副手中形成第二把念刃，并在双武器战斗时将两把念刃都视为轻型武器。\n此能力替换了3级时获得的注能。"
   },
 
   {
@@ -185,7 +185,7 @@
     "Key": "CinderAdept.Name",
     "ProcessTemplates": false,
     "enGB": "Cinder Adept",
-    "zhCN": "薪火驭使"
+    "zhCN": "薪火驭者"
   },
 
   {
@@ -204,7 +204,33 @@
   {
     "Key": "CinderAdept.FireFocus.Description",
     "enGB": "When a Cinder adept gains elemental focus, she must select fire (pyrokinesis) as her chosen element. When she gains the expanded element class feature at 7th level, she must select her primary element of fire and does not learn to use a new element.",
-    "zhCN": "薪火驭使在选择元素专攻时，必须选择火作为她的首要元素。当薪火驭使在7级获得元素扩展时，她必须再次选择火，而不是选择一个新元素。"
+    "zhCN": "薪火驭者在选择元素专攻时，必须选择火作为她的首要元素。当薪火驭者在7级获得元素扩展时，她必须再次选择火，而不是选择一个新元素。"
+  },
+
+  {
+    "Key": "CinderAdept.GallopingSiphon",
+    "ProcessTemplates": false,
+    "enGB": "Galloping Siphon",
+    "zhCN": "奔腾虹吸"
+  },
+
+  {
+    "Key": "CinderAdept.GallopingSiphon.Description",
+    "enGB": "A Cinder adept gains Mounted Combat as a bonus feat and a +1 bonus on concentration checks due to riding. This bonus increases by +1 at 4th level and every 4 levels thereafter (up to a maximum of +6 at 20th level).\nThis alters replaces the infusion gained at 1st level.",
+    "zhCN": "薪火驭者获得额外专长骑乘战斗，且她在骑乘时的专注检定获得+1加值。此加值在4级以及之后每提升4级时提高1点，在20级时最多提高至+6。\n此能力替换了1级时获得的注能。"
+  },
+
+  {
+    "Key": "CinderAdept.Mount",
+    "ProcessTemplates": false,
+    "enGB": "Mount",
+    "zhCN": "坐骑"
+  },
+
+  {
+    "Key": "CinderAdept.Mount.Description",
+    "enGB": "At 4th level, a Cinder adept gains a loyal mount. This ability functions like the druid's animal companion ability, except that the Cinder adept always gains a horse and her effective druid level is equal to her level –3.\nThis replaces the utility wild talents gained at 4th, 8th, and 12th levels.",
+    "zhCN": "4级时，薪火驭者获得一匹忠诚的坐骑。此能力类似德鲁伊的动物伙伴，区别在于薪火驭者必须选择马，并且以其等级-3作为有效德鲁伊等级。\n此能力替换了4、8、12级时获得的辅助原力。"
   }
 
 
