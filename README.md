@@ -9,8 +9,6 @@ This mod is available in ModFinder. Alternatively, you can download the zip file
 
 Should be compatible with DarkCodex and KineticistElementsExpanded.
 
-For DarkCodex, there is a minor known issue - see below for more details. 
-
 # Contents
 ### Fixes
 Fixed the problem where taking burn from a kinetic blade would deactivate the blade after the first attack due to insufficient remaining burn.
@@ -36,11 +34,7 @@ Fire-focused kineticist with a horse.
 # Known issues
 **If you encounter any bug, feel free to fire an issue!**
 
-Conflict with DarkCodex's Patch_KineticistAllowOpportunityAttack (referered to as the patch in below):
-- If the patch is enabled, anything else other than a kinetic blade will allow AoOs. E.g. if you're dual-wielding a kinetic blade with a dagger, the dagger can AoO. This patch also enables kinetic whip to re-enable AoOs for kinetic blades. However, its code is written to a lower level than mine, causing the patch to disable AoOs for a kinetic duelist with the 1st level feature that is meant be enabling AoOs for kinetic blades.
-- If the patch is not enabled, the base game rule follows, so as long as a kinetic blade is equipped, AoOs are prohibited. E.g. if you are dual-wielding a kinetic blade with a dagger, neither can perform AoO. This also makes kinetic whip to lose its functionality of re-enabling AoO for a kinetic blade. However, for a kinetic duelist with the 1st level feature, AoOs are properly re-enabled as the feature describes.
-- **TLDR:** If you are not playing kinetic duelist, enable the patch. If you are playing kinetic duelist, disable the patch. If you have both a kinetic duelist and another kineticist in your party, you have to choose who can AoO with kinetic blades.
-- This issue is planned to be fully addressed.
+No known issues at the moment.
 
 # Planned contents
 ### Homebrew fighter archetype using kinetic blades

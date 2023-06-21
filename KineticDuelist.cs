@@ -510,6 +510,13 @@ namespace KineticArchetypes
         {
             RestrictModInfusionSelections();
             AddModBladeToFeatures();
+
+            // Solution to make blade AoO compatible with DarkCodex's Patch_AllowAoO
+            // If DarkCodex is enabled, this will make the save permenantly dependent on DarkCodex
+            var CreateAddMechanicsFeature = AccessTools.Method("CodexLib.Helper, CodexLib:CreateAddMechanicsFeature", new[] { Type.GetType("CodexLib.MechanicFeature, CodexLib") });
+            var comp = CreateAddMechanicsFeature?.Invoke(null, new object[] { 8 }) as BlueprintComponent;
+            if (comp != null)
+                FeatureConfigurator.For(KDKineticBladeGuid).AddComponent(comp).Configure();
         }
     }
 
