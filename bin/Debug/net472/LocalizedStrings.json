@@ -244,6 +244,52 @@
     "Key": "CinderAdept.Mount.Description",
     "enGB": "At 4th level, a Cinder adept gains a loyal mount. This ability functions like the druid's animal companion ability, except that the Cinder adept always gains a horse and her effective druid level is equal to her level –3.\nThis replaces the utility wild talents gained at 4th, 8th, and 12th levels.",
     "zhCN": "4级时，薪火驭者获得一匹忠诚的坐骑。此能力类似德鲁伊的动物伙伴，区别在于薪火驭者必须选择马，并且以其等级-3作为有效德鲁伊等级。\n此能力替换了4、8、12级时获得的辅助原力。"
+  },
+
+  {
+    "Key": "EsotericBlade.Name",
+    "ProcessTemplates": false,
+    "enGB": "Esoteric Blade",
+    "zhCN": "秘刃"
+  },
+
+  {
+    "Key": "EsotericBlade.Description",
+    "enGB": "Rare do fighters find themselfs connected to the elemental plane. For those who possess a connection not too weak to allow for channelling powers, they always choose to wield manipulated elemental energy as a preferred option over any manufactured weapon.",
+    "zhCN": "很少有战士能与元素位面产生联系。对于能通过足够强的位面联系汲取力量的人来说，他们总是更喜欢挥舞操纵后的元素能量，而不是人造武器。"
+  },
+
+  {
+    "Key": "EsotericBlade.KineticBlade",
+    "ProcessTemplates": false,
+    "enGB": "Kinetic Blade",
+    "zhCN": "念刃"
+  },
+
+  {
+    "Key": "EsotericBlade.KineticBlade.Description",
+    "enGB": "At 1st level, an esoteric blade can choose a kineticist element that has an energy simple blast. He gains the kinetic blade form infusion instead of the energy simple blast, and it costs 0 points of burn. An esoteric blade adds his fighter level to his kineticist level and uses his strength modifier in place of constitution modifier for the purpose of determining the damage of the energy kinetic blade, as well as for caster level checks made to overcome a creature's spell resistance.\nThis ability replaces the bonus combat feats gained at 1st, 10th and 20th levels.",
+    "zhCN": "1级时，秘刃可以选择一种有能量念袭的操念使元素。他获得与所选元素关联的能量念刃，而不是简易念袭，并且该念刃消耗0点超载值。在计算念刃伤害以及用于突破法术抗力进行施法者检定时，秘刃将其战士等级加在操念使等级上，并使用力量调整值代替体质调整值。\n此能力替换了1、10、20级时获得的额外专长。"
+  },
+
+  {
+    "Key": "EsotericBlade.ElementSelection",
+    "ProcessTemplates": false,
+    "enGB": "Select An Element",
+    "zhCN": "选择元素"
+  },
+
+  {
+    "Key": "EsotericBlade.WeaponTrainingKineticBlade",
+    "ProcessTemplates": false,
+    "enGB": "Weaepon Training (Kinetic Blade)",
+    "zhCN": "武器训练（念刃）"
+  },
+
+  {
+    "Key": "EsotericBlade.WeaponTrainingKineticBlade.Description",
+    "enGB": "As the fighter class feature, but the bonuses only apply when wielding kinetic blades. In addition, a kinetic blade fighter may form a second kinetic blade in his off hand, and he treats both blades as light weapons for determining two-weapon fightining penalities.\nThis ability replaces Weapon Training 1, 2, 3 and 4.",
+    "zhCN": "如同战士职业特性，但是加值只对念刃生效。"
   }
 
 
