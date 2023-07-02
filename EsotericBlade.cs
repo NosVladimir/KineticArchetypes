@@ -1,16 +1,25 @@
-﻿using BlueprintCore.Blueprints.CustomConfigurators;
+﻿using BlueprintCore.Actions.Builder;
+using BlueprintCore.Actions.Builder.ContextEx;
+using BlueprintCore.Blueprints.CustomConfigurators;
 using BlueprintCore.Blueprints.CustomConfigurators.Classes;
 using BlueprintCore.Blueprints.CustomConfigurators.Classes.Selection;
 using BlueprintCore.Blueprints.References;
+using BlueprintCore.Conditions.Builder;
+using BlueprintCore.Conditions.Builder.ContextEx;
 using BlueprintCore.Utils;
 using BlueprintCore.Utils.Types;
 using HarmonyLib;
+using JetBrains.Annotations;
 using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
 using Kingmaker.Blueprints.Classes.Prerequisites;
 using Kingmaker.Blueprints.Classes.Selection;
 using Kingmaker.Blueprints.Classes.Spells;
+using Kingmaker.Blueprints.Facts;
 using Kingmaker.Blueprints.Items.Weapons;
+using Kingmaker.Controllers;
+using Kingmaker.Designers.EventConditionActionSystem.Actions;
+using Kingmaker.Designers.EventConditionActionSystem.Conditions;
 using Kingmaker.Designers.EventConditionActionSystem.Evaluators;
 using Kingmaker.Designers.Mechanics.Facts;
 using Kingmaker.EntitySystem;
@@ -19,9 +28,12 @@ using Kingmaker.EntitySystem.Stats;
 using Kingmaker.Enums;
 using Kingmaker.Items;
 using Kingmaker.PubSubSystem;
+using Kingmaker.RuleSystem;
 using Kingmaker.RuleSystem.Rules;
+using Kingmaker.RuleSystem.Rules.Abilities;
 using Kingmaker.RuleSystem.Rules.Damage;
 using Kingmaker.UnitLogic;
+using Kingmaker.UnitLogic.Abilities;
 using Kingmaker.UnitLogic.Abilities.Blueprints;
 using Kingmaker.UnitLogic.Abilities.Components;
 using Kingmaker.UnitLogic.Buffs.Blueprints;
@@ -30,12 +42,17 @@ using Kingmaker.UnitLogic.Class.Kineticist.ActivatableAbility;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.FactLogic;
+using Kingmaker.UnitLogic.Mechanics;
+using Kingmaker.UnitLogic.Mechanics.Actions;
 using Kingmaker.UnitLogic.Mechanics.Components;
 using Kingmaker.UnitLogic.Parts;
 using Owlcat.Runtime.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
+using static Kingmaker.RuleSystem.Rules.RuleCalculateAttacksCount;
+using static Kingmaker.Visual.Animation.IKController;
 
 namespace KineticArchetypes
 {
@@ -58,6 +75,14 @@ namespace KineticArchetypes
 
         internal const string EmptyResourceName = "EsotericBlade.EmptyResource";
         internal const string EmptyResourceGuid = "65129688-FD7F-4267-B3D2-30F6AE4C2A01";
+
+        internal const string ConstantEnergyName = "EsotericBlade.ConstantEnergy";
+        internal const string ConstantEnergyGuid = "1FAF41F1-5BDA-48A7-B61C-71390635B57C";
+        internal const string ConstantEnergyDescription = "EsotericBlade.ConstantEnergy.Description";
+
+        internal const string CondensedEnergyName = "EsotericBlade.CondensedEnergy";
+        internal const string CondensedEnergyGuid = "7AD69CF2-4B68-4C55-97AF-2A7B7E7E0091";
+        internal const string CondensedEnergyDescription = "EsotericBlade.CondensedEnergy.Description";
 
 
         internal static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes.EsotericBlade");
@@ -84,10 +109,13 @@ namespace KineticArchetypes
                     .SetLocalizedDescription(ArchetypeDescription);
 
             var kineticBlade = CreateKineticBlade();
+            var constantEnergy = CreateConstantEnergy();
             var weaponTrainingKB = CreateWeaponTrainingKineticBlade();
+            var condensedEnergy = CreateCondensedEnergy();
 
             archetype
                 .AddToRemoveFeatures(1, FeatureSelectionRefs.FighterFeatSelection.ToString())
+                .AddToRemoveFeatures(4, FeatureSelectionRefs.FighterFeatSelection.ToString())
                 .AddToRemoveFeatures(10, FeatureSelectionRefs.FighterFeatSelection.ToString())
                 .AddToRemoveFeatures(20, FeatureSelectionRefs.FighterFeatSelection.ToString())
                 .AddToRemoveFeatures(5, FeatureSelectionRefs.WeaponTrainingSelection.ToString())
@@ -97,8 +125,10 @@ namespace KineticArchetypes
 
                 .AddToAddFeatures(1, ProgressionRefs.KineticBlastProgression.ToString())
                 .AddToAddFeatures(1, kineticBlade)
+                .AddToAddFeatures(4, constantEnergy)
                 .AddToAddFeatures(5, weaponTrainingKB)
                 .AddToAddFeatures(9, weaponTrainingKB)
+                .AddToAddFeatures(10, condensedEnergy)
                 .AddToAddFeatures(13, weaponTrainingKB)
                 .AddToAddFeatures(17, weaponTrainingKB)
                 .Configure();
@@ -221,6 +251,25 @@ namespace KineticArchetypes
                 .Configure();
         }
 
+        private static BlueprintFeature CreateConstantEnergy()
+        {
+            FeatureConfigurator.For(FeatureRefs.CleavingFinish).AddComponent(new CleavingFinishForKineticBlade()).Configure();
+            return FeatureConfigurator.New(ConstantEnergyName, ConstantEnergyGuid)
+                .SetDisplayName(ConstantEnergyName)
+                .SetDescription(ConstantEnergyDescription)
+                .SetIcon(FeatureRefs.EldritchFontEldritchSurge.Reference.Get().Icon)
+                .Configure(); ;
+        }
+
+        private static BlueprintFeature CreateCondensedEnergy() 
+        {
+            return FeatureConfigurator.New(CondensedEnergyName, CondensedEnergyGuid)
+                .SetDisplayName(CondensedEnergyName)
+                .SetDescription(CondensedEnergyDescription)
+                .SetIcon(FeatureRefs.EldritchFontGreaterSurge.Reference.Get().Icon)
+                .Configure();
+        }
+
         private static void AddModBladeToFeatures()
         {
             var modBladeBurnGuids = new string[]
@@ -288,6 +337,13 @@ namespace KineticArchetypes
             AddModBladeToFeatures();
             AddModBlastProgressionToSelection();
             AddModBlastToKineticistPart();
+
+            // Solution to make blade AoO compatible with DarkCodex's Patch_AllowAoO
+            // If DarkCodex is enabled, this will make the save permenantly dependent on DarkCodex
+            var CreateAddMechanicsFeature = AccessTools.Method("CodexLib.Helper, CodexLib:CreateAddMechanicsFeature", new[] { Type.GetType("CodexLib.MechanicFeature, CodexLib") });
+            var comp = CreateAddMechanicsFeature?.Invoke(null, new object[] { 8 }) as BlueprintComponent;
+            if (comp != null)
+                FeatureConfigurator.For(ConstantEnergyGuid).AddComponent(comp).Configure();
         }
     }
 
@@ -382,6 +438,62 @@ namespace KineticArchetypes
             }
 
             return true;
+        }
+    }
+
+    internal class CleavingFinishForKineticBlade : UnitFactComponentDelegate, IInitiatorRulebookHandler<RuleAttackWithWeapon>, IRulebookHandler<RuleAttackWithWeapon>, IInitiatorRulebookHandler<RuleDealDamage>, IRulebookHandler<RuleDealDamage>, ISubscriber, IInitiatorRulebookSubscriber
+    {
+        public void OnEventAboutToTrigger(RuleDealDamage evt)
+        {
+        }
+
+        public void OnEventAboutToTrigger(RuleAttackWithWeapon evt)
+        {
+        }
+
+        public void OnEventDidTrigger(RuleDealDamage evt)
+        {
+            var ability = evt.Reason?.Ability?.Blueprint;
+            if (ability != null && evt.Initiator == Owner &&
+                Owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(EsotericBlade.ConstantEnergyGuid)) != null &&
+                ability.GetComponent<AbilityKineticist>() != null && ability.GetComponent<AbilityDeliveredByWeapon>() != null &&
+                evt.Target.HPLeft < 0 && evt.Target.HPLeft + evt.Result > 0)
+            {
+                bool cooldown = false;
+                foreach (var buff in Owner.Buffs)
+                    if (buff.Blueprint == BuffRefs.CleavingFinishCooldown.Reference.Get())
+                        cooldown = true;
+                if (cooldown)
+                    return;
+
+                var weapon = Owner.Body.PrimaryHand.Weapon;
+                if (weapon is null || weapon.Blueprint.Type.Category != WeaponCategory.KineticBlast)
+                    return;
+                UnitEntityData newTarget = ContextActionMeleeAttack.SelectTarget(Owner, weapon.AttackRange.Meters, true, evt.Target);
+                if (newTarget is null)
+                    return;
+
+                RuleAttackWithWeapon ruleAttackWithWeapon = new RuleAttackWithWeapon(Owner, newTarget, weapon, 0)
+                {
+                    Reason = Context,
+                    ExtraAttack = true,
+                    AttackNumber = 0,
+                    AttacksCount = 1
+                };
+                Context.TriggerRule(ruleAttackWithWeapon);
+                
+                if (Owner.GetFeature(FeatureRefs.ImprovedCleavingFinish.Reference) is null)
+                    Owner.AddBuff(BuffRefs.CleavingFinishCooldown.Reference.Get(), Owner, duration: 6.Seconds());
+            }
+        }
+
+        public void OnEventDidTrigger(RuleAttackWithWeapon evt)
+        {
+            var buffs = Owner.Buffs.Enumerable.ToArray();
+            if (evt.IsFullAttack && evt.IsFirstAttack)
+                foreach (var buff in buffs)
+                    if (buff.Blueprint.ToString().Equals(BuffRefs.CleavingFinishCooldown.Reference.Get().Name))
+                        buff.Remove();
         }
     }
 }

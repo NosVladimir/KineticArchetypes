@@ -596,8 +596,9 @@ namespace KineticArchetypes
         {
             UnitEntityData owner = __instance.Owner;
 
-            // Allow AoO if having KD blade feature
-            if (owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(KineticDuelist.KDKineticBladeGuid)) != null)
+            // Allow AoO if having KD blade feature or EsotericBlade feature
+            if (owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(KineticDuelist.KDKineticBladeGuid)) != null ||
+                owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(EsotericBlade.ConstantEnergyGuid)) != null)
                 owner.State.RemoveCondition(UnitCondition.DisableAttacksOfOpportunity);
 
             // Spawn off-hand blade if dual blade activated

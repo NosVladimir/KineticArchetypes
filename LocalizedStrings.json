@@ -268,8 +268,8 @@
 
   {
     "Key": "EsotericBlade.KineticBlade.Description",
-    "enGB": "At 1st level, an esoteric blade can choose a kineticist element that has an energy simple blast. He gains the energy kinetic blade associated with his chosen element instead of the energy simple blast, and it costs 0 points of burn. An esoteric blade adds his fighter level to his kineticist level for the purpose of determining the damage of the energy kinetic blade, as well as for caster level checks made to overcome a creature's spell resistance. If an esoteric blade does not have kineticist levels, he can never accept burn, but can use his strength modifier in place of constitution modifier for the damage of the energy kinetic blade.\nThis ability replaces the bonus combat feat gained at 1st level.",
-    "zhCN": "1级时，秘刃可以选择一种有能量念袭的操念使元素。他获得与所选元素关联的能量念刃，而不是简易念袭，并且该念刃消耗0点超载值。在计算能量念刃伤害以及用于突破法术抗力进行施法者检定时，秘刃将其战士等级加在操念使等级上。若秘刃没有操念使等级，他将永远无法承受超载，但可以用力量调整值代替体质调整值计算能量念刃的伤害。\n此能力替换了1级时获得的额外战斗专长。"
+    "enGB": "At 1st level, an esoteric blade can choose a kineticist element that has an energy blast. He gains the energy kinetic blade associated with his chosen element instead of the energy simple blast, and it costs 0 points of burn. An esoteric blade adds his fighter level to his kineticist level for the purpose of determining the damage of the energy kinetic blade, as well as for caster level checks made to overcome a creature's spell resistance. If an esoteric blade does not have kineticist levels, he can never accept burn, but can use his strength modifier in place of constitution modifier for the damage of the energy kinetic blade.\nThis ability replaces the bonus combat feat gained at 1st level.",
+    "zhCN": "1级时，秘刃可以选择一种有能量念袭的操念使元素。他获得与所选元素关联的能量念刃，而不是简易能量念袭，并且该念刃消耗0点超载值。在计算能量念刃伤害以及用于突破法术抗力进行施法者检定时，秘刃将其战士等级加在操念使等级上。若秘刃没有操念使等级，他将永远无法承受超载，但可以用力量调整值代替体质调整值计算能量念刃的伤害。\n此能力替换了1级时获得的额外战斗专长。"
   },
 
   {
@@ -288,8 +288,8 @@
 
   {
     "Key": "EsotericBlade.ConstantEnergy.Description",
-    "enGB": "At 4th level, an esoteric blade can maintain a steady stream of energy to keep the energy kinetic blade for as long as he wishes, alleviating the limitations on the actions he can take while wielding the energy kinetic blade. This allows him to perform attacks of opportunity with the energy kinetic blade, and use combat feats with the energy kinetic blade that are not normally applicable. An esoteric blade still needs to actually possess these combat feats to benefit from this ability. These combat feats include: Cleaving Finish, Improved Cleaving Finish.\nThis ability replaces the bonus combat feat gained at 4th level.",
-    "zhCN": "4级时，秘刃可以维持一股稳定的能量流，使能量念刃保持任意长的时间，从而克服了操控能量念刃对其行动的限制。这使他能够用能量念刃发动借机攻击和一般情况下无法生效的战斗专长。秘刃仍然需要实际拥有这些专长，才能从此能力中获益。这些战斗专长包括：终势斩，精通终势斩。\n此能力替换了4级时获得的额外战斗专长。"
+    "enGB": "At 4th level, an esoteric blade can maintain a steady stream of energy to keep the energy kinetic blade for as long as he wishes, alleviating the limitations on the actions he can take while wielding the energy kinetic blade. This allows him to perform attacks of opportunity with the energy kinetic blade, and use combat feats with the energy kinetic blade that are normally inapplicable to it.\nThese combat feats include: Cleaving Finish, Improved Cleaving Finish, Vital Strike, Improved Vital Strike, Greater Vital Strike. An esoteric blade still needs to actually possess these combat feats to benefit from this ability.\nThis ability replaces the bonus combat feat gained at 4th level.",
+    "zhCN": "4级时，秘刃可以维持一股稳定的能量流，使能量念刃保持任意长的时间，从而克服了操控能量念刃对其行动的限制。这使他能够用能量念刃发动借机攻击和一般无法对能量念刃生效的战斗专长。\n这些战斗专长包括：终势斩，精通终势斩，要害打击，精通要害打击，高等要害打击。秘刃仍然需要实际拥有这些专长，才能从此能力中获益。\n此能力替换了4级时获得的额外战斗专长。"
   },
 
   {
@@ -302,7 +302,7 @@
   {
     "Key": "EsotericBlade.CondensedEnergy.Description",
     "enGB": "At 10th level, an esoteric blade masters in manipulating elemental energy into a weapon. He further condenses and constrains the energy into a certain shape manifesting a chosen type of light or one-handed melee weapon. Such densely packed energy changes the critical threat range and critical multiplier of the energy kinetic blade to match those of the chosen weapon type, while the blade remains a light weapon and any attacks made with it are still touch attacks.\nThis ability replaces the bonus combat feats gained at 10th and 20th levels.",
-    "zhCN": "10级时，秘刃精通于以元素能量塑造武器。他进一步凝练能量并将其限制在某种轻型或单手武器的形状中。如此高密度的能量使念刃的重击威胁范围与重击倍数变为与选定武器种类相同。能量念刃仍被视为轻型武器，且用其进行的攻击仍为接触攻击。\n此能力替换了10、20级时获得的额外战斗专长。"
+    "zhCN": "10级时，秘刃精通于以元素能量塑造武器。他进一步凝练能量并将其限制在某种轻型或单手武器的形状中。如此高密度的能量使念刃的重击威胁范围与重击倍数变为与选定的武器种类相同。能量念刃仍被视为轻型武器，且用其进行的攻击仍为接触攻击。\n此能力替换了10、20级时获得的额外战斗专长。"
   },
 
   {
