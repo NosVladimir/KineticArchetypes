@@ -9,18 +9,10 @@ using BlueprintCore.Conditions.Builder.ContextEx;
 using BlueprintCore.Utils;
 using BlueprintCore.Utils.Types;
 using HarmonyLib;
-using JetBrains.Annotations;
 using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
-using Kingmaker.Blueprints.Classes.Prerequisites;
-using Kingmaker.Blueprints.Classes.Selection;
-using Kingmaker.Blueprints.Classes.Spells;
-using Kingmaker.Blueprints.Facts;
 using Kingmaker.Blueprints.Items.Weapons;
 using Kingmaker.Controllers;
-using Kingmaker.Designers.EventConditionActionSystem.Actions;
-using Kingmaker.Designers.EventConditionActionSystem.Conditions;
-using Kingmaker.Designers.EventConditionActionSystem.Evaluators;
 using Kingmaker.Designers.Mechanics.Facts;
 using Kingmaker.EntitySystem;
 using Kingmaker.EntitySystem.Entities;
@@ -30,7 +22,6 @@ using Kingmaker.Items;
 using Kingmaker.PubSubSystem;
 using Kingmaker.RuleSystem;
 using Kingmaker.RuleSystem.Rules;
-using Kingmaker.RuleSystem.Rules.Abilities;
 using Kingmaker.RuleSystem.Rules.Damage;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities;
@@ -38,21 +29,15 @@ using Kingmaker.UnitLogic.Abilities.Blueprints;
 using Kingmaker.UnitLogic.Abilities.Components;
 using Kingmaker.UnitLogic.Buffs.Blueprints;
 using Kingmaker.UnitLogic.Class.Kineticist;
-using Kingmaker.UnitLogic.Class.Kineticist.ActivatableAbility;
-using Kingmaker.UnitLogic.Commands;
-using Kingmaker.UnitLogic.Commands.Base;
-using Kingmaker.UnitLogic.FactLogic;
-using Kingmaker.UnitLogic.Mechanics;
 using Kingmaker.UnitLogic.Mechanics.Actions;
-using Kingmaker.UnitLogic.Mechanics.Components;
 using Kingmaker.UnitLogic.Parts;
-using Owlcat.Runtime.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using static Kingmaker.RuleSystem.Rules.RuleCalculateAttacksCount;
-using static Kingmaker.Visual.Animation.IKController;
+using Kingmaker.Utility;
+using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Abilities;
+using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
+using Kingmaker.Items.Slots;
 
 namespace KineticArchetypes
 {
@@ -79,6 +64,9 @@ namespace KineticArchetypes
         internal const string ConstantEnergyName = "EsotericBlade.ConstantEnergy";
         internal const string ConstantEnergyGuid = "1FAF41F1-5BDA-48A7-B61C-71390635B57C";
         internal const string ConstantEnergyDescription = "EsotericBlade.ConstantEnergy.Description";
+
+        internal const string VitalStrikeKineticBladeBuffName = "EsotericBlade.VitalStrikeKineticBladeBuff";
+        internal const string VitalStrikeKineticBladeBuffGuid = "E2734902-5CC4-4F4C-8866-A7D9EAD92F8E";
 
         internal const string CondensedEnergyName = "EsotericBlade.CondensedEnergy";
         internal const string CondensedEnergyGuid = "7AD69CF2-4B68-4C55-97AF-2A7B7E7E0091";
@@ -160,12 +148,9 @@ namespace KineticArchetypes
                 BurnType = KineticistBurnType.Infusion,
                 m_AppliableTo = new BlueprintAbilityReference[]
                 {
-                    AbilityRefs.KineticBladeAirBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
                     AbilityRefs.KineticBladeColdBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
-                    AbilityRefs.KineticBladeEarthBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
                     AbilityRefs.KineticBladeElectricBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
                     AbilityRefs.KineticBladeFireBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference,
-                    AbilityRefs.KineticBladeWaterBlastBurnAbility.Cast<BlueprintAbilityReference>().Reference
                 }
             };
 
@@ -181,11 +166,8 @@ namespace KineticArchetypes
 
             var allElements = new Blueprint<BlueprintFeatureReference>[]
             {
-                //ProgressionRefs.AirBlastProgression.Reference.Get(),
                 ProgressionRefs.ElectricBlastProgression.Reference.Get(),
-                //ProgressionRefs.EarthBlastProgression.Reference.Get(),
                 ProgressionRefs.FireBlastProgression.Reference.Get(),
-                //ProgressionRefs.WaterBlastProgression.Reference.Get(),
                 ProgressionRefs.ColdBlastProgression.Reference.Get()
             };
 
@@ -254,6 +236,14 @@ namespace KineticArchetypes
         private static BlueprintFeature CreateConstantEnergy()
         {
             FeatureConfigurator.For(FeatureRefs.CleavingFinish).AddComponent(new CleavingFinishForKineticBlade()).Configure();
+
+            BuffConfigurator.New(VitalStrikeKineticBladeBuffName, VitalStrikeKineticBladeBuffGuid)
+                .SetFlags(BlueprintBuff.Flags.HiddenInUi)
+                .Configure();
+            AbilityConfigurator.For(AbilityRefs.VitalStrikeAbility).AddComponent(new VitalStrikeForKineticBlade()).Configure();
+            AbilityConfigurator.For(AbilityRefs.VitalStrikeAbilityImproved).AddComponent(new VitalStrikeForKineticBlade()).Configure();
+            AbilityConfigurator.For(AbilityRefs.VitalStrikeAbilityGreater).AddComponent(new VitalStrikeForKineticBlade()).Configure();
+
             return FeatureConfigurator.New(ConstantEnergyName, ConstantEnergyGuid)
                 .SetDisplayName(ConstantEnergyName)
                 .SetDescription(ConstantEnergyDescription)
@@ -303,10 +293,7 @@ namespace KineticArchetypes
         {
             var modBlastProgressionGuids = new string[]
             {
-                //"6ce72cb2bf0244b0bd0e5e0a552a6a4a", // Telekinetic
                 "21b063289b4f4c7783a24b179a0ea3c0", // Negative
-                //"da0d241e1c63441e8d9ee50f61de8c1f", // Gravity
-                //"736473267be3455bad091a5138423175", // Wood
                 "d0d8d2bb86d44473bd24ceb34f0ef6ea", // Positive
             };
             var modBlasts = new List<Blueprint<BlueprintFeatureReference>>();
@@ -459,6 +446,7 @@ namespace KineticArchetypes
                 ability.GetComponent<AbilityKineticist>() != null && ability.GetComponent<AbilityDeliveredByWeapon>() != null &&
                 evt.Target.HPLeft < 0 && evt.Target.HPLeft + evt.Result > 0)
             {
+                // Check for cleaving finish cooldown
                 bool cooldown = false;
                 foreach (var buff in Owner.Buffs)
                     if (buff.Blueprint == BuffRefs.CleavingFinishCooldown.Reference.Get())
@@ -466,6 +454,7 @@ namespace KineticArchetypes
                 if (cooldown)
                     return;
 
+                // Make new attack
                 var weapon = Owner.Body.PrimaryHand.Weapon;
                 if (weapon is null || weapon.Blueprint.Type.Category != WeaponCategory.KineticBlast)
                     return;
@@ -482,6 +471,7 @@ namespace KineticArchetypes
                 };
                 Context.TriggerRule(ruleAttackWithWeapon);
                 
+                // Add cooldown if not having improved feature
                 if (Owner.GetFeature(FeatureRefs.ImprovedCleavingFinish.Reference) is null)
                     Owner.AddBuff(BuffRefs.CleavingFinishCooldown.Reference.Get(), Owner, duration: 6.Seconds());
             }
@@ -489,11 +479,121 @@ namespace KineticArchetypes
 
         public void OnEventDidTrigger(RuleAttackWithWeapon evt)
         {
+            // Remove cooldown on first attack
             var buffs = Owner.Buffs.Enumerable.ToArray();
             if (evt.IsFullAttack && evt.IsFirstAttack)
                 foreach (var buff in buffs)
                     if (buff.Blueprint.ToString().Equals(BuffRefs.CleavingFinishCooldown.Reference.Get().Name))
                         buff.Remove();
+        }
+    }
+
+    internal class VitalStrikeForKineticBlade : UnitFactComponentDelegate, IInitiatorRulebookHandler<RuleDealDamage>, IRulebookHandler<RuleDealDamage>, ISubscriber, IInitiatorRulebookSubscriber
+    {
+        public void OnEventAboutToTrigger(RuleDealDamage evt)
+        {
+            var ability = evt.Reason?.Ability?.Blueprint;
+            if (ability == null || evt.Initiator != Owner ||
+                Owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(EsotericBlade.ConstantEnergyGuid)) == null ||
+                ability.GetComponent<AbilityKineticist>() == null || ability.GetComponent<AbilityDeliveredByWeapon>() == null)
+                return;
+
+            var vitalStrikeMod = Fact.Blueprint.GetComponent<AbilityCustomVitalStrike>().VitalStrikeMod;
+            var mythicFact = Owner.HasFact(Fact.Blueprint.GetComponent<AbilityCustomVitalStrike>().MythicBlueprint);
+            var rowdy = Owner.HasFact(Fact.Blueprint.GetComponent<AbilityCustomVitalStrike>().RowdyFeature);
+
+            bool hasBuff = false;
+            foreach (var buff in Owner.Buffs)
+                if (buff.Blueprint.ToString().Equals(EsotericBlade.VitalStrikeKineticBladeBuffName))
+                {
+                    hasBuff = true;
+                    if (buff.TimeLeft > 1.Seconds())
+                        buff.SetDuration(1.Seconds());
+                    break;
+                }
+
+            if (!hasBuff)
+                return;
+
+            BaseDamage damage = evt.DamageBundle.WeaponDamage;
+            damage.PostCritIncrements.AddDiceModifier((vitalStrikeMod - 1) * damage.Dice.ModifiedValue.Rolls, Fact);
+            EsotericBlade.Logger.Info($"VS damage dice {damage.Dice}");
+            if (mythicFact)
+                damage.PostCritIncrements.AddBonusModifier(damage.Bonus * (vitalStrikeMod - 1), Fact);
+
+            int sneakAttackDiceCount = evt.Initiator.Descriptor.Stats.SneakAttack.ModifiedValue;
+            if (rowdy && sneakAttackDiceCount > 0)
+            {
+                DamageDescription damageDescription2 = new() { SourceFact = Fact };
+                DamageTypeDescription typeDescription = damage.CreateTypeDescription();
+                damageDescription2.TypeDescription = new DamageTypeDescription
+                {
+                    Common = new DamageTypeDescription.CommomData
+                    {
+                        Alignment = typeDescription.Common.Alignment,
+                        Precision = true,
+                        Reality = typeDescription.Common.Reality
+                    },
+                    Energy = typeDescription.Energy,
+                    Physical = new DamageTypeDescription.PhysicalData
+                    {
+                        Enhancement = typeDescription.Physical.Enhancement,
+                        EnhancementTotal = typeDescription.Physical.EnhancementTotal,
+                        Form = typeDescription.Physical.Form,
+                        Material = typeDescription.Physical.Material
+                    },
+                    Type = typeDescription.Type
+                };
+                damageDescription2.Dice = new DiceFormula(2 * sneakAttackDiceCount, DiceType.D6);
+                var bonusSneakAttackDmg = damageDescription2.CreateDamage();
+                evt.Add(bonusSneakAttackDmg);
+            }
+        }
+
+        public void OnEventDidTrigger(RuleDealDamage evt)
+        {
+        }
+    }
+
+    [HarmonyPatch(typeof(AbilityCustomVitalStrike))]
+    public class Patch_AbilityCustomVitalStrike
+    {
+        [HarmonyPatch(nameof(AbilityCustomVitalStrike.Deliver))]
+        [HarmonyPrefix]
+        public static void Prefix1(AbilityCustomVitalStrike __instance, AbilityExecutionContext context, TargetWrapper target)
+        {
+            EsotericBlade.Logger.Info("Deliver prefix");
+            UnitEntityData maybeCaster = context.MaybeCaster;
+            if (maybeCaster != null && maybeCaster.HasFact(BlueprintTool.Get<BlueprintFeature>(EsotericBlade.ConstantEnergyGuid)))
+            {
+                maybeCaster.AddBuff(BlueprintTool.Get<BlueprintBuff>(EsotericBlade.VitalStrikeKineticBladeBuffGuid), maybeCaster);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(AddKineticistBlade))]
+    public class Patch_AddKineticistBladeVisual
+    {
+        [HarmonyPatch(nameof(AddKineticistBlade.OnActivate))]
+        [HarmonyPostfix]
+        public static void Postfix1(AddKineticistBlade __instance)
+        {
+            var owner = __instance.Owner;
+            if (owner is null)
+                return;
+            foreach (var hand in new HandSlot[] { 
+                owner.Body.CurrentHandsEquipmentSet.PrimaryHand, owner.Body.CurrentHandsEquipmentSet.SecondaryHand })
+            if (hand.Weapon?.Blueprint.Type.Category == WeaponCategory.KineticBlast)
+            {
+                EsotericBlade.Logger.Info($"Overriding visual for hand {hand}");
+                var visual = hand.Weapon.WeaponVisualParameters;
+                var target = ItemWeaponRefs.ColdIronLongsword.Reference.Get().m_VisualParameters;
+                visual.m_WeaponModel = target.m_WeaponModel;
+                visual.m_WeaponAnimationStyle = target.m_WeaponAnimationStyle == 0 ? visual.m_WeaponAnimationStyle : target.m_WeaponAnimationStyle;
+                //visual.m_CachedBeltModel = target.Model.GetComponent<WeaponEquipLinks>().BeltModel;
+                visual.m_CachedEquipLinksUpToDate = false;
+                EventBus.RaiseEvent(delegate (IItemVisualChangeHandler h) { h.HandleItemVisualChanged(hand.Weapon); });
+            }
         }
     }
 }
