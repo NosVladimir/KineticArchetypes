@@ -301,8 +301,8 @@
 
   {
     "Key": "EsotericBlade.CondensedEnergy.Description",
-    "enGB": "At 10th level, an esoteric blade masters in manipulating elemental energy into a weapon. He further condenses and constrains the energy into a certain shape manifesting a chosen type of light or one-handed melee weapon. Such densely packed energy changes the critical threat range and critical multiplier of the energy kinetic blade to match the base stats of the chosen weapon type, while the blade remains a light weapon and any attacks made with it are still touch attacks.\nThis ability replaces the bonus combat feats gained at 12th and 20th levels.\n(Note: this ability takes effect via <Change Kinetic Blade's Shape>.)",
-    "zhCN": "10级时，秘刃精通于以元素能量塑造武器。他进一步凝练能量并将其限制在某种轻型或单手武器的形状中。如此高密度的能量使念刃的重击威胁范围与重击倍数变为与选定的武器种类的基础值相同。能量念刃仍被视为轻型武器，且用其进行的攻击仍为接触攻击。\n此能力替换了12、20级时获得的额外战斗专长。\n（注：通过<改变念刃形状>来使用此能力。）"
+    "enGB": "At 12th level, an esoteric blade masters in manipulating elemental energy into a weapon. He further condenses and constrains the energy into a certain shape manifesting a chosen type of light or one-handed melee weapon. Such densely packed energy changes the critical threat range and critical multiplier of the energy kinetic blade to match the base stats of the chosen weapon type, while the blade remains a light weapon and any attacks made with it are still touch attacks.\nThis ability replaces the bonus combat feats gained at 12th and 20th levels.\n(Note: this ability takes effect via <Change Kinetic Blade's Shape>.)",
+    "zhCN": "12级时，秘刃精通于以元素能量塑造武器。他进一步凝练能量并将其限制在某种轻型或单手武器的形状中。如此高密度的能量使念刃的重击威胁范围与重击倍数变为与选定的武器种类的基础值相同。能量念刃仍被视为轻型武器，且用其进行的攻击仍为接触攻击。\n此能力替换了12、20级时获得的额外战斗专长。\n（注：通过<改变念刃形状>来使用此能力。）"
   },
 
   {
