@@ -1,10 +1,7 @@
-﻿using BlueprintCore.Actions.Builder;
-using BlueprintCore.Actions.Builder.ContextEx;
-using BlueprintCore.Blueprints.CustomConfigurators;
+﻿using BlueprintCore.Blueprints.CustomConfigurators;
 using BlueprintCore.Blueprints.CustomConfigurators.Classes;
 using BlueprintCore.Blueprints.CustomConfigurators.Classes.Selection;
 using BlueprintCore.Blueprints.References;
-using BlueprintCore.Conditions.Builder;
 using BlueprintCore.Conditions.Builder.ContextEx;
 using BlueprintCore.Utils;
 using BlueprintCore.Utils.Types;
@@ -38,6 +35,9 @@ using Kingmaker.Utility;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Abilities;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
 using Kingmaker.Items.Slots;
+using Kingmaker.UnitLogic.Abilities.Components.Base;
+using Newtonsoft.Json;
+using Kingmaker.View;
 
 namespace KineticArchetypes
 {
@@ -72,6 +72,9 @@ namespace KineticArchetypes
         internal const string CondensedEnergyGuid = "7AD69CF2-4B68-4C55-97AF-2A7B7E7E0091";
         internal const string CondensedEnergyDescription = "EsotericBlade.CondensedEnergy.Description";
 
+        internal const string ChangeKineticBladeShapeName = "KineticArchetypes.ChangeKineticBladeShape";
+        internal const string ChangeKineticBladeShapeGuid = "43A3B05D-4801-4D02-9433-D7C7A5A0C5E7";
+        internal const string ChangeKineticBladeShapeDescription = "KineticArchetypes.ChangeKineticBladeShape.Description";
 
         internal static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes.EsotericBlade");
 
@@ -104,7 +107,7 @@ namespace KineticArchetypes
             archetype
                 .AddToRemoveFeatures(1, FeatureSelectionRefs.FighterFeatSelection.ToString())
                 .AddToRemoveFeatures(4, FeatureSelectionRefs.FighterFeatSelection.ToString())
-                .AddToRemoveFeatures(10, FeatureSelectionRefs.FighterFeatSelection.ToString())
+                .AddToRemoveFeatures(12, FeatureSelectionRefs.FighterFeatSelection.ToString())
                 .AddToRemoveFeatures(20, FeatureSelectionRefs.FighterFeatSelection.ToString())
                 .AddToRemoveFeatures(5, FeatureSelectionRefs.WeaponTrainingSelection.ToString())
                 .AddToRemoveFeatures(9, FeatureSelectionRefs.WeaponTrainingRankUpSelection.ToString())
@@ -116,14 +119,13 @@ namespace KineticArchetypes
                 .AddToAddFeatures(4, constantEnergy)
                 .AddToAddFeatures(5, weaponTrainingKB)
                 .AddToAddFeatures(9, weaponTrainingKB)
-                .AddToAddFeatures(10, condensedEnergy)
+                .AddToAddFeatures(12, condensedEnergy)
                 .AddToAddFeatures(13, weaponTrainingKB)
                 .AddToAddFeatures(17, weaponTrainingKB)
                 .Configure();
 
             var FighterClass = CharacterClassRefs.FighterClass.Reference.Get();
             UIGroup uiGroup0 = new();
-            //uiGroup0.Features.Add(kineticBlade);
             uiGroup0.Features.Add(weaponTrainingKB);
             
             var oldUIGroup = FighterClass.Progression.UIGroups;
@@ -135,8 +137,22 @@ namespace KineticArchetypes
             FighterClass.Progression.UIGroups = newUIGroup;
 
 
-            ProgressionConfigurator.For(ProgressionRefs.KineticBlastProgression.ToString())
+            ProgressionConfigurator.For(ProgressionRefs.KineticBlastProgression)
                 .AddToArchetypes(ArchetypeGuid)
+                .Configure();
+
+            var changeKBShape = AbilityConfigurator.New(ChangeKineticBladeShapeName, ChangeKineticBladeShapeGuid)
+                .SetDisplayName(ChangeKineticBladeShapeName)
+                .SetDescription(ChangeKineticBladeShapeDescription)
+                .SetIcon(AbilityRefs.MagicDomainBaseAbility.Reference.Get().Icon)
+                .AddComponent(new RememberWeaponShape())
+                .SetType(AbilityType.Special)
+                .SetRange(AbilityRange.Personal)
+                .SetActionType(Kingmaker.UnitLogic.Commands.Base.UnitCommand.CommandType.Free)
+                .Configure();
+
+            FeatureConfigurator.For(FeatureRefs.KineticBladeInfusion)
+                .AddFacts(new List<Blueprint<BlueprintUnitFactReference>> { changeKBShape.ToReference<BlueprintUnitFactReference>() })
                 .Configure();
         }
 
@@ -144,7 +160,7 @@ namespace KineticArchetypes
         {
             var reduceBladeCost = new AddKineticistBurnModifier
             {
-                Value = -5,
+                Value = -1,
                 BurnType = KineticistBurnType.Infusion,
                 m_AppliableTo = new BlueprintAbilityReference[]
                 {
@@ -213,6 +229,7 @@ namespace KineticArchetypes
                 // Add additional spell peneration for caster level
                 .AddContextRankConfig(ContextRankConfigs.ClassLevel(new string[] { CharacterClassRefs.FighterClass.ToString() }))
                 .AddSpellPenetrationBonus(checkFact: false, value: ContextValues.Rank())
+                .SetIsClassFeature()
                 .Configure();
 
             return feature;
@@ -248,6 +265,7 @@ namespace KineticArchetypes
                 .SetDisplayName(ConstantEnergyName)
                 .SetDescription(ConstantEnergyDescription)
                 .SetIcon(FeatureRefs.EldritchFontEldritchSurge.Reference.Get().Icon)
+                .SetIsClassFeature()
                 .Configure(); ;
         }
 
@@ -257,6 +275,8 @@ namespace KineticArchetypes
                 .SetDisplayName(CondensedEnergyName)
                 .SetDescription(CondensedEnergyDescription)
                 .SetIcon(FeatureRefs.EldritchFontGreaterSurge.Reference.Get().Icon)
+                .AddComponent(new EnergyBladeCritsBonusComponent())
+                .SetIsClassFeature()
                 .Configure();
         }
 
@@ -264,10 +284,7 @@ namespace KineticArchetypes
         {
             var modBladeBurnGuids = new string[]
             {
-                "5d81270056d24a2e88df79dfb983cbcd", // Telekinetic
                 "4471efdc8c1440faba7110675ddb31af", // Negative
-                "1ec348ed9dcb437eb601f20b98f25181", // Gravity
-                "e7c2a4e7dcae40b09dda30a879123483", // Wood
                 "22d5001563c74bdfa6e0c5602fd11eef", // Positive
             };
             var modBlades = new List<BlueprintAbilityReference>();
@@ -462,7 +479,7 @@ namespace KineticArchetypes
                 if (newTarget is null)
                     return;
 
-                RuleAttackWithWeapon ruleAttackWithWeapon = new RuleAttackWithWeapon(Owner, newTarget, weapon, 0)
+                RuleAttackWithWeapon ruleAttackWithWeapon = new(Owner, newTarget, weapon, 0)
                 {
                     Reason = Context,
                     ExtraAttack = true,
@@ -517,9 +534,12 @@ namespace KineticArchetypes
 
             BaseDamage damage = evt.DamageBundle.WeaponDamage;
             damage.PostCritIncrements.AddDiceModifier((vitalStrikeMod - 1) * damage.Dice.ModifiedValue.Rolls, Fact);
-            EsotericBlade.Logger.Info($"VS damage dice {damage.Dice}");
+            int bonus = damage.Bonus;
+            var weaponTraining = Owner.GetFeature(BlueprintTool.Get<BlueprintFeature>(EsotericBlade.WeaponTrainingKBGuid));
+            if (weaponTraining != null)
+                bonus += weaponTraining.GetRank();
             if (mythicFact)
-                damage.PostCritIncrements.AddBonusModifier(damage.Bonus * (vitalStrikeMod - 1), Fact);
+                damage.PostCritIncrements.AddBonusModifier(bonus * (vitalStrikeMod - 1), Fact);
 
             int sneakAttackDiceCount = evt.Initiator.Descriptor.Stats.SneakAttack.ModifiedValue;
             if (rowdy && sneakAttackDiceCount > 0)
@@ -562,7 +582,6 @@ namespace KineticArchetypes
         [HarmonyPrefix]
         public static void Prefix1(AbilityCustomVitalStrike __instance, AbilityExecutionContext context, TargetWrapper target)
         {
-            EsotericBlade.Logger.Info("Deliver prefix");
             UnitEntityData maybeCaster = context.MaybeCaster;
             if (maybeCaster != null && maybeCaster.HasFact(BlueprintTool.Get<BlueprintFeature>(EsotericBlade.ConstantEnergyGuid)))
             {
@@ -576,24 +595,74 @@ namespace KineticArchetypes
     {
         [HarmonyPatch(nameof(AddKineticistBlade.OnActivate))]
         [HarmonyPostfix]
+        [HarmonyPriority(Priority.Low)]
         public static void Postfix1(AddKineticistBlade __instance)
         {
             var owner = __instance.Owner;
             if (owner is null)
                 return;
-            foreach (var hand in new HandSlot[] { 
+
+            var rememberedWeapon = owner.Parts.Ensure<RememberWeaponPart>().RememberedWeapon;
+            foreach (var hand in new HandSlot[] {
                 owner.Body.CurrentHandsEquipmentSet.PrimaryHand, owner.Body.CurrentHandsEquipmentSet.SecondaryHand })
-            if (hand.Weapon?.Blueprint.Type.Category == WeaponCategory.KineticBlast)
+                if (hand.Weapon?.Blueprint.Type.Category == WeaponCategory.KineticBlast && rememberedWeapon != null)
+                {
+                    Main.Logger.Info($"Overriding visual for kinetic blade of {hand.IsPrimaryHand} into {rememberedWeapon}");
+
+                    hand.Weapon.VisualSourceItemBlueprint = rememberedWeapon;
+                    try 
+                    {
+                        if (hand.Weapon.WeaponVisualParameters.Model.GetComponent<UnitEntityView>() is null)
+                            hand.Weapon.WeaponVisualParameters.Model.AddComponent<UnitEntityView>(); 
+                    }
+                    catch { }
+                    owner.View.HandsEquipment.UpdateActiveWeaponSetImmediately();
+                    EventBus.RaiseEvent(delegate (IItemVisualChangeHandler h) { h.HandleItemVisualChanged(hand.Weapon); });
+                }
+        }
+    }
+
+    internal class RememberWeaponPart : UnitPart
+    {
+        [JsonProperty]
+        public BlueprintItemWeapon RememberedWeapon { get; set; }
+    }
+
+    internal class RememberWeaponShape : AbilityCustomLogic
+    {
+        public override void Cleanup(AbilityExecutionContext context)
+        {
+        }
+
+        public override IEnumerator<AbilityDeliveryTarget> Deliver(AbilityExecutionContext context, TargetWrapper target)
+        {
+            var weapon = context.MaybeCaster?.Body.PrimaryHand.Weapon?.Blueprint;
+            if (weapon is not null && weapon.Type.Category != WeaponCategory.KineticBlast && !weapon.IsTwoHanded && !weapon.IsRanged && !weapon.IsNatural)
+                context.MaybeCaster.Parts.Ensure<RememberWeaponPart>().RememberedWeapon = weapon;
+            else
+                context.MaybeCaster.Parts.Ensure<RememberWeaponPart>().RememberedWeapon = null;
+            yield break;
+        }
+    }
+
+    internal class EnergyBladeCritsBonusComponent : UnitFactComponentDelegate, IInitiatorRulebookHandler<RuleCalculateWeaponStats>, IRulebookHandler<RuleCalculateWeaponStats>, ISubscriber, IInitiatorRulebookSubscriber
+    {
+        public void OnEventAboutToTrigger(RuleCalculateWeaponStats evt)
+        {
+            var rememberedWeapon = Owner.Parts.Ensure<RememberWeaponPart>().RememberedWeapon;
+            if (evt.Weapon != null && evt.Weapon.Blueprint.Type.Category == WeaponCategory.KineticBlast && evt.Weapon.Blueprint.AttackType == AttackType.Touch && rememberedWeapon != null)
             {
-                EsotericBlade.Logger.Info($"Overriding visual for hand {hand}");
-                var visual = hand.Weapon.WeaponVisualParameters;
-                var target = ItemWeaponRefs.ColdIronLongsword.Reference.Get().m_VisualParameters;
-                visual.m_WeaponModel = target.m_WeaponModel;
-                visual.m_WeaponAnimationStyle = target.m_WeaponAnimationStyle == 0 ? visual.m_WeaponAnimationStyle : target.m_WeaponAnimationStyle;
-                //visual.m_CachedBeltModel = target.Model.GetComponent<WeaponEquipLinks>().BeltModel;
-                visual.m_CachedEquipLinksUpToDate = false;
-                EventBus.RaiseEvent(delegate (IItemVisualChangeHandler h) { h.HandleItemVisualChanged(hand.Weapon); });
+                int bonusCritEdge = 20 - rememberedWeapon.Type.CriticalRollEdge;
+                int bonusCritMultiplier = (int)rememberedWeapon.Type.CriticalModifier - 2;
+                if (bonusCritEdge > 0)
+                    evt.CriticalEdgeBonus += bonusCritEdge;
+                if (bonusCritMultiplier > 0)
+                    evt.AdditionalCriticalMultiplier.Add(new Modifier(bonusCritMultiplier, Fact, ModifierDescriptor.UntypedStackable));
             }
+        }
+
+        public void OnEventDidTrigger(RuleCalculateWeaponStats evt)
+        {
         }
     }
 }

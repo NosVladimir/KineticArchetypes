@@ -288,8 +288,8 @@
 
   {
     "Key": "EsotericBlade.ConstantEnergy.Description",
-    "enGB": "At 4th level, an esoteric blade can maintain a steady stream of energy to keep the energy kinetic blade for as long as he wishes, alleviating the limitations on the actions he can take while wielding the energy kinetic blade. This allows him to perform attacks of opportunity with the energy kinetic blade, and use combat feats with the energy kinetic blade that are normally inapplicable to it.\nThese combat feats include: Cleaving Finish, Improved Cleaving Finish, Vital Strike, Improved Vital Strike, Greater Vital Strike. An esoteric blade still needs to actually possess these combat feats to benefit from this ability.\nThis ability replaces the bonus combat feat gained at 4th level.",
-    "zhCN": "4级时，秘刃可以维持一股稳定的能量流，使能量念刃保持任意长的时间，从而克服了操控能量念刃对其行动的限制。这使他能够用能量念刃发动借机攻击和一般无法对能量念刃生效的战斗专长。\n这些战斗专长包括：终势斩，精通终势斩，要害打击，精通要害打击，高等要害打击。秘刃仍然需要实际拥有这些专长，才能从此能力中获益。\n此能力替换了4级时获得的额外战斗专长。"
+    "enGB": "At 4th level, an esoteric blade can maintain a steady stream of energy to keep the energy kinetic blade for as long as he wishes, alleviating the limitations on the actions he can take while wielding the energy kinetic blade. This allows him to perform attacks of opportunity with kinetic blades, and use combat feats with the energy kinetic blade that are normally inapplicable to it.\nThese combat feats include: Cleaving Finish, Improved Cleaving Finish, Vital Strike, Improved Vital Strike, Greater Vital Strike, Vital Strike (Mythic). An esoteric blade still needs to actually possess these feats to benefit from this ability.\nThis ability replaces the bonus combat feat gained at 4th level.",
+    "zhCN": "4级时，秘刃可以维持一股稳定的能量流，使能量念刃保持任意长的时间，从而克服了操控能量念刃对其行动的限制。这使他能够用念刃发动借机攻击和一般无法对能量念刃生效的战斗专长。\n这些战斗专长包括：终势斩，精通终势斩，要害打击，精通要害打击，高等要害打击，要害打击（神话）。秘刃仍然需要实际拥有这些专长，才能从此能力中获益。\n此能力替换了4级时获得的额外战斗专长。"
   },
 
   {
@@ -301,8 +301,8 @@
 
   {
     "Key": "EsotericBlade.CondensedEnergy.Description",
-    "enGB": "At 10th level, an esoteric blade masters in manipulating elemental energy into a weapon. He further condenses and constrains the energy into a certain shape manifesting a chosen type of light or one-handed melee weapon. Such densely packed energy changes the critical threat range and critical multiplier of the energy kinetic blade to match those of the chosen weapon type, while the blade remains a light weapon and any attacks made with it are still touch attacks.\nThis ability replaces the bonus combat feats gained at 10th and 20th levels.",
-    "zhCN": "10级时，秘刃精通于以元素能量塑造武器。他进一步凝练能量并将其限制在某种轻型或单手武器的形状中。如此高密度的能量使念刃的重击威胁范围与重击倍数变为与选定的武器种类相同。能量念刃仍被视为轻型武器，且用其进行的攻击仍为接触攻击。\n此能力替换了10、20级时获得的额外战斗专长。"
+    "enGB": "At 10th level, an esoteric blade masters in manipulating elemental energy into a weapon. He further condenses and constrains the energy into a certain shape manifesting a chosen type of light or one-handed melee weapon. Such densely packed energy changes the critical threat range and critical multiplier of the energy kinetic blade to match the base stats of the chosen weapon type, while the blade remains a light weapon and any attacks made with it are still touch attacks.\nThis ability replaces the bonus combat feats gained at 12th and 20th levels.\n(Note: this ability takes effect via <Change Kinetic Blade's Shape>.)",
+    "zhCN": "10级时，秘刃精通于以元素能量塑造武器。他进一步凝练能量并将其限制在某种轻型或单手武器的形状中。如此高密度的能量使念刃的重击威胁范围与重击倍数变为与选定的武器种类的基础值相同。能量念刃仍被视为轻型武器，且用其进行的攻击仍为接触攻击。\n此能力替换了12、20级时获得的额外战斗专长。\n（注：通过<改变念刃形状>来使用此能力。）"
   },
 
   {
@@ -316,6 +316,19 @@
     "Key": "EsotericBlade.WeaponTrainingKineticBlade.Description",
     "enGB": "As the fighter class feature, but the bonuses only apply when wielding kinetic blades.\nThis ability replaces Weapon Training 1, 2, 3 and 4.",
     "zhCN": "如同战士职业特性，但是加值只对念刃生效。\n此能力替换了武器训练1，2，3，4。"
+  },
+
+  {
+    "Key": "KineticArchetypes.ChangeKineticBladeShape",
+    "ProcessTemplates": false,
+    "enGB": "Change Kinetic Blade's Shape",
+    "zhCN": "改变念刃形状"
+  },
+
+  {
+    "Key": "KineticArchetypes.ChangeKineticBladeShape.Description",
+    "enGB": "You can remember the shape of a light or one-handed weapon that you currently hold in your main hand. When you form a kinetic blade, it will be shaped as you have remembered. This is purely cosmetic unless you possess abilities that change the properties of a kinetic blade with its shape.",
+    "zhCN": "你可以记住当前以主手持用的轻型或单手武器的形状，念刃将根据你的记忆被塑形。这仅是单纯的装饰，除非你拥有能根据形状改变念刃属性的能力。"
   }
 
 

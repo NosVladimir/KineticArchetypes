@@ -611,7 +611,11 @@ namespace KineticArchetypes
                 var bladeOffHand = (ResourcesLibrary.TryGetBlueprint(__instance.m_Blade.Guid) as BlueprintItemWeapon).CreateEntity<ItemEntityWeapon>();
                 bladeOffHand.MakeNotLootable();
                 // Workaround to prevent spamming exception of missing BloodyFaceController
-                try { bladeOffHand.WeaponVisualParameters.Model.AddComponent<UnitEntityView>(); }
+                try 
+                { 
+                    if (bladeOffHand.WeaponVisualParameters.Model.GetComponent<UnitEntityView>() is null)
+                        bladeOffHand.WeaponVisualParameters.Model.AddComponent<UnitEntityView>(); 
+                }
                 catch { }
 
                 if (owner.Body.SecondaryHand.HasItem || !owner.Body.SecondaryHand.CanInsertItem(bladeOffHand))
@@ -628,15 +632,11 @@ namespace KineticArchetypes
                 }
 
                 // Add extra offhand attacks if having improved/greater dual blade features and no TWF features
-                var TWFRank = owner.GetFeature(FeatureRefs.TwoWeaponFightingBasicMechanics.Reference.Get()).GetRank();
-                if (owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(KineticDuelist.ImprovedKineticDualBladesGuid)) != null &&  TWFRank < 3)
-                {
+                var TWFRank = owner.GetFeature(FeatureRefs.TwoWeaponFightingBasicMechanics.Reference.Get())?.GetRank();
+                if (owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(KineticDuelist.ImprovedKineticDualBladesGuid)) != null && TWFRank != null && TWFRank < 3)
                     owner.AddBuff(BlueprintTool.GetRef<BlueprintBuffReference>(KineticDuelist.DualBlades2ndAttackBuffGuid), owner);
-                }
-                if (owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(KineticDuelist.GreaterKineticDualBladesGuid)) != null && TWFRank < 4)
-                {
+                if (owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(KineticDuelist.GreaterKineticDualBladesGuid)) != null && TWFRank != null && TWFRank < 4)
                     owner.AddBuff(BlueprintTool.GetRef<BlueprintBuffReference>(KineticDuelist.DualBlades3rdAttackBuffGuid), owner);
-                }
             }
         }
 
@@ -650,7 +650,7 @@ namespace KineticArchetypes
             foreach (var handsSet in handsSets)
             {
                 var offhand = handsSet.SecondaryHand;
-                if (offhand.HasWeapon && offhand.HasItem)
+                if (offhand != null && offhand.HasWeapon && offhand.HasItem)
                 {
                     // This variable is ESSENTIAL!!!
                     var weapon = offhand.Item as ItemEntityWeapon;
