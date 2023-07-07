@@ -14,6 +14,9 @@ Should be compatible with DarkCodex and KineticistElementsExpanded.
 Fixed the problem where taking burn from a kinetic blade would deactivate the blade after the first attack due to insufficient remaining burn.
 - Implemented by checking the blade availability using your burn at the start of round and not considering any burn taken during the round, and thus has a side effect that if you spend some burn before doing your first attack, the attacks may not happen when there is indeed no burn left. E.g. you are at 4/5 burn at start of round and your blade would cost 1 burn - you use Shroud of Water to increase AC and accept 1 burn - you're now at 5/5 burn - blade still shows available but you cannot accept the burn to attack. In turn based this should be a minor issue, but in real time it could lock you out of doing anything. If this ever happens, manually deactivate the blade.
 
+### General
+Added an ability to allow for remembering a currently held weapon, so that when kinetic blades are formed, the remembered weapon's shape is used instead of a never-changing scimitar. This works the same way as the base game transmog system with the golem, but any visual effect coming from the remembered weapon's enchants sometimes appears sometimes not. I have no idea how to fix that.
+
 ### [Kinetic Duelist](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/kinetic-duelist/)
 
 A kineticist archetype that allows legit two-weapon fighting with kinetic blades. Heavily homebrewed since gaining dual blades at 17th level is not very appealing.
@@ -28,18 +31,23 @@ A kineticist archetype that allows legit two-weapon fighting with kinetic blades
 
 Fire-focused kineticist with a horse.
 - Must choose fire as primary and secondary element. Can still choose a different third element (in base game there is no benefit of choosing the same element except for the composite blast, so the third element is not restricted)
-- Mounted combat bonus feat to replace 1st level infusion
-- A horse animal companion at level -3
+- Trades 1st level infusion for Mounted Combat bonus feat 
+- Trades 4th, 8th, 12th wild talents for a horse animal companion at level -3
+
+### Esoteric Blade
+A fighter archetype that has access to an energy kinetic blade, can make AoOs with it and use it for Cleaving Finishes and Vital Strikes.
+- Trades 1st level combat feat for a full-progression simple energy kinetic blade, and Str modifier for KB damage
+- Can multiclass with proper kineticist, adds up kinetic blast damage progression but reverts KB damage modifier to conform kineticist main stat (Con/Int/Wis/Cha)
+- Trades 4th level combat feat for KB AoO and KB combat feats including all Cleaving Finishes and all Vital Strikes
+- Trades weapon training 1/2/3/4 for weapon training (kinetic blade). Retains additional weapon type choices and advanced weapon training options. Works with anything dependent on weapon training, e.g. golves of dueling, all advanced weapon training features and Sohei's flurry
+- Trades 10th and 20th level combat feats for changing KB critical range and multiplier to be the same as remembered weapon's base type stats (see above for remembering a weapon). This doesn't account for weapon crit enchants
 
 # Known issues
 **If you encounter any bug, feel free to fire an issue!**
 
-No known issues at the moment.
+Taking levels first in an esoteric blade then a proper kineticist would give you associated composite blasts right away. Not a big deal so not going to fix.
 
 # Planned contents
-### Homebrew fighter archetype using kinetic blades
-(Rough idea) A fighter archetype that trades some bonus feats for elemental focus and kinetic blades, trades weapon training for special weapon training for kinetic blades, and trades advanced weapon training for maybe kinetic dual blades. Maybe also trades armor training with something but I feel like that would be too much and won't make a huge distinction from a kinetic duelist.
-
 ### [Kinetic Lancer](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/kinetic-lancer/)
 Using kinetic lance instead of blade, leaping around the battlefield to full-attack foes.
 

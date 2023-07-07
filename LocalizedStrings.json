@@ -244,6 +244,91 @@
     "Key": "CinderAdept.Mount.Description",
     "enGB": "At 4th level, a Cinder adept gains a loyal mount. This ability functions like the druid's animal companion ability, except that the Cinder adept always gains a horse and her effective druid level is equal to her level –3.\nThis replaces the utility wild talents gained at 4th, 8th, and 12th levels.",
     "zhCN": "4级时，薪火驭者获得一匹忠诚的坐骑。此能力类似德鲁伊的动物伙伴，区别在于薪火驭者必须选择马，并且以其等级-3作为有效德鲁伊等级。\n此能力替换了4、8、12级时获得的辅助原力。"
+  },
+
+  {
+    "Key": "EsotericBlade.Name",
+    "ProcessTemplates": false,
+    "enGB": "Esoteric Blade",
+    "zhCN": "秘刃"
+  },
+
+  {
+    "Key": "EsotericBlade.Description",
+    "enGB": "Rare do fighters find themselfs connected to the elemental plane. For those who possess a connection not too weak to allow for channelling powers, they always choose to wield manipulated elemental energy as a preferred option over any manufactured weapon.",
+    "zhCN": "很少有战士能与元素位面产生联系。对于能通过足够强的位面联系汲取力量的人来说，他们总是更喜欢挥舞操纵后的元素能量，而不是人造武器。"
+  },
+
+  {
+    "Key": "EsotericBlade.KineticBlade",
+    "ProcessTemplates": false,
+    "enGB": "Energy Kinetic Blade",
+    "zhCN": "能量念刃"
+  },
+
+  {
+    "Key": "EsotericBlade.KineticBlade.Description",
+    "enGB": "At 1st level, an esoteric blade can choose a kineticist element that has an energy blast. He gains the energy kinetic blade associated with his chosen element instead of the energy simple blast, and it costs 0 points of burn. An esoteric blade adds his fighter level to his kineticist level for the purpose of determining the damage of the energy kinetic blade, as well as for caster level checks made to overcome a creature's spell resistance. If an esoteric blade does not have kineticist levels, he can never accept burn, but can use his strength modifier in place of constitution modifier for the damage of the energy kinetic blade.\nThis ability replaces the bonus combat feat gained at 1st level.",
+    "zhCN": "1级时，秘刃可以选择一种有能量念袭的操念使元素。他获得与所选元素关联的能量念刃，而不是简易能量念袭，并且该念刃消耗0点超载值。在计算能量念刃伤害以及用于突破法术抗力进行施法者检定时，秘刃将其战士等级加在操念使等级上。若秘刃没有操念使等级，他将永远无法承受超载，但可以用力量调整值代替体质调整值计算能量念刃的伤害。\n此能力替换了1级时获得的额外战斗专长。"
+  },
+
+  {
+    "Key": "EsotericBlade.ElementSelection",
+    "ProcessTemplates": false,
+    "enGB": "Select An Element",
+    "zhCN": "选择元素"
+  },
+
+  {
+    "Key": "EsotericBlade.ConstantEnergy",
+    "ProcessTemplates": false,
+    "enGB": "Constant Energy",
+    "zhCN": "恒常能量"
+  },
+
+  {
+    "Key": "EsotericBlade.ConstantEnergy.Description",
+    "enGB": "At 4th level, an esoteric blade can maintain a steady stream of energy to keep the energy kinetic blade for as long as he wishes, alleviating the limitations on the actions he can take while wielding the energy kinetic blade. This allows him to perform attacks of opportunity with kinetic blades, and use combat feats with the energy kinetic blade that are normally inapplicable to it.\nThese combat feats include: Cleaving Finish, Improved Cleaving Finish, Vital Strike, Improved Vital Strike, Greater Vital Strike, Vital Strike (Mythic). An esoteric blade still needs to actually possess these feats to benefit from this ability.\nThis ability replaces the bonus combat feat gained at 4th level.",
+    "zhCN": "4级时，秘刃可以维持一股稳定的能量流，使能量念刃保持任意长的时间，从而克服了操控能量念刃对其行动的限制。这使他能够用念刃发动借机攻击和一般无法对能量念刃生效的战斗专长。\n这些战斗专长包括：终势斩，精通终势斩，要害打击，精通要害打击，高等要害打击，要害打击（神话）。秘刃仍然需要实际拥有这些专长，才能从此能力中获益。\n此能力替换了4级时获得的额外战斗专长。"
+  },
+
+  {
+    "Key": "EsotericBlade.CondensedEnergy",
+    "ProcessTemplates": false,
+    "enGB": "Condensed Energy",
+    "zhCN": "凝练能量"
+  },
+
+  {
+    "Key": "EsotericBlade.CondensedEnergy.Description",
+    "enGB": "At 10th level, an esoteric blade masters in manipulating elemental energy into a weapon. He further condenses and constrains the energy into a certain shape manifesting a chosen type of light or one-handed melee weapon. Such densely packed energy changes the critical threat range and critical multiplier of the energy kinetic blade to match the base stats of the chosen weapon type, while the blade remains a light weapon and any attacks made with it are still touch attacks.\nThis ability replaces the bonus combat feats gained at 12th and 20th levels.\n(Note: this ability takes effect via <Change Kinetic Blade's Shape>.)",
+    "zhCN": "10级时，秘刃精通于以元素能量塑造武器。他进一步凝练能量并将其限制在某种轻型或单手武器的形状中。如此高密度的能量使念刃的重击威胁范围与重击倍数变为与选定的武器种类的基础值相同。能量念刃仍被视为轻型武器，且用其进行的攻击仍为接触攻击。\n此能力替换了12、20级时获得的额外战斗专长。\n（注：通过<改变念刃形状>来使用此能力。）"
+  },
+
+  {
+    "Key": "EsotericBlade.WeaponTrainingKineticBlade",
+    "ProcessTemplates": false,
+    "enGB": "Weaepon Training (Kinetic Blade)",
+    "zhCN": "武器训练（念刃）"
+  },
+
+  {
+    "Key": "EsotericBlade.WeaponTrainingKineticBlade.Description",
+    "enGB": "As the fighter class feature, but the bonuses only apply when wielding kinetic blades.\nThis ability replaces Weapon Training 1, 2, 3 and 4.",
+    "zhCN": "如同战士职业特性，但是加值只对念刃生效。\n此能力替换了武器训练1，2，3，4。"
+  },
+
+  {
+    "Key": "KineticArchetypes.ChangeKineticBladeShape",
+    "ProcessTemplates": false,
+    "enGB": "Change Kinetic Blade's Shape",
+    "zhCN": "改变念刃形状"
+  },
+
+  {
+    "Key": "KineticArchetypes.ChangeKineticBladeShape.Description",
+    "enGB": "You can remember the shape of a light or one-handed weapon that you currently hold in your main hand. When you form a kinetic blade, it will be shaped as you have remembered. This is purely cosmetic unless you possess abilities that change the properties of a kinetic blade with its shape.",
+    "zhCN": "你可以记住当前以主手持用的轻型或单手武器的形状，念刃将根据你的记忆被塑形。这仅是单纯的装饰，除非你拥有能根据形状改变念刃属性的能力。"
   }
 
 

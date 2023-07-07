@@ -10,7 +10,7 @@ namespace KineticArchetypes
     public static class Main
     {
         public static bool Enabled;
-        private static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes");
+        internal static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes");
 
         public static bool Load(UnityModManager.ModEntry modEntry)
         {
@@ -56,6 +56,7 @@ namespace KineticArchetypes
 
                     KineticDuelist.Configure();
                     CinderAdept.Configure();
+                    EsotericBlade.Configure();
                 }
                 catch (Exception e)
                 {
@@ -97,6 +98,7 @@ namespace KineticArchetypes
                 {
                     KineticDuelist.HandleOtherMods();
                     CinderAdept.HandleOtherMods();
+                    EsotericBlade.HandleOtherMods();
                 }
                 catch (Exception e)
                 {
