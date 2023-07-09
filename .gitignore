@@ -1,3 +1,6 @@
 .git/
 .vs/
 .editorconfig
+bin/
+lib/
+obj/
