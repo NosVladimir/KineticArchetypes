@@ -617,7 +617,6 @@ namespace KineticArchetypes
                     }
                     catch { }
                     owner.View.HandsEquipment.UpdateActiveWeaponSetImmediately();
-                    EventBus.RaiseEvent(delegate (IItemVisualChangeHandler h) { h.HandleItemVisualChanged(hand.Weapon); });
                 }
         }
     }
