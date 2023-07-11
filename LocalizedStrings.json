@@ -345,6 +345,19 @@
   },
 
   {
+    "Key": "KineticLancer.Leap",
+    "ProcessTemplates": false,
+    "enGB": "Leap",
+    "zhCN": "跳跃"
+  },
+
+  {
+    "Key": "KineticLancer.Leap.Description",
+    "enGB": "A kinetic lancer can make an Acrobatics skill check to make a jump as a standard action. The base DC to make a jump is equal to the horizontal distance to be crossed plus four times the height to be reached (in feet). A failed Acrobatics check results in a proportionally shorter or lower jump; if the check fails by 5 or more, a kinetic lancer lands prone.",
+    "zhCN": "以一个标准动作，念枪可以通过运动技能检定进行跳跃。跳跃的基础DC等同于跳远的水平距离加上4倍的跳跃高度（英尺）。失败的运动检定意味着按比例缩短或变矮的跳跃；如果检定失败5点或更多，念枪着陆时会倒地俯卧。"
+  },
+
+  {
     "Key": "KineticLancer.KineticLeap",
     "ProcessTemplates": false,
     "enGB": "Kinetic Leap",
@@ -354,7 +367,7 @@
   {
     "Key": "KineticLancer.KineticLeap.Description",
     "enGB": "At 1st level, a kinetic lancer can make an Acrobatics skill check to make a jump as a standard action. The base DC to make a jump is equal to the horizontal distance to be crossed plus four times the height to be reached (in feet). A failed Acrobatics check results in a proportionally shorter or lower jump; if the check fails by 5 or more, a kinetic lancer lands prone.\nAs a swift action, a kinetic lancer can conjure a burst of energy from their kinetic blast to help them jump a long distance, adding a +10 bonus on their Acrobatics check to jump; if they have at least 10 ranks in Acrobatics, the bonus increases to +20. All movement during a round in which a kinetic lancer has used Kinetic Leap does not provoke attacks of opportunity.",
-    "zhCN": "1级起，以一个标准动作，念枪可以通过运动技能检定进行跳跃。跳跃的基础DC等同于跳远的水平距离加上4倍的跳跃高度（英尺）。失败的运动检定意味着按比例缩短或变矮的跳跃；如果检定失败5点或更多，念枪会俯卧倒地。\n以一个迅捷动作，念枪可以通过念袭创造出爆发能量以助其跃过一段长距离，从而在跳跃的运动检定上获得+10加值；此加值在运动技能等级达到10时提升至+20。念枪使用念力之跃后的一轮内，所有移动均不触发借机攻击。"
+    "zhCN": "1级起，以一个标准动作，念枪可以通过运动技能检定进行跳跃。跳跃的基础DC等同于跳远的水平距离加上4倍的跳跃高度（英尺）。失败的运动检定意味着按比例缩短或变矮的跳跃；如果检定失败5点或更多，念枪着陆时会倒地俯卧。\n以一个迅捷动作，念枪可以通过念袭创造出爆发能量以助其跃过一段长距离，从而在跳跃的运动检定上获得+10加值；此加值在运动技能等级达到10时提升至+20。念枪使用念力之跃后的一轮内，所有移动均不触发借机攻击。"
   },
 
   {
@@ -366,8 +379,8 @@
 
   {
     "Key": "KineticLancer.DragoonDive.Description",
-    "enGB": "A kinetic lancer gains kinetic blade as a bonus infusion, and its burn cost is reduced by 1. As a full-round action, a kinetic lancer can use their kinetic leap to leap into the air, making a attack with their kinetic blade at the end of their movement. This is treated as a charge for the purposes of bonuses and penalties. At 11th level, when using dragoon dive, a kinetic lancer reduces the burn cost of the blast associated to the kinetic blade by 2.\nThis ability replaces gather power and the 1st-level infusion.",
-    "zhCN": "念枪获得念刃奖励注能，且其超载值降低1点。以一个整轮动作，念枪可以用念力之跃跳到空中，在移动结束时用念刃进行一次攻击。计算加值与惩罚时，此能力被视为冲锋。11级起，念枪在使用龙骑飞袭时可以将念刃所关联念袭的超载值降低2点。\n此能力替换了念力凝聚和1级时获得的注能。"
+    "enGB": "A kinetic lancer gains kinetic blade as a bonus infusion, and its burn cost is reduced by 1. As a full-round action, a kinetic lancer can use their kinetic leap to leap into the air, making an attack with their kinetic blade at the end of their movement. This is treated as a charge for the purposes of bonuses and penalties.\nThis ability replaces gather power and the 1st-level infusion.",
+    "zhCN": "念枪获得念刃奖励注能，且其超载值降低1点。以一个整轮动作，念枪可以用念力之跃跳到空中，在移动结束时用念刃进行一次攻击。计算加值与惩罚时，此能力被视为冲锋。\n此能力替换了念力凝聚和1级时获得的注能。"
   },
 
   {
@@ -378,7 +391,7 @@
   },
 
   {
-    "Key": "KineticLancer.DragoonDive.Description",
+    "Key": "KineticLancer.DragoonLeap.Description",
     "enGB": "At 2nd level, a kinetic lancer adds their kineticist level as a bonus on Acrobatics checks to jump, and the DC to make a jump is halved.\nThis replaces the 2nd-level utility wild talent.",
     "zhCN": "2级起，念枪在跳跃的运动检定上获得等同于操念使等级的加值，且跳跃的DC减半。\n此能力替换了2级时获得的原力。"
   },
@@ -392,8 +405,8 @@
 
   {
     "Key": "KineticLancer.KineticLance.Description",
-    "enGB": "At 7th level, a kinetic lancer gains the kinetic lance infusion as a bonus infusion.\nThis replaces the 7th-level infusion.",
-    "zhCN": "7级时，念枪获得念力长枪奖励注能。\n此能力替换了7级时获得的注能。"
+    "enGB": "At 5th level, a kinetic lancer gains the kinetic lance infusion as a bonus infusion.\nThis replaces the 5th-level infusion.",
+    "zhCN": "5级时，念枪获得念力长枪奖励注能。\n此能力替换了5级时获得的注能。"
   },
 
   {
@@ -419,7 +432,7 @@
   {
     "Key": "KineticLancer.ImpalingCrash.Description",
     "enGB": "At 9th level, by accepting 1 point of burn when using dragoon dive, a kinetic lancer can impale their foe with their kinetic blast upon making a successful attack, leaving a spike of elemental energy or matter inside of the creature for a number of rounds equal to their Constitution modifier.\nEach round the creature is impaled by this weapon, they take damage equal to the minimum damage of the kinetic blast (effects of substance infusions and damage bonuses from elemental overflow do not apply to this damage). The creature can spend a standard action to make a Strength check (DC equal to 10 + twice the kinetic lancer's Constitution modifier) to remove it.\nThis replaces metakinesis (maximize).",
-    "zhCN": "9级起，通过在使用龙骑飞袭时承受1点超载值，念枪在攻击成功时可以用念袭刺穿他的敌人，在其体内留下由元素能量或元素物质形成的尖刺，持续相当于念枪体质调整值的轮数。\n被刺穿的敌人每轮都会受到念袭的最低伤害（性质注能的效果和元素满溢加值不对此伤害生效）。敌人需要以标准动作进行力量检定（DC等于10+两倍的念枪体质调整值）以移除元素尖刺。\n此能力替换了超念（极效）。"
+    "zhCN": "9级起，通过在使用龙骑飞袭时承受1点超载值，念枪的攻击会使念袭刺穿他的敌人，在其体内留下由元素能量或元素物质形成的尖刺，持续相当于念枪体质调整值的轮数。\n被刺穿的敌人每轮都会受到念袭的最低伤害（性质注能的效果和元素满溢加值不对此伤害生效），并可以花费标准动作进行力量检定（DC等于10+两倍的念枪体质调整值）以移除元素尖刺。\n此能力替换了超念（极效）。"
   },
 
   {
@@ -431,8 +444,8 @@
 
   {
     "Key": "KineticLancer.ImpossibleLeap.Description",
-    "enGB": "At 11th level, whenever a kinetic lancer possesses 3 or more points of burn, they further half the DC to make a jump to 1/4 the base DC.\nThis replaces supercharge.",
-    "zhCN": "11级起，当念枪已承受至少3点超载值时，跳跃的DC再次减半，从而降低至基础DC的1/4。\n此能力替换了超聚合。"
+    "enGB": "At 11th level, when using dragoon dive, a kinetic lancer reduces the burn cost of the blast associated to the kinetic blade by 2. Whenever a kinetic lancer possesses 3 or more points of burn, they further half the DC to make a jump to 1/4 the base DC. \nThis replaces supercharge.",
+    "zhCN": "11级起，念枪在使用龙骑飞袭时可以将念刃所关联念袭的超载值降低2点。当念枪已承受至少3点超载值时，跳跃的DC再次减半，降低至基础DC的1/4。\n此能力替换了超聚合。"
   },
 
   {
