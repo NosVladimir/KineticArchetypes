@@ -31,6 +31,8 @@ using Kingmaker.UnitLogic.Abilities.Components.CasterCheckers;
 using Kingmaker.View;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UnitLogic.Class.Kineticist.ActivatableAbility;
+using Kingmaker.UnitLogic.FactLogic;
+using Owlcat.Runtime.Core.Physics.PositionBasedDynamics.Bodies;
 
 namespace KineticArchetypes
 {
@@ -603,10 +605,16 @@ namespace KineticArchetypes
 
             // Spawn off-hand blade if dual blade activated
             bool dualbuff = false;
+            bool spearbuff = false;
             foreach (var buff in owner.Buffs)
+            {
                 if (buff.Blueprint.ToString().Equals(KineticDuelist.KineticDualBladesBuffName))
                     dualbuff = true;
-            if (dualbuff)
+                else if (buff.Blueprint.ToString().Equals(KineticLancer.KineticSpearBuffName))
+                    spearbuff = true;
+            }
+                
+            if (dualbuff && !spearbuff)
             {
                 var bladeOffHand = (ResourcesLibrary.TryGetBlueprint(__instance.m_Blade.Guid) as BlueprintItemWeapon).CreateEntity<ItemEntityWeapon>();
                 bladeOffHand.MakeNotLootable();
@@ -638,6 +646,13 @@ namespace KineticArchetypes
                 if (owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(KineticDuelist.GreaterKineticDualBladesGuid)) != null && TWFRank != null && TWFRank < 4)
                     owner.AddBuff(BlueprintTool.GetRef<BlueprintBuffReference>(KineticDuelist.DualBlades3rdAttackBuffGuid), owner);
             }
+            else if (spearbuff)
+            {
+                if (owner.Body.SecondaryHand.HasItem)
+                    owner.Body.SecondaryHand.RemoveItem();
+                owner.State.RemoveCondition(UnitCondition.DisableAttacksOfOpportunity);
+                owner.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.KineticSpearRealBuffGuid), owner);
+            }
         }
 
 
@@ -668,12 +683,14 @@ namespace KineticArchetypes
                 }
             }
 
-            // Remove dual blade buff and extra attack buffs
+            // Remove dual blade buff and extra attack buffs and spear buff
             foreach (var buff in owner.Buffs)
             {
                 if (buff.Blueprint.ToString().Equals(KineticDuelist.KineticDualBladesBuffName)   ||
                     buff.Blueprint.ToString().Equals(KineticDuelist.DualBlades2ndAttackBuffName) || 
-                    buff.Blueprint.ToString().Equals(KineticDuelist.DualBlades3rdAttackBuffName))
+                    buff.Blueprint.ToString().Equals(KineticDuelist.DualBlades3rdAttackBuffName) ||
+                    buff.Blueprint.ToString().Equals(KineticLancer.KineticSpearBuffName)         || 
+                    buff.Blueprint.ToString().Equals(KineticLancer.KineticSpearRealBuffName))
                 {
                     buff.SetDuration(TimeSpan.FromSeconds(0));
                 }

@@ -603,6 +603,10 @@ namespace KineticArchetypes
                 return;
 
             var rememberedWeapon = owner.Parts.Ensure<RememberWeaponPart>().RememberedWeapon;
+            foreach (var buff in owner.Buffs)
+                if (buff.Blueprint.ToString().Equals(KineticLancer.KineticSpearBuffName))
+                    rememberedWeapon = owner.Parts.Get<RememberWeaponPart>().RememberedLongSpear ?? 
+                                        ItemWeaponRefs.ColdIronLongspear.Reference.Get();
             foreach (var hand in new HandSlot[] {
                 owner.Body.CurrentHandsEquipmentSet.PrimaryHand, owner.Body.CurrentHandsEquipmentSet.SecondaryHand })
                 if (hand.Weapon?.Blueprint.Type.Category == WeaponCategory.KineticBlast && rememberedWeapon != null)
@@ -625,6 +629,9 @@ namespace KineticArchetypes
     {
         [JsonProperty]
         public BlueprintItemWeapon RememberedWeapon { get; set; }
+
+        [JsonProperty]
+        public BlueprintItemWeapon RememberedLongSpear { get; set; }
     }
 
     internal class RememberWeaponShape : AbilityCustomLogic
@@ -635,11 +642,19 @@ namespace KineticArchetypes
 
         public override IEnumerator<AbilityDeliveryTarget> Deliver(AbilityExecutionContext context, TargetWrapper target)
         {
-            var weapon = context.MaybeCaster?.Body.PrimaryHand.Weapon?.Blueprint;
+            var caster = context.MaybeCaster;
+            if (caster is null)
+                yield break;
+
+            var weapon = caster.Body.PrimaryHand.Weapon?.Blueprint;
             if (weapon is not null && weapon.Type.Category != WeaponCategory.KineticBlast && !weapon.IsTwoHanded && !weapon.IsRanged && !weapon.IsNatural)
-                context.MaybeCaster.Parts.Ensure<RememberWeaponPart>().RememberedWeapon = weapon;
+                caster.Parts.Ensure<RememberWeaponPart>().RememberedWeapon = weapon;
+            else if (weapon is not null && weapon.Type.Category == WeaponCategory.Longspear &&
+                caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.KineticSpearGuid)) != null)
+                caster.Parts.Ensure<RememberWeaponPart>().RememberedLongSpear = weapon;
             else
-                context.MaybeCaster.Parts.Ensure<RememberWeaponPart>().RememberedWeapon = null;
+                caster.Parts.Ensure<RememberWeaponPart>().RememberedWeapon = null;
+
             yield break;
         }
     }
