@@ -650,20 +650,28 @@ namespace KineticArchetypes
             {
                 if (owner.Body.SecondaryHand.HasItem)
                     owner.Body.SecondaryHand.RemoveItem();
+                owner.Body.SecondaryHand.Lock.Retain();
                 owner.State.RemoveCondition(UnitCondition.DisableAttacksOfOpportunity);
                 owner.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.KineticSpearRealBuffGuid), owner);
             }
         }
 
 
-        [HarmonyPostfix]
+        [HarmonyPrefix]
         [HarmonyPatch(nameof(AddKineticistBlade.OnDeactivate))]
-        public static void Postfix2(AddKineticistBlade __instance)
+        public static void Prefix2(AddKineticistBlade __instance)
         {
             var owner = __instance.Owner;
+
+            bool spearBuff = false;
+            foreach (var buff in owner.Buffs)
+                if (buff.Blueprint.ToString().Equals(KineticLancer.KineticSpearBuffName))
+                    spearBuff = true;
+
             var handsSets = owner.Body.HandsEquipmentSets;
             foreach (var handsSet in handsSets)
             {
+                var mainhand = handsSet.PrimaryHand;
                 var offhand = handsSet.SecondaryHand;
                 if (offhand != null && offhand.HasWeapon && offhand.HasItem)
                 {
@@ -681,6 +689,8 @@ namespace KineticArchetypes
                         weapon.Dispose();
                     }
                 }
+                if (spearBuff && mainhand != null && mainhand.HasWeapon && mainhand.HasItem && (mainhand.Item as ItemEntityWeapon).Blueprint.Type.Category == WeaponCategory.KineticBlast)
+                    offhand.Lock.ReleaseAll();
             }
 
             // Remove dual blade buff and extra attack buffs and spear buff
@@ -752,8 +762,13 @@ namespace KineticArchetypes
             // Trace back the burn at the start of round by adding this back to left burn this round
             // Will create situations of having used burn for other stuff but still passing check for blade
             var acceptedBurnThisRound = unitPartKineticist.AcceptedBurnThisRound;
+            int cost = AbilityKineticist.CalculateAbilityBurnCost(BlueprintComponentExtendAsObject.Or(blueprintItemWeapon2.GetComponent<WeaponKineticBlade>(), null)?.GetActivationAbility(unit))?.Total ?? 0;
+            if (unit.GetFact(BlueprintTool.Get<BlueprintFeature>(KineticLancer.DragoonDiveGuid)) != null)
+            {
+                cost = DragoonDiveBurnDisplay.CalculateCostForBlade(unit, blueprintItemWeapon2.GetComponent<WeaponKineticBlade>());
+            }
 
-            if ((blueprintItemWeapon != blueprintItemWeapon2 || !unitPartKineticist.IsBladeActivated) && (AbilityKineticist.CalculateAbilityBurnCost(BlueprintComponentExtendAsObject.Or(blueprintItemWeapon2.GetComponent<WeaponKineticBlade>(), null)?.GetActivationAbility(unit))?.Total ?? 0) > unitPartKineticist.LeftBurnThisRound + acceptedBurnThisRound)
+            if ((blueprintItemWeapon != blueprintItemWeapon2 || !unitPartKineticist.IsBladeActivated) && cost > unitPartKineticist.LeftBurnThisRound + acceptedBurnThisRound)
             {
                 __result = false;
                 return false;

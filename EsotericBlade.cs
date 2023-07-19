@@ -38,6 +38,7 @@ using Kingmaker.Items.Slots;
 using Kingmaker.UnitLogic.Abilities.Components.Base;
 using Newtonsoft.Json;
 using Kingmaker.View;
+using Kingmaker.View.Equipment;
 
 namespace KineticArchetypes
 {
@@ -617,11 +618,18 @@ namespace KineticArchetypes
                     try 
                     {
                         if (hand.Weapon.WeaponVisualParameters.Model.GetComponent<UnitEntityView>() is null)
-                            hand.Weapon.WeaponVisualParameters.Model.AddComponent<UnitEntityView>(); 
+                            hand.Weapon.WeaponVisualParameters.Model.AddComponent<UnitEntityView>();
                     }
                     catch { }
                     owner.View.HandsEquipment.UpdateActiveWeaponSetImmediately();
                 }
+            // Fix kinetic spear not on back
+            if (rememberedWeapon != null && rememberedWeapon.Type.Category == WeaponCategory.Longspear)
+            {
+                owner.View.HandsEquipment.m_ActiveSet.MainHand.VisualSlot = 0;
+                owner.View.HandsEquipment.FindSlotForHand(owner.View.HandsEquipment.m_ActiveSet.MainHand, new List<UnitEquipmentVisualSlotType>(), force: false);
+                owner.View.HandsEquipment.ReattachBackEquipment();
+            }
         }
     }
 
