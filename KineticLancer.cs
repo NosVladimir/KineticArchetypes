@@ -65,6 +65,9 @@ using Kingmaker.UI.Models.Log;
 using Kingmaker.Blueprints.Items.Armors;
 using Kingmaker.Items;
 using BlueprintCore.Conditions.Builder;
+using BlueprintCore.Conditions.Builder.BasicEx;
+using BlueprintCore.Conditions.Builder.ContextEx;
+using BlueprintCore.Conditions.Builder.NewEx;
 using BlueprintCore.Utils.Types;
 using Kingmaker.RuleSystem;
 using Kingmaker.UnitLogic.Buffs.Blueprints;
@@ -79,6 +82,13 @@ using static Kingmaker.UI.CanvasScalerWorkaround;
 using Kingmaker.UnitLogic.Class.Kineticist.ActivatableAbility;
 using Kingmaker.Blueprints.Items.Weapons;
 using Kingmaker.UnitLogic.Mechanics.Components;
+using Kingmaker.EntitySystem;
+using Kingmaker.Blueprints.Items.Ecnchantments;
+using Kingmaker.RuleSystem.Rules.Damage;
+using Kingmaker.UI.Selection;
+using Kingmaker.UnitLogic.Buffs.Components;
+using Kingmaker.ElementsSystem;
+using Kingmaker.Designers.Mechanics.Facts;
 
 namespace KineticArchetypes
 {
@@ -448,7 +458,7 @@ namespace KineticArchetypes
 
             var realBuff = BuffConfigurator.New(ImpalingCrashRealBuffName, ImpalingCrashRealBuffGuid)
                 .SetFlags(BlueprintBuff.Flags.HiddenInUi)
-                .AddNewRoundTrigger(newRoundActions: ActionsBuilder.New().RemoveSelf())
+                .AddComponent(new ImpalingCrashApplyDebuffComponent())
                 .AddNotDispelable()
                 .Configure();
             
@@ -456,6 +466,8 @@ namespace KineticArchetypes
                 .SetDisplayName(ImpalingCrashDebuffName)
                 .SetDescription(ImpalingCrashDebuffDescription)
                 .SetIcon(AbilityRefs.Jolt.Reference.Get().Icon)
+                .AddComponent(new ImpalingCrashDebuffComponent())
+                .AddCondition(UnitCondition.CantUseStandardActions)
                 .AddNotDispelable()
                 .Configure();
 
@@ -589,6 +601,7 @@ namespace KineticArchetypes
                     var impalingCrashRealBuff = caster.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.ImpalingCrashRealBuffGuid), caster);
                     var components = caster.Body.PrimaryHand.MaybeItem?.Blueprint.GetComponent<WeaponKineticBlade>()?.GetBlastAbility(caster).Blueprint.Components;
                     
+                    // Calculate values for implaing crash to apply debuffs
                     foreach (var component in components ?? new BlueprintComponent[] {} )
                     {
                         if (component is ContextRankConfig config)
@@ -601,7 +614,8 @@ namespace KineticArchetypes
                         
                         else if (component is ContextCalculateSharedValue sharedValue && 
                             sharedValue.ValueType == AbilitySharedValue.Damage && 
-                            sharedValue.Value.BonusValue.ValueType == ContextValueType.Rank)
+                            sharedValue.Value.BonusValue.ValueType == ContextValueType.Rank &&
+                            sharedValue.Value.BonusValue.ValueRank == AbilityRankType.DamageDice)
                         {
                             diceMult = 2;
                         }
@@ -609,6 +623,10 @@ namespace KineticArchetypes
                     
                     dmg = dice * diceMult + bonus;
                     KineticLancer.Logger.Info($"Values for {impalingCrashRealBuff}: dice {dice}, diceMult {diceMult}, bonus {bonus}, main stat mod {mainStatMod}, dmg {dmg}");
+                    var impalingCrashApplyDebuffComponent = impalingCrashRealBuff.GetComponent<ImpalingCrashApplyDebuffComponent>();
+                    impalingCrashApplyDebuffComponent.dmg = dmg;
+                    impalingCrashApplyDebuffComponent.mainStatMod = mainStatMod;
+                    impalingCrashApplyDebuffComponent.combatEntered = caster.IsInCombat;
                 }
             }
 
@@ -948,6 +966,7 @@ namespace KineticArchetypes
                     {
                         cmd.Executor.Commands.TryAddToQueueInsteadOfRunImmediately(new UnitActivateAbility(activatable));
                         activatable.TurnOffImmediately();
+                        break;
                     }
                 }
             }
@@ -964,6 +983,60 @@ namespace KineticArchetypes
 
         public void OnEventDidTrigger(RuleCalculateWeaponStats evt)
         {
+        }
+    }
+
+    internal class ImpalingCrashApplyDebuffComponent : UnitFactComponentDelegate, IInitiatorRulebookHandler<RuleAttackWithWeapon>, IRulebookHandler<RuleAttackWithWeapon>, ISubscriber, IInitiatorRulebookSubscriber, ITickEachRound
+    {
+        public int dmg = 0, mainStatMod = 0;
+        public bool combatEntered = false;
+
+        public void OnEventAboutToTrigger(RuleAttackWithWeapon evt)
+        {
+        }
+
+        public void OnEventDidTrigger(RuleAttackWithWeapon evt)
+        {
+            if (!evt.AttackRoll.IsHit || evt.Weapon.Blueprint.Category != WeaponCategory.KineticBlast)
+                return;
+
+            var debuff = evt.Target.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.ImpalingCrashDebuffGuid), evt.Initiator, mainStatMod.Rounds().Seconds).GetComponent<ImpalingCrashDebuffComponent>();
+            debuff.dmg = dmg;
+            debuff.mainStatMod = mainStatMod;
+            debuff.initiator = evt.Initiator;
+        }
+
+        public void OnNewRound()
+        {
+            // Remove buff on new round, if not first round of combat
+            if (combatEntered)
+                Owner.Buffs.RemoveFact(Fact.Blueprint);
+            else
+                combatEntered = true;
+        }
+    }
+
+    internal class ImpalingCrashDebuffComponent : UnitFactComponentDelegate, ITickEachRound
+    {
+        public int dmg = 0, mainStatMod = 0;
+        public UnitEntityData initiator;
+
+        public void OnNewRound()
+        {
+            DamageTypeDescription damageTypeDescription = new() { Type = DamageType.Direct};
+            BaseDamage baseDamage = damageTypeDescription.GetDamageDescriptor(DiceFormula.Zero, dmg).CreateDamage();
+            baseDamage.SourceFact = initiator.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.ImpalingCrashGuid));
+            DamageBundle damage = new(baseDamage);
+            RuleDealDamage ruleDealDamage = new(initiator, Owner, damage)
+            {
+                DisablePrecisionDamage = true,
+                Reason = baseDamage.SourceFact
+            };
+            Context.TriggerRule(ruleDealDamage);
+            RuleSkillCheck ruleSkillCheck = new(Owner, StatType.Strength, 10 + 2 * mainStatMod) { ShowAnyway = true };
+            Context.TriggerRule(ruleSkillCheck);
+            if (ruleSkillCheck.Success)
+                Owner.Buffs.RemoveFact(Fact.Blueprint);
         }
     }
 }

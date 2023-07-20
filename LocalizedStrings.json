@@ -522,8 +522,8 @@
 
   {
     "Key": "KineticLancer.FuriousDragoon.Description",
-    "enGB": "At 13th level, by accepting 2 points of burn when using dragoon dive, a kinetic lancer can make an additional attack with their kinetic blade.\nThis replaces the 13th-level infusion.",
-    "zhCN": "13级起，通过在使用龙骑飞袭时承受2点超载值，念枪可以用念刃进行一次额外攻击。\n此能力替换了13级时获得的注能。"
+    "enGB": "At 13th level, by accepting 1 points of burn when using dragoon dive, a kinetic lancer can make an additional attack with their kinetic blade.\nThis replaces the 13th-level infusion.",
+    "zhCN": "13级起，通过在使用龙骑飞袭时承受1点超载值，念枪可以用念刃进行一次额外攻击。\n此能力替换了13级时获得的注能。"
   },
 
   {
