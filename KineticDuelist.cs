@@ -33,6 +33,8 @@ using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UnitLogic.Class.Kineticist.ActivatableAbility;
 using Kingmaker.UnitLogic.FactLogic;
 using Owlcat.Runtime.Core.Physics.PositionBasedDynamics.Bodies;
+using Kingmaker.Items.Slots;
+using Kingmaker.View.Equipment;
 
 namespace KineticArchetypes
 {
@@ -597,6 +599,8 @@ namespace KineticArchetypes
         public static void Postfix1(AddKineticistBlade __instance)
         {
             UnitEntityData owner = __instance.Owner;
+            if (owner is null)
+                return;
 
             // Allow AoO if having KD blade feature or EsotericBlade feature
             if (owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(KineticDuelist.KDKineticBladeGuid)) != null ||
@@ -653,6 +657,33 @@ namespace KineticArchetypes
                 owner.Body.SecondaryHand.Lock.Retain();
                 owner.State.RemoveCondition(UnitCondition.DisableAttacksOfOpportunity);
                 owner.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.KineticSpearRealBuffGuid), owner);
+            }
+
+            var rememberedWeapon = owner.Parts.Ensure<RememberWeaponPart>().RememberedWeapon;
+            if (spearbuff)
+                rememberedWeapon = owner.Parts.Get<RememberWeaponPart>().RememberedLongSpear ??
+                                        ItemWeaponRefs.ColdIronLongspear.Reference.Get();
+            foreach (var hand in new HandSlot[] {
+                owner.Body.CurrentHandsEquipmentSet.PrimaryHand, owner.Body.CurrentHandsEquipmentSet.SecondaryHand })
+                if (hand.Weapon?.Blueprint.Type.Category == WeaponCategory.KineticBlast && rememberedWeapon != null)
+                {
+                    Main.Logger.Info($"Overriding visual for kinetic blade of {hand.IsPrimaryHand} into {rememberedWeapon}");
+
+                    hand.Weapon.VisualSourceItemBlueprint = rememberedWeapon;
+                    try
+                    {
+                        if (hand.Weapon.WeaponVisualParameters.Model.GetComponent<UnitEntityView>() is null)
+                            hand.Weapon.WeaponVisualParameters.Model.AddComponent<UnitEntityView>();
+                    }
+                    catch { }
+                    owner.View.HandsEquipment.UpdateActiveWeaponSetImmediately();
+                }
+            // Fix kinetic spear not on back
+            if (rememberedWeapon != null && rememberedWeapon.Type.Category == WeaponCategory.Longspear)
+            {
+                owner.View.HandsEquipment.m_ActiveSet.MainHand.VisualSlot = 0;
+                owner.View.HandsEquipment.FindSlotForHand(owner.View.HandsEquipment.m_ActiveSet.MainHand, new List<UnitEquipmentVisualSlotType>(), force: false);
+                owner.View.HandsEquipment.ReattachBackEquipment();
             }
         }
 

@@ -76,6 +76,9 @@ using Kingmaker.UnitLogic.Commands.Base;
 using static Pathfinding.Util.RetainedGizmos;
 using Steamworks;
 using static Kingmaker.UI.CanvasScalerWorkaround;
+using Kingmaker.UnitLogic.Class.Kineticist.ActivatableAbility;
+using Kingmaker.Blueprints.Items.Weapons;
+using Kingmaker.UnitLogic.Mechanics.Components;
 
 namespace KineticArchetypes
 {
@@ -138,6 +141,8 @@ namespace KineticArchetypes
         internal const string ImpalingCrashAbilityDescription = "KineticLancer.ImpalingCrashAbility.Description";
         internal const string ImpalingCrashBuffName = "KineticLancer.ImpalingCrashBuff";
         internal const string ImpalingCrashBuffGuid = "4F740AA2-27B4-4BB0-A0AF-CE356AB0497A";
+        internal const string ImpalingCrashBurnBuffName = "KineticLancer.ImpalingCrashBurnBuff";
+        internal const string ImpalingCrashBurnBuffGuid = "EF6A471D-F78E-4706-AC99-8FB9F024AB91";
         internal const string ImpalingCrashRealBuffName = "KineticLancer.ImpalingCrashRealBuff";
         internal const string ImpalingCrashRealBuffGuid = "9DB41706-664E-4280-A9F0-570484F99774";
         internal const string ImpalingCrashDebuffName = "KineticLancer.ImpalingCrashDebuff";
@@ -344,11 +349,7 @@ namespace KineticArchetypes
                 .AddComponent(new AbilityIsFullRoundInTurnBased() { FullRoundIfTurnBased = true })
                 .AddComponent<AbilityDragoonDive>()
                 .AddComponent(new MustHaveEquippedKineticBlade())
-                .AddComponent(new DragoonDiveBurnDisplay() 
-                {
-                    // m_RequiredResource = lessBurnResc.ToReference<BlueprintAbilityResourceReference>(),
-                    // m_IsSpendResource = false
-                })
+                .AddComponent(new DragoonDiveBurnDisplay())
                 .Configure();
 
             return FeatureConfigurator.New(DragoonDiveName, DragoonDiveGuid)
@@ -434,9 +435,19 @@ namespace KineticArchetypes
                 m_AppliableTo = KineticDuelist.allBlades
             };
 
-            var realBuff = BuffConfigurator.New(ImpalingCrashRealBuffName, ImpalingCrashRealBuffGuid)
+            var burnBuff = BuffConfigurator.New(ImpalingCrashBurnBuffName, ImpalingCrashBurnBuffGuid)
                 .SetFlags(BlueprintBuff.Flags.HiddenInUi)
                 .AddComponent(increaseBladeCost)
+                .AddInitiatorAttackWithWeaponTrigger(
+                    action: ActionsBuilder.New().RemoveSelf(),
+                    checkWeaponCategory: true,
+                    category: WeaponCategory.KineticBlast,
+                    triggerBeforeAttack: false)
+                .AddNotDispelable()
+                .Configure();
+
+            var realBuff = BuffConfigurator.New(ImpalingCrashRealBuffName, ImpalingCrashRealBuffGuid)
+                .SetFlags(BlueprintBuff.Flags.HiddenInUi)
                 .AddNewRoundTrigger(newRoundActions: ActionsBuilder.New().RemoveSelf())
                 .AddNotDispelable()
                 .Configure();
@@ -546,6 +557,10 @@ namespace KineticArchetypes
         {
             KineticLancer.Logger.Info($"Leap from {caster.Position} to {target}");
 
+            UnitPartKineticist kineticist = caster.Parts.Get<UnitPartKineticist>();
+            if (kineticist == null)
+                yield break;
+
             Vector3 initial = caster.Position;
             Vector3 end = target.Point;
             Vector3 delta = end - initial;
@@ -560,14 +575,41 @@ namespace KineticArchetypes
                     impalingCrash = true;
             }
 
-            // Apply kinetic leap buff and burn reduction buff if it's dragoon dive
+            // Apply dragoon dive buffs
+            int dice = 0, diceMult = 1, bonus = 0, dmg, mainStatMod = kineticist?.MainStatBonus ?? 0;
             if (context.Ability.Blueprint.ToString().Equals(KineticLancer.DragoonDiveAbilityName))
             {
                 caster.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.KineticLeapSwiftBuffGuid), caster, 6.Seconds());
                 kineticLeap = true;
                 caster.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.DragoonDiveBurnBuffGuid), caster);
+
                 if (impalingCrash)
-                    caster.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.ImpalingCrashRealBuffGuid), caster);
+                {
+                    caster.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.ImpalingCrashBurnBuffGuid), caster);
+                    var impalingCrashRealBuff = caster.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.ImpalingCrashRealBuffGuid), caster);
+                    var components = caster.Body.PrimaryHand.MaybeItem?.Blueprint.GetComponent<WeaponKineticBlade>()?.GetBlastAbility(caster).Blueprint.Components;
+                    
+                    foreach (var component in components ?? new BlueprintComponent[] {} )
+                    {
+                        if (component is ContextRankConfig config)
+                        {
+                            if (config.m_Type == AbilityRankType.DamageDice)
+                                dice = config.GetValue(context);
+                            else if (config.m_Type == AbilityRankType.DamageBonus)
+                                bonus = config.GetValue(context);
+                        }
+                        
+                        else if (component is ContextCalculateSharedValue sharedValue && 
+                            sharedValue.ValueType == AbilitySharedValue.Damage && 
+                            sharedValue.Value.BonusValue.ValueType == ContextValueType.Rank)
+                        {
+                            diceMult = 2;
+                        }
+                    }
+                    
+                    dmg = dice * diceMult + bonus;
+                    KineticLancer.Logger.Info($"Values for {impalingCrashRealBuff}: dice {dice}, diceMult {diceMult}, bonus {bonus}, main stat mod {mainStatMod}, dmg {dmg}");
+                }
             }
 
             // Start animation
@@ -714,10 +756,6 @@ namespace KineticArchetypes
             // Make attack if it's dragoon dive
             else if (target.Unit != null && context.Ability.Blueprint.ToString().Equals(KineticLancer.DragoonDiveAbilityName))
             {
-                /*var kineticist = caster.Parts.Get<UnitPartKineticist>();
-                WeaponKineticBlade blade = caster.Body.PrimaryHand.MaybeWeapon?.Blueprint.GetComponent<WeaponKineticBlade>();
-                if (kineticist != null && blade != null && caster.GetFact(blade.ActivationAbility) is Ability bladeBurnAbility)
-                    caster.Commands.AddToQueueFirst(new UnitUseAbility(bladeBurnAbility.Data, caster));*/
                 UnitAttack attack = new(target.Unit);
                 attack.IgnoreCooldown();
                 attack.Init(caster);
@@ -813,18 +851,6 @@ namespace KineticArchetypes
                 return false;
             }
 
-            // Check for sufficient burn
-            /*int dragoonDiveBurn = -1;
-            if (caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.ImpossibleLeapGuid)) != null)
-                dragoonDiveBurn = -2;
-
-            int impalingCrash = 0;
-            foreach (var buff in caster.Buffs)
-            {
-                if (buff.Blueprint.ToString().Equals(KineticLancer.ImpalingCrashBuffName))
-                    impalingCrash = 1;
-            }*/
-
             failReason = null;
             return true;
         }
@@ -840,16 +866,20 @@ namespace KineticArchetypes
             if (unit.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.ImpossibleLeapGuid)) != null)
                 dragoonReduction = 2;
 
-            int impalingCrash = 0, impalingCrashReal = 0;
+            int impalingCrash = 0, impalingCrashBurn = 0;
             foreach (var buff in unit.Buffs)
             {
-                if (buff.Blueprint.ToString().Equals(KineticLancer.ImpalingCrashBuffName))
+                var buffString = buff.Blueprint.ToString();
+                if (buffString.Equals(KineticLancer.DragoonDiveBurnBuffName))  // Avoid counting twice
+                    dragoonReduction = 0;
+                if (buffString.Equals(KineticLancer.ImpalingCrashBuffName))
                     impalingCrash = 1;
-                if (buff.Blueprint.ToString().Equals(KineticLancer.ImpalingCrashRealBuffName))
-                    impalingCrashReal = 1;
+                if (buffString.Equals(KineticLancer.ImpalingCrashBurnBuffName))  // Avoid counting twice
+                    impalingCrashBurn = 1;
+                
             }
 
-            return Math.Max(0, bladeBurn - dragoonReduction + impalingCrash - impalingCrashReal);
+            return Math.Max(0, bladeBurn - dragoonReduction + impalingCrash - impalingCrashBurn);
         }
 
         public override int CalculateCost(AbilityData ability)
@@ -865,8 +895,17 @@ namespace KineticArchetypes
             return CalculateCostForBlade(unit, weaponKB);
         }
 
+        public override string GetAbilityRestrictionUIText()
+        {
+            return LocalizedTexts.Instance.Reasons.KineticNotEnoughBurnLeft;
+        }
+
         public override bool IsAbilityRestrictionPassed(AbilityData ability)
         {
+            var kineticist = ability.Caster.Unit.Parts.Get<UnitPartKineticist>();
+            int burn = CalculateCost(ability);
+            if (kineticist == null || burn > kineticist.LeftBurn || burn > kineticist.LeftBurnThisRound)
+                return false;
             return true;
         }
 
@@ -885,6 +924,33 @@ namespace KineticArchetypes
             if (caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.ImpossibleLeapGuid)) != null)
                 num = 2;
             cost.GatherPower += num;
+        }
+    }
+
+    [HarmonyPatch(typeof(KineticistController))]
+    public class Patch_Handle
+    {
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(KineticistController.HandleUnitWantRunCommand))]
+        public static void Postfix1(KineticistController __instance, UnitCommand cmd, ref UnitCommands.CustomHandlerData? customHandler)
+        {
+            UnitPartKineticist kineticist = cmd.Executor.Get<UnitPartKineticist>();
+            BlueprintItemWeapon bladeBP = cmd.Executor.Body.PrimaryHand.MaybeWeapon?.Blueprint;
+            WeaponKineticBlade blade = bladeBP?.GetComponent<WeaponKineticBlade>();
+            BlueprintAbility blueprintAbility = (cmd as UnitUseAbility)?.Ability.Blueprint;
+            if (blueprintAbility != null && blade != null && blade.ActivationAbility == blueprintAbility &&
+                (AbilityKineticist.CalculateAbilityBurnCost(blade.GetActivationAbility(cmd.Executor))?.Total ?? 0) > kineticist.LeftBurnThisRound)
+            {
+                cmd.Executor.Commands.InterruptAndRemoveCommand(cmd.Type);
+                foreach(var activatable in cmd.Executor.Descriptor.ActivatableAbilities.RawFacts)
+                {
+                    if (activatable.IsOn && activatable.Blueprint.Buff?.GetComponent<AddKineticistBlade>()?.Blade == bladeBP)
+                    {
+                        cmd.Executor.Commands.TryAddToQueueInsteadOfRunImmediately(new UnitActivateAbility(activatable));
+                        activatable.TurnOffImmediately();
+                    }
+                }
+            }
         }
     }
 

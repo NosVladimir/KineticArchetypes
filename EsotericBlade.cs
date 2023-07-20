@@ -591,48 +591,6 @@ namespace KineticArchetypes
         }
     }
 
-    [HarmonyPatch(typeof(AddKineticistBlade))]
-    public class Patch_AddKineticistBladeVisual
-    {
-        [HarmonyPatch(nameof(AddKineticistBlade.OnActivate))]
-        [HarmonyPostfix]
-        [HarmonyPriority(Priority.Low)]
-        public static void Postfix1(AddKineticistBlade __instance)
-        {
-            var owner = __instance.Owner;
-            if (owner is null)
-                return;
-
-            var rememberedWeapon = owner.Parts.Ensure<RememberWeaponPart>().RememberedWeapon;
-            foreach (var buff in owner.Buffs)
-                if (buff.Blueprint.ToString().Equals(KineticLancer.KineticSpearBuffName))
-                    rememberedWeapon = owner.Parts.Get<RememberWeaponPart>().RememberedLongSpear ?? 
-                                        ItemWeaponRefs.ColdIronLongspear.Reference.Get();
-            foreach (var hand in new HandSlot[] {
-                owner.Body.CurrentHandsEquipmentSet.PrimaryHand, owner.Body.CurrentHandsEquipmentSet.SecondaryHand })
-                if (hand.Weapon?.Blueprint.Type.Category == WeaponCategory.KineticBlast && rememberedWeapon != null)
-                {
-                    Main.Logger.Info($"Overriding visual for kinetic blade of {hand.IsPrimaryHand} into {rememberedWeapon}");
-
-                    hand.Weapon.VisualSourceItemBlueprint = rememberedWeapon;
-                    try 
-                    {
-                        if (hand.Weapon.WeaponVisualParameters.Model.GetComponent<UnitEntityView>() is null)
-                            hand.Weapon.WeaponVisualParameters.Model.AddComponent<UnitEntityView>();
-                    }
-                    catch { }
-                    owner.View.HandsEquipment.UpdateActiveWeaponSetImmediately();
-                }
-            // Fix kinetic spear not on back
-            if (rememberedWeapon != null && rememberedWeapon.Type.Category == WeaponCategory.Longspear)
-            {
-                owner.View.HandsEquipment.m_ActiveSet.MainHand.VisualSlot = 0;
-                owner.View.HandsEquipment.FindSlotForHand(owner.View.HandsEquipment.m_ActiveSet.MainHand, new List<UnitEquipmentVisualSlotType>(), force: false);
-                owner.View.HandsEquipment.ReattachBackEquipment();
-            }
-        }
-    }
-
     internal class RememberWeaponPart : UnitPart
     {
         [JsonProperty]
