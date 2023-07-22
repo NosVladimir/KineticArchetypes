@@ -248,6 +248,7 @@ namespace KineticArchetypes
                 .SetRanks(10)
                 .SetGroups(FeatureGroup.WeaponTraining)
                 .SetIsClassFeature(true)
+                .SkipAddToSelections()
                 .Configure();
         }
 

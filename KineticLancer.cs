@@ -8,46 +8,30 @@ using Kingmaker.UnitLogic.Abilities.Blueprints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kingmaker.UnitLogic.FactLogic;
 using JetBrains.Annotations;
 using Kingmaker.Blueprints.Root;
 using Kingmaker.Controllers;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.Localization;
-using Kingmaker.ResourceLinks;
 using Kingmaker.UnitLogic.Abilities.Components.Base;
 using Kingmaker.UnitLogic.Abilities.Components;
 using Kingmaker.UnitLogic.Abilities;
-using Kingmaker.UnitLogic.Buffs;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic;
 using Kingmaker.Utility;
 using Kingmaker.View;
-using Kingmaker.Visual.Animation.Actions;
 using Kingmaker;
 using UnityEngine;
 using Kingmaker.Visual.Animation.Kingmaker.Actions;
-using Kingmaker.Pathfinding;
-using Pathfinding;
 using System.Collections;
 using TurnBased.Controllers;
-using System.Net;
-using Kingmaker.AreaLogic.Cutscenes;
 using Kingmaker.Controllers.Units;
-using Kingmaker.Designers.EventConditionActionSystem.Evaluators;
 using Kingmaker.UnitLogic.Class.Kineticist;
 using Kingmaker.Visual.Animation.Kingmaker;
-using System.CodeDom.Compiler;
-using Epic.OnlineServices;
 using Kingmaker.Visual.Particles;
-using Kingmaker.Visual.Particles.FxSpawnSystem;
 using Owlcat.Runtime.Visual.RenderPipeline.RendererFeatures.FogOfWar;
-using Kingmaker.UnitLogic.Mechanics.Actions;
 using Kingmaker.Designers;
 using Kingmaker.RuleSystem.Rules;
-using static Kingmaker.GameModes.GameModeType;
 using Kingmaker.EntitySystem.Stats;
 using Kingmaker.PubSubSystem;
 using Kingmaker.Enums;
@@ -55,40 +39,22 @@ using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
 using BlueprintCore.Actions.Builder;
 using BlueprintCore.Actions.Builder.ContextEx;
 using Kingmaker.UnitLogic.Mechanics;
-using Kingmaker.UnitLogic.Mechanics.Properties;
 using BlueprintCore.Blueprints.Configurators.UnitLogic.ActivatableAbilities;
-using System.Drawing.Text;
 using Kingmaker.UnitLogic.ActivatableAbilities.Restrictions;
 using BlueprintCore.Blueprints.CustomConfigurators;
 using Kingmaker.Blueprints.TurnBasedModifiers;
-using Kingmaker.UI.Models.Log;
-using Kingmaker.Blueprints.Items.Armors;
 using Kingmaker.Items;
-using BlueprintCore.Conditions.Builder;
-using BlueprintCore.Conditions.Builder.BasicEx;
-using BlueprintCore.Conditions.Builder.ContextEx;
-using BlueprintCore.Conditions.Builder.NewEx;
-using BlueprintCore.Utils.Types;
 using Kingmaker.RuleSystem;
 using Kingmaker.UnitLogic.Buffs.Blueprints;
-using Kingmaker.UI.Common;
 using HarmonyLib;
-using System.Reflection.Emit;
-using System.Reflection;
 using Kingmaker.UnitLogic.Commands.Base;
-using static Pathfinding.Util.RetainedGizmos;
-using Steamworks;
-using static Kingmaker.UI.CanvasScalerWorkaround;
-using Kingmaker.UnitLogic.Class.Kineticist.ActivatableAbility;
 using Kingmaker.Blueprints.Items.Weapons;
 using Kingmaker.UnitLogic.Mechanics.Components;
-using Kingmaker.EntitySystem;
-using Kingmaker.Blueprints.Items.Ecnchantments;
 using Kingmaker.RuleSystem.Rules.Damage;
-using Kingmaker.UI.Selection;
 using Kingmaker.UnitLogic.Buffs.Components;
-using Kingmaker.ElementsSystem;
-using Kingmaker.Designers.Mechanics.Facts;
+using Kingmaker.Visual;
+using Kingmaker.TurnBasedMode.Controllers;
+using Kingmaker.RuleSystem.Rules.Abilities;
 
 namespace KineticArchetypes
 {
@@ -121,8 +87,8 @@ namespace KineticArchetypes
         internal const string DragoonDiveAbilityDescription = "KineticLancer.DragoonDiveAbility.Description";
         internal const string DragoonDiveBurnBuffName = "KineticLancer.DragoonDiveBurnBuff";
         internal const string DragoonDiveBurnBuffGuid = "C7D9AA8C-FC3E-403E-9288-34E5B796F6F0";
-        internal const string DragoonDiveLessBurnRescName = "KineticLancer.DragoonDiveLessBurnResc";
-        internal const string DragoonDiveLessBurnRescGuid = "312B4894-D184-4B75-A49F-DEAF45ECE3D1";
+        /*internal const string DragoonDiveLessBurnRescName = "KineticLancer.DragoonDiveLessBurnResc";
+        internal const string DragoonDiveLessBurnRescGuid = "312B4894-D184-4B75-A49F-DEAF45ECE3D1";*/
 
         internal const string DragoonLeapName = "KineticLancer.DragoonLeap";
         internal const string DragoonLeapGuid = "9D6CCD93-F1F5-4BB0-95CF-04320BA0DEED";
@@ -166,18 +132,21 @@ namespace KineticArchetypes
         internal const string FuriousDragoonName = "KineticLancer.FuriousDragoon";
         internal const string FuriousDragoonGuid = "92919E8E-7726-4BC6-8C9C-64D87A1CE61F";
         internal const string FuriousDragoonDescription = "KineticLancer.FuriousDragoon.Description";
+        internal const string FuriousDragoonAbilityName = "KineticLancer.FuriousDragoonAbility";
+        internal const string FuriousDragoonAbilityGuid = "B6CB5BD8-47A2-4D8E-9E36-9698366982FD";
+        internal const string FuriousDragoonAbilityDescription = "KineticLancer.FuriousDragoonAbility.Description";
+        internal const string FuriousDragoonBuffName = "KineticLancer.FuriousDragoonBuff";
+        internal const string FuriousDragoonBuffGuid = "DB3EA8E5-0216-4295-8F51-FDF713262835";
+        internal const string FuriousDragoonBurnBuffName = "KineticLancer.FuriousDragoonBurnBuff";
+        internal const string FuriousDragoonBurnBuffGuid = "4F00476F-12AC-4DCE-AADC-8EC96F8C7627";
+        internal const string FuriousDragoonRealBuffName = "KineticLancer.FuriousDragoonRealBuff";
+        internal const string FuriousDragoonRealBuffGuid = "0901456A-66D9-4577-A926-9A3B24789196";
 
         internal const string BrutalDragoonName = "KineticLancer.BrutalDragoon";
         internal const string BrutalDragoonGuid = "CB90C2E8-7B91-4690-B231-53C694CD8CF4";
         internal const string BrutalDragoonDescription = "KineticLancer.BrutalDragoon.Description";
-
-        internal const string KineticBarbsName = "KineticLancer.KineticBarbs";
-        internal const string KineticBarbsGuid = "F60BD7CC-2732-42A2-AF63-2D89872D3AB4";
-        internal const string KineticBarbsDescription = "KineticLancer.KineticBarbs.Description";
-
-        internal const string KineticHarpoonName = "KineticLancer.KineticHarpoon";
-        internal const string KineticHarpoonGuid = "1EADD640-66AA-4162-93D5-FB6C2367B7C1";
-        internal const string KineticHarpoonDescription = "KineticLancer.KineticHarpoon.Description";
+        internal const string BrutalDragoonRealBuffName = "KineticLancer.BrutalDragoonRealBuff";
+        internal const string BrutalDragoonRealBuffGuid = "9F0A793B-B818-4CC5-BABA-B0F9381B6251";
 
         internal static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes.KineticLancer");
 
@@ -189,7 +158,7 @@ namespace KineticArchetypes
             }
             catch (Exception e)
             {
-                Logger.Error("Failed to configure Esoteric Blade", e);
+                Logger.Error("Failed to configure Kinetic Lancer", e);
             }
         }
 
@@ -202,7 +171,6 @@ namespace KineticArchetypes
                     .SetLocalizedName(ArchetypeDisplayName)
                     .SetLocalizedDescription(ArchetypeDescription);
 
-            // 念力倒钩-恶心重击，念力鱼叉-精准射击
             var kineticLeap = CreateKineticLeap();
             var dragoonDive = CreateDragoonDive();
             var dragoonLeap = CreateDragoonLeap();
@@ -258,6 +226,11 @@ namespace KineticArchetypes
                 .AddUniqueComponent(new KineticLancerCannotGatherPower(), ComponentMerge.Fail, null).Configure();
             ActivatableAbilityConfigurator.For(ActivatableAbilityRefs.GatherPowerModeHigh)
                 .AddUniqueComponent(new KineticLancerCannotGatherPower(), ComponentMerge.Fail, null).Configure();
+
+            // Remove automatically add KineticBladeEnableBuff for blade burn abilities
+            // So that patches in the end won't allow for free kb attacks
+            foreach (var bladeBurnAbility in KineticDuelist.allBlades)
+                AbilityConfigurator.For(bladeBurnAbility).RemoveComponents(c => c is AbilityEffectRunAction).Configure();
         }
 
         private static BlueprintFeature CreateKineticLeap()
@@ -284,7 +257,7 @@ namespace KineticArchetypes
                 .SetDisplayName(KineticLeapSwiftName)
                 .SetDescription(KineticLeapSwiftDescription)
                 .SetIcon(FeatureSelectionRefs.RogueTalentSelection.Reference.Get().Icon)
-                .SetStacking(Kingmaker.UnitLogic.Buffs.Blueprints.StackingType.Replace)
+                .SetStacking(StackingType.Replace)
                 .SetFxOnStart(BuffRefs.GraceBuff.Reference.Get().FxOnStart)
                 .AddNotDispelable()
                 .AddCondition(UnitCondition.ImmuneToAttackOfOpportunity)
@@ -296,7 +269,7 @@ namespace KineticArchetypes
                 .SetIcon(FeatureSelectionRefs.RogueTalentSelection.Reference.Get().Icon)
                 .SetType(AbilityType.Special)
                 .SetRange(AbilityRange.Personal)
-                .SetActionType(Kingmaker.UnitLogic.Commands.Base.UnitCommand.CommandType.Swift)
+                .SetActionType(UnitCommand.CommandType.Swift)
                 .AddAbilityEffectRunAction(ActionsBuilder.New().ApplyBuffWithDurationSeconds(swiftBuff, 6f, toCaster: true))
                 .Configure();
 
@@ -335,10 +308,10 @@ namespace KineticArchetypes
                 .Configure();
 
             // Indicator for the actual burn reduction number
-            var lessBurnResc = AbilityResourceConfigurator.New(DragoonDiveLessBurnRescName, DragoonDiveLessBurnRescGuid)
+            /*var lessBurnResc = AbilityResourceConfigurator.New(DragoonDiveLessBurnRescName, DragoonDiveLessBurnRescGuid)
                 .SetMin(2)
                 .SetMax(2)
-                .Configure();
+                .Configure();*/
 
             var ability = AbilityConfigurator.New(DragoonDiveAbilityName, DragoonDiveAbilityGuid)
                 .SetDisplayName(DragoonDiveAbilityName)
@@ -349,12 +322,11 @@ namespace KineticArchetypes
                 .SetRange(AbilityRange.Unlimited)
                 .SetCanTargetPoint(false)
                 .SetCanTargetEnemies(true)
-                .SetCanTargetFriends(true)
+                .SetCanTargetFriends(false)
                 .SetCanTargetSelf(false)
                 .SetShouldTurnToTarget(true)
                 .SetSpellResistance(false)
                 .SetEffectOnEnemy(AbilityEffectOnUnit.Harmful)
-                .SetEffectOnAlly(AbilityEffectOnUnit.Harmful)
                 .SetAnimation(UnitAnimationActionCastSpell.CastAnimationStyle.Immediate)
                 .AddComponent(new AbilityIsFullRoundInTurnBased() { FullRoundIfTurnBased = true })
                 .AddComponent<AbilityDragoonDive>()
@@ -369,7 +341,7 @@ namespace KineticArchetypes
                 .SetIsClassFeature()
                 .AddComponent(reduceBladeCost)
                 .AddFacts(new List<Blueprint<BlueprintUnitFactReference>> { ability, FeatureRefs.KineticBladeInfusion.Reference.Get() })
-                .AddAbilityResources(2, lessBurnResc)
+                //.AddAbilityResources(2, lessBurnResc)
                 .Configure();
         }
 
@@ -414,7 +386,7 @@ namespace KineticArchetypes
                 .AddAbilityEffectRunAction(ActionsBuilder.New().ApplyBuffPermanent(buff, isNotDispelable: true))
                 .SetType(AbilityType.Special)
                 .SetRange(AbilityRange.Personal)
-                .SetActionType(Kingmaker.UnitLogic.Commands.Base.UnitCommand.CommandType.Free)
+                .SetActionType(UnitCommand.CommandType.Free)
                 .Configure();
 
             return FeatureConfigurator.New(KineticSpearName, KineticSpearGuid)
@@ -459,6 +431,7 @@ namespace KineticArchetypes
             var realBuff = BuffConfigurator.New(ImpalingCrashRealBuffName, ImpalingCrashRealBuffGuid)
                 .SetFlags(BlueprintBuff.Flags.HiddenInUi)
                 .AddComponent(new ImpalingCrashApplyDebuffComponent())
+                .AddComponent(new RemoveNextRoundAfterAttak())
                 .AddNotDispelable()
                 .Configure();
             
@@ -508,16 +481,65 @@ namespace KineticArchetypes
 
         private static BlueprintFeature CreateFuriousDragoon()
         {
+            var increaseBladeCost = new AddKineticistBurnModifier
+            {
+                Value = 1,
+                BurnType = KineticistBurnType.Metakinesis,
+                m_AppliableTo = KineticDuelist.allBlades
+            };
+
+            var burnBuff = BuffConfigurator.New(FuriousDragoonBurnBuffName, FuriousDragoonBurnBuffGuid)
+                .SetFlags(BlueprintBuff.Flags.HiddenInUi)
+                .AddComponent(increaseBladeCost)
+                .AddInitiatorAttackWithWeaponTrigger(
+                    action: ActionsBuilder.New().RemoveSelf(),
+                    checkWeaponCategory: true,
+                    category: WeaponCategory.KineticBlast,
+                    triggerBeforeAttack: false)
+                .AddNotDispelable()
+                .Configure();
+
+            var realBuff = BuffConfigurator.New(FuriousDragoonRealBuffName, FuriousDragoonRealBuffGuid)
+                .SetFlags(BlueprintBuff.Flags.HiddenInUi)
+                .AddBuffExtraAttack(haste: false, number: 1, penalized: false)
+                .AddComponent(new RemoveNextRoundAfterAttak())
+                .AddNotDispelable()
+                .Configure();
+
+            var buff = BuffConfigurator.New(FuriousDragoonBuffName, FuriousDragoonBuffGuid)
+                .SetDisplayName(FuriousDragoonAbilityName)
+                .SetDescription(FuriousDragoonAbilityDescription)
+                .SetIcon(FeatureRefs.DemonRageForcedRageFeature.Reference.Get().Icon)
+                .AddNotDispelable()
+                .Configure();
+
+            var ability = ActivatableAbilityConfigurator.New(FuriousDragoonAbilityName, FuriousDragoonAbilityGuid)
+                .SetDisplayName(FuriousDragoonAbilityName)
+                .SetDescription(FuriousDragoonAbilityDescription)
+                .SetIcon(FeatureRefs.DemonRageForcedRageFeature.Reference.Get().Icon)
+                .SetBuff(buff)
+                .SetDoNotTurnOffOnRest()
+                .SetDeactivateImmediately()
+                .Configure();
+
             return FeatureConfigurator.New(FuriousDragoonName, FuriousDragoonGuid)
                 .SetDisplayName(FuriousDragoonName)
                 .SetDescription(FuriousDragoonDescription)
                 .SetIcon(FeatureRefs.DemonRageForcedRageFeature.Reference.Get().Icon)
                 .SetIsClassFeature()
+                .AddFacts(new List<Blueprint<BlueprintUnitFactReference>> { ability })
                 .Configure();
         }
 
         private static BlueprintFeature CreateBrutalDragoon()
         {
+            BuffConfigurator.New(BrutalDragoonRealBuffName, BrutalDragoonRealBuffGuid)
+                .SetFlags(BlueprintBuff.Flags.HiddenInUi)
+                .AddComponent(new RemoveNextRoundAfterAttak())
+                .AddComponent(new BrutalDragoonExtraDamage())
+                .AddNotDispelable()
+                .Configure();
+
             return FeatureConfigurator.New(BrutalDragoonName, BrutalDragoonGuid)
                 .SetDisplayName(BrutalDragoonName)
                 .SetDescription(BrutalDragoonDescription)
@@ -528,10 +550,21 @@ namespace KineticArchetypes
 
         internal static void HandleOtherMods()
         {
-            BlueprintTool.Get<BlueprintFeature>(DragoonDiveAbilityGuid)
+            BlueprintTool.Get<BlueprintFeature>(DragoonDiveGuid)
                 .GetComponent<AddKineticistBurnModifier>().m_AppliableTo = KineticDuelist.allBlades;
-            BlueprintTool.Get<BlueprintFeature>(KineticSpearRealBuffGuid)
+            BlueprintTool.Get<BlueprintBuff>(KineticSpearRealBuffGuid)
                 .GetComponent<AddKineticistBurnModifier>().m_AppliableTo = KineticDuelist.allBlades;
+            BlueprintTool.Get<BlueprintBuff>(ImpalingCrashBurnBuffGuid)
+                .GetComponent<AddKineticistBurnModifier>().m_AppliableTo = KineticDuelist.allBlades;
+            BlueprintTool.Get<BlueprintBuff>(FuriousDragoonBurnBuffGuid)
+                .GetComponent<AddKineticistBurnModifier>().m_AppliableTo = KineticDuelist.allBlades;
+
+            // Solution to make blade AoO compatible with DarkCodex's Patch_AllowAoO
+            // If DarkCodex is enabled, this will make the save permenantly dependent on DarkCodex
+            var CreateAddMechanicsFeature = AccessTools.Method("CodexLib.Helper, CodexLib:CreateAddMechanicsFeature", new[] { Type.GetType("CodexLib.MechanicFeature, CodexLib") });
+            var comp = CreateAddMechanicsFeature?.Invoke(null, new object[] { 8 }) as BlueprintComponent;
+            if (comp != null)
+                FeatureConfigurator.For(KineticSpearRealBuffGuid).AddComponent(comp).Configure();
         }
     }
 
@@ -578,16 +611,19 @@ namespace KineticArchetypes
             Vector3 delta = end - initial;
 
             // Check if things are activated
-            bool kineticLeap = false, impalingCrash = false;
+            bool kineticLeap = false, impalingCrash = false, furiousDragoon = false, 
+                brutalDragoon = caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.BrutalDragoonGuid)) != null;
             foreach (var buff in caster.Buffs)
             {
                 if (buff.Blueprint.ToString().Equals(KineticLancer.KineticLeapSwiftBuffName))
                     kineticLeap = true;
                 if (buff.Blueprint.ToString().Equals(KineticLancer.ImpalingCrashBuffName))
                     impalingCrash = true;
+                if (buff.Blueprint.ToString().Equals(KineticLancer.FuriousDragoonBuffName))
+                    furiousDragoon = true;
             }
 
-            // Apply dragoon dive buffs
+            // Apply dragoon dive burn buffs and real buffs
             int dice = 0, diceMult = 1, bonus = 0, dmg, mainStatMod = kineticist?.MainStatBonus ?? 0;
             if (context.Ability.Blueprint.ToString().Equals(KineticLancer.DragoonDiveAbilityName))
             {
@@ -601,7 +637,7 @@ namespace KineticArchetypes
                     var impalingCrashRealBuff = caster.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.ImpalingCrashRealBuffGuid), caster);
                     var components = caster.Body.PrimaryHand.MaybeItem?.Blueprint.GetComponent<WeaponKineticBlade>()?.GetBlastAbility(caster).Blueprint.Components;
                     
-                    // Calculate values for implaing crash to apply debuffs
+                    // Calculate values for impaling crash to apply debuffs
                     foreach (var component in components ?? new BlueprintComponent[] {} )
                     {
                         if (component is ContextRankConfig config)
@@ -622,11 +658,20 @@ namespace KineticArchetypes
                     }
                     
                     dmg = dice * diceMult + bonus;
-                    KineticLancer.Logger.Info($"Values for {impalingCrashRealBuff}: dice {dice}, diceMult {diceMult}, bonus {bonus}, main stat mod {mainStatMod}, dmg {dmg}");
                     var impalingCrashApplyDebuffComponent = impalingCrashRealBuff.GetComponent<ImpalingCrashApplyDebuffComponent>();
-                    impalingCrashApplyDebuffComponent.dmg = dmg;
-                    impalingCrashApplyDebuffComponent.mainStatMod = mainStatMod;
-                    impalingCrashApplyDebuffComponent.combatEntered = caster.IsInCombat;
+                    impalingCrashApplyDebuffComponent.DMG = dmg;
+                    impalingCrashApplyDebuffComponent.MainStatMod = mainStatMod;
+                }
+
+                if (furiousDragoon)
+                {
+                    caster.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.FuriousDragoonBurnBuffGuid), caster);
+                    caster.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.FuriousDragoonRealBuffGuid), caster);
+                }
+
+                if (brutalDragoon)
+                {
+                    caster.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.BrutalDragoonRealBuffGuid), caster);
                 }
             }
 
@@ -679,7 +724,8 @@ namespace KineticArchetypes
 
             // Make skill check after jump starts, DC = horizontal + 4*vertical, /4 for impossible leap and /2 for dragoon leap
             int DC = (int)Math.Round((x2 + 4f * Math.Abs(end.y - initial.y)) / Feet.FeetToMetersRatio);
-            if (caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.ImpossibleLeapGuid)) != null)
+            if (caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.ImpossibleLeapGuid)) != null &&
+                kineticist.AcceptedBurn > 2)
                 DC /= 4;
             else if (caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.DragoonLeapGuid)) != null)
                 DC /= 2;
@@ -778,7 +824,7 @@ namespace KineticArchetypes
                 attack.IgnoreCooldown();
                 attack.Init(caster);
                 attack.IsCharge = true;
-
+                
                 // Full attack for dragoon frenzy
                 attack.ForceFullAttack = caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.DragoonFrenzyGuid)) != null;
                 caster.Commands.AddToQueueFirst(attack);
@@ -817,11 +863,11 @@ namespace KineticArchetypes
 
         private bool CheckTargetRestriction(UnitEntityData caster, TargetWrapper targetWrapper, [CanBeNull] out LocalizedString failReason)
         {
-            if (caster.RiderPart || caster.SaddledPart)
+            /*if (caster.RiderPart || caster.SaddledPart)
             {
                 failReason = BlueprintRoot.Instance.LocalizedTexts.Reasons.UnavailableGeneric;
                 return false;
-            }
+            }*/
 
             if (LineOfSightGeometry.Instance.HasObstacle(caster.Position, targetWrapper.Point))
             {
@@ -854,7 +900,7 @@ namespace KineticArchetypes
         public bool IsCasterRestrictionPassed(UnitEntityData caster)
         {
             UnitPartKineticist unitPartKineticist = caster.Parts.Get<UnitPartKineticist>();
-            if (!unitPartKineticist)
+            if (unitPartKineticist == null)
             {
                 failReason = LocalizedTexts.Instance.Reasons.NoResources;
                 return false;
@@ -884,7 +930,7 @@ namespace KineticArchetypes
             if (unit.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.ImpossibleLeapGuid)) != null)
                 dragoonReduction = 2;
 
-            int impalingCrash = 0, impalingCrashBurn = 0;
+            int impalingCrash = 0, impalingCrashBurn = 0, furiousDragoon = 0, furiousDragoonBurn = 0;
             foreach (var buff in unit.Buffs)
             {
                 var buffString = buff.Blueprint.ToString();
@@ -894,10 +940,13 @@ namespace KineticArchetypes
                     impalingCrash = 1;
                 if (buffString.Equals(KineticLancer.ImpalingCrashBurnBuffName))  // Avoid counting twice
                     impalingCrashBurn = 1;
-                
+                if (buffString.Equals(KineticLancer.FuriousDragoonBuffName))
+                    furiousDragoon = 1;
+                if (buffString.Equals(KineticLancer.FuriousDragoonBurnBuffName))  // Avoid counting twice
+                    furiousDragoonBurn = 1;
             }
 
-            return Math.Max(0, bladeBurn - dragoonReduction + impalingCrash - impalingCrashBurn);
+            return Math.Max(0, bladeBurn - dragoonReduction + impalingCrash - impalingCrashBurn + furiousDragoon - furiousDragoonBurn);
         }
 
         public override int CalculateCost(AbilityData ability)
@@ -945,34 +994,6 @@ namespace KineticArchetypes
         }
     }
 
-    [HarmonyPatch(typeof(KineticistController))]
-    public class Patch_Handle
-    {
-        [HarmonyPostfix]
-        [HarmonyPatch(nameof(KineticistController.HandleUnitWantRunCommand))]
-        public static void Postfix1(KineticistController __instance, UnitCommand cmd, ref UnitCommands.CustomHandlerData? customHandler)
-        {
-            UnitPartKineticist kineticist = cmd.Executor.Get<UnitPartKineticist>();
-            BlueprintItemWeapon bladeBP = cmd.Executor.Body.PrimaryHand.MaybeWeapon?.Blueprint;
-            WeaponKineticBlade blade = bladeBP?.GetComponent<WeaponKineticBlade>();
-            BlueprintAbility blueprintAbility = (cmd as UnitUseAbility)?.Ability.Blueprint;
-            if (blueprintAbility != null && blade != null && blade.ActivationAbility == blueprintAbility &&
-                (AbilityKineticist.CalculateAbilityBurnCost(blade.GetActivationAbility(cmd.Executor))?.Total ?? 0) > kineticist.LeftBurnThisRound)
-            {
-                cmd.Executor.Commands.InterruptAndRemoveCommand(cmd.Type);
-                foreach(var activatable in cmd.Executor.Descriptor.ActivatableAbilities.RawFacts)
-                {
-                    if (activatable.IsOn && activatable.Blueprint.Buff?.GetComponent<AddKineticistBlade>()?.Blade == bladeBP)
-                    {
-                        cmd.Executor.Commands.TryAddToQueueInsteadOfRunImmediately(new UnitActivateAbility(activatable));
-                        activatable.TurnOffImmediately();
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
     internal class KineticSpearCritComponent : UnitFactComponentDelegate, IInitiatorRulebookHandler<RuleCalculateWeaponStats>, IRulebookHandler<RuleCalculateWeaponStats>, ISubscriber, IInitiatorRulebookSubscriber
     {
         public void OnEventAboutToTrigger(RuleCalculateWeaponStats evt)
@@ -986,10 +1007,30 @@ namespace KineticArchetypes
         }
     }
 
-    internal class ImpalingCrashApplyDebuffComponent : UnitFactComponentDelegate, IInitiatorRulebookHandler<RuleAttackWithWeapon>, IRulebookHandler<RuleAttackWithWeapon>, ISubscriber, IInitiatorRulebookSubscriber, ITickEachRound
+    internal class RemoveNextRoundAfterAttak : UnitBuffComponentDelegate, ITickEachRound, IInitiatorRulebookHandler<RuleAttackWithWeapon>, IRulebookHandler<RuleAttackWithWeapon>, ISubscriber, IInitiatorRulebookSubscriber
     {
-        public int dmg = 0, mainStatMod = 0;
-        public bool combatEntered = false;
+        public bool Attacked = false;
+
+        public void OnEventAboutToTrigger(RuleAttackWithWeapon evt)
+        {
+        }
+
+        public void OnEventDidTrigger(RuleAttackWithWeapon evt)
+        {
+            Attacked = true;
+        }
+
+        public void OnNewRound()
+        {
+            // Remove buff on new round, if not first round of combat
+            if (Attacked)
+                Owner.Buffs.RemoveFact(Fact.Blueprint);
+        }
+    }
+
+    internal class ImpalingCrashApplyDebuffComponent : UnitFactComponentDelegate, IInitiatorRulebookHandler<RuleAttackWithWeapon>, IRulebookHandler<RuleAttackWithWeapon>, ISubscriber, IInitiatorRulebookSubscriber
+    {
+        public int DMG = 0, MainStatMod = 0;
 
         public void OnEventAboutToTrigger(RuleAttackWithWeapon evt)
         {
@@ -1000,43 +1041,209 @@ namespace KineticArchetypes
             if (!evt.AttackRoll.IsHit || evt.Weapon.Blueprint.Category != WeaponCategory.KineticBlast)
                 return;
 
-            var debuff = evt.Target.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.ImpalingCrashDebuffGuid), evt.Initiator, mainStatMod.Rounds().Seconds).GetComponent<ImpalingCrashDebuffComponent>();
-            debuff.dmg = dmg;
-            debuff.mainStatMod = mainStatMod;
-            debuff.initiator = evt.Initiator;
-        }
-
-        public void OnNewRound()
-        {
-            // Remove buff on new round, if not first round of combat
-            if (combatEntered)
-                Owner.Buffs.RemoveFact(Fact.Blueprint);
-            else
-                combatEntered = true;
+            var debuff = evt.Target.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.ImpalingCrashDebuffGuid), evt.Initiator, MainStatMod.Rounds().Seconds).GetComponent<ImpalingCrashDebuffComponent>();
+            debuff.DMG = DMG;
+            debuff.MainStatMod = MainStatMod;
+            debuff.Initiator = evt.Initiator;           
+            if (CombatController.IsInTurnBasedCombat())
+                debuff.AttachedRound = Game.Instance.TurnBasedCombatController.RoundNumber;
         }
     }
 
     internal class ImpalingCrashDebuffComponent : UnitFactComponentDelegate, ITickEachRound
     {
-        public int dmg = 0, mainStatMod = 0;
-        public UnitEntityData initiator;
+        public int DMG = 0, MainStatMod = 0;
+        public UnitEntityData Initiator;
+        public int AttachedRound = -1;
 
         public void OnNewRound()
         {
-            DamageTypeDescription damageTypeDescription = new() { Type = DamageType.Direct};
-            BaseDamage baseDamage = damageTypeDescription.GetDamageDescriptor(DiceFormula.Zero, dmg).CreateDamage();
-            baseDamage.SourceFact = initiator.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.ImpalingCrashGuid));
-            DamageBundle damage = new(baseDamage);
-            RuleDealDamage ruleDealDamage = new(initiator, Owner, damage)
+            if (!CombatController.IsInTurnBasedCombat() || Game.Instance.TurnBasedCombatController.RoundNumber > AttachedRound)
+                CheckAndRemove();
+        }
+
+        private void CheckAndRemove()
+        {
+            DamageTypeDescription damageTypeDescription = new() { Type = DamageType.Direct };
+            BaseDamage baseDamage = damageTypeDescription.GetDamageDescriptor(DiceFormula.Zero, DMG).CreateDamage();
+            baseDamage.SourceFact = Initiator.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.ImpalingCrashGuid));
+            RuleDealDamage ruleDealDamage = new(Initiator, Owner, new DamageBundle(baseDamage))
             {
                 DisablePrecisionDamage = true,
                 Reason = baseDamage.SourceFact
             };
             Context.TriggerRule(ruleDealDamage);
-            RuleSkillCheck ruleSkillCheck = new(Owner, StatType.Strength, 10 + 2 * mainStatMod) { ShowAnyway = true };
+            RuleSkillCheck ruleSkillCheck = new(Owner, StatType.Strength, 10 + 2 * MainStatMod) { ShowAnyway = true };
             Context.TriggerRule(ruleSkillCheck);
+
             if (ruleSkillCheck.Success)
                 Owner.Buffs.RemoveFact(Fact.Blueprint);
+        }
+    }
+
+    internal class BrutalDragoonExtraDamage : UnitFactComponentDelegate, IInitiatorRulebookHandler<RuleCalculateDamage>, IRulebookHandler<RuleCalculateDamage>, ISubscriber, IInitiatorRulebookSubscriber
+    {
+        public void OnEventAboutToTrigger(RuleCalculateDamage evt)
+        {
+            var ability = evt.Reason.Context?.SourceAbility;
+            if (ability == null)
+                return;
+            UnitPartKineticist unitPartKineticist = Owner.Get<UnitPartKineticist>();
+            if (!unitPartKineticist)
+                return;
+            BlueprintAbility blueprintAbility = SimpleBlueprintExtendAsObject.Or(ability.Parent, null) ?? ability;
+            if ((bool)blueprintAbility && unitPartKineticist.Blasts.Contains(blueprintAbility) && evt.DamageBundle.First != null)
+                evt.DamageBundle.First.AddModifier(evt.DamageBundle.First.Dice.ModifiedValue.Rolls, 
+                    Owner.GetFact(BlueprintTool.Get<BlueprintFeature>(KineticLancer.BrutalDragoonGuid)));
+        }
+
+        public void OnEventDidTrigger(RuleCalculateDamage evt)
+        {
+        }
+    }
+
+
+    // Following are patches to make sure kinetic blades do not deactivate when dragoon dive is available
+    // And should deactivate on performing a normal kinetic blade attack, not when a unit wants to attack
+    // These also prevent unit stuck forever if there is indeed no burn left for blade but atk is issued
+    [HarmonyPatch(typeof(UnitUseAbility))]
+    public class Patch_UnitUseAbility
+    {
+        // Unit can always use blade burn ability 
+        [HarmonyPatch(nameof(UnitUseAbility.CanStart), MethodType.Getter)]
+        [HarmonyPrefix]
+        public static bool Prefix1(UnitUseAbility __instance, ref bool __result)
+        {
+            var caster = __instance.Ability.Caster.Unit;
+            var kineticist = caster.Parts.Get<UnitPartKineticist>();
+            BlueprintItemWeapon bladeBP = caster.Body.PrimaryHand.MaybeWeapon?.Blueprint;
+            WeaponKineticBlade blade = bladeBP?.GetComponent<WeaponKineticBlade>();
+            if (kineticist == null || blade == null)
+                return true;
+            if (blade.m_ActivationAbility.Get() == __instance.Ability.Blueprint)
+            {
+                __result = true;
+                return false;
+            }
+            return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(AbilityKineticist))]
+    public class Patch_AbilityKineticist
+    {
+        // Blade burn ability always passes restrictions check
+        [HarmonyPatch(nameof(AbilityKineticist.IsAbilityRestrictionPassed))]
+        [HarmonyPrefix]
+        public static bool Prefix1(AbilityKineticist __instance, ref bool __result, AbilityData ability)
+        {
+            var caster = ability.Caster.Unit;
+            var kineticist = caster.Parts.Get<UnitPartKineticist>();
+            BlueprintItemWeapon bladeBP = caster.Body.PrimaryHand.MaybeWeapon?.Blueprint;
+            WeaponKineticBlade blade = bladeBP?.GetComponent<WeaponKineticBlade>();
+            if (kineticist == null || blade == null)
+                return true;
+            if (blade.m_ActivationAbility.Get() == ability.Blueprint)
+            {
+                __result = true;
+                return false;
+            }
+            return true;
+        }
+
+        // Blade burn ability will deactivate blade when burn insufficient, instead of stuck forever
+        [HarmonyPatch(nameof(AbilityKineticist.Spend))]
+        [HarmonyPrefix]
+        public static bool Prefix2(AbilityKineticist __instance, AbilityData ability)
+        {
+            var caster = ability.Caster.Unit;
+            var kineticist = caster.Parts.Get<UnitPartKineticist>();
+            BlueprintItemWeapon bladeBP = caster.Body.PrimaryHand.MaybeWeapon?.Blueprint;
+            WeaponKineticBlade blade = bladeBP?.GetComponent<WeaponKineticBlade>();
+            if (kineticist == null || blade == null)
+                return true;
+            if (blade.m_ActivationAbility.Get() == ability.Blueprint && (AbilityKineticist.CalculateAbilityBurnCost(blade.GetActivationAbility(caster))?.Total ?? 0) > kineticist.LeftBurnThisRound)
+            {
+                caster.Commands.InterruptAll();
+                foreach (var activatable in caster.Descriptor.ActivatableAbilities.RawFacts)
+                {
+                    if (activatable.IsOn && activatable.Blueprint.Buff?.GetComponent<AddKineticistBlade>()?.Blade == bladeBP)
+                    {
+                        activatable.SetIsOn(value: false, null);
+                        activatable.Stop(forceRemovedBuff: true);
+                        break;
+                    }
+                }
+                caster.Commands.Queue.Clear();
+
+                // TODO: Find better ways of dealing with TB action bar
+                if (CombatController.IsInTurnBasedCombat())
+                {
+                    var states = Game.Instance.TurnBasedCombatController.CurrentTurn.GetActionsStates(caster);
+                    states.Move.m_MovementActivityStateCurrent = CombatAction.ActivityState.Used;
+                    states.Move.m_AttackActivityStateCurrent = CombatAction.ActivityState.Used;
+                    states.Move.m_AbilityActivityStateCurrent = CombatAction.ActivityState.Used;
+                    states.Move.m_MovementActivityStatePredicted = CombatAction.ActivityState.Used;
+                    states.Move.m_AttackActivityStatePredicted = CombatAction.ActivityState.Used;
+                    states.Move.m_AbilityActivityStatePredicted = CombatAction.ActivityState.Used;
+                    states.Move.CurrentAbility = null;
+                    states.Move.PredictedAbility = null;
+                    states.Move.Type = CombatAction.UsageType.ChangeWeapon;
+                    states.Standard.m_MovementActivityStateCurrent = CombatAction.ActivityState.Available;
+                    states.Standard.m_AttackActivityStateCurrent = CombatAction.ActivityState.Available;
+                    states.Standard.m_AbilityActivityStateCurrent = CombatAction.ActivityState.Available;
+                    states.Standard.m_MovementActivityStatePredicted = CombatAction.ActivityState.Available;
+                    states.Standard.m_AttackActivityStatePredicted = CombatAction.ActivityState.Available;
+                    states.Standard.m_AbilityActivityStatePredicted = CombatAction.ActivityState.Available;
+                    states.Standard.Type = CombatAction.UsageType.None;
+                    states.Standard.CurrentAbility = null;
+                    states.Standard.PredictedAbility = null;
+                    states.Clear();
+                }
+
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(KineticistController))]
+    public class Patch_KineticistController
+    {
+        // Prevent KineticBladeEnableBuff on insufficient burn
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(KineticistController.TryActivateKineticBlade))]
+        public static bool Prefix1(KineticistController __instance, [CanBeNull] UnitPartKineticist kineticist, RuleCastSpell rule)
+        {
+            if ((bool)kineticist)
+            {
+                BlueprintItemWeapon bladeBP = kineticist.Owner.Body.PrimaryHand.MaybeWeapon?.Blueprint;
+                WeaponKineticBlade blade = bladeBP?.GetComponent<WeaponKineticBlade>();
+                if (blade != null && blade.ActivationAbility == rule.Spell.Blueprint && (AbilityKineticist.CalculateAbilityBurnCost(blade.GetActivationAbility(kineticist.Owner))?.Total ?? 0) > kineticist.LeftBurnThisRound)
+                {
+                    kineticist.RemoveBladeActivatedBuff();
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    // Patch the BLOODY BloodyFaceController so it doesn't throw any warnings
+    [HarmonyPatch(typeof(BloodyFaceController))]
+    public class Patch_BloodyFaceController
+    {
+        [HarmonyPatch(nameof(BloodyFaceController.Init))]
+        [HarmonyPrefix]
+        public static bool Prefix1(BloodyFaceController __instance)
+        {
+            if (__instance.MyEntity == null && __instance.gameObject.GetComponent<UnitEntityView>() == null)
+            {
+                __instance.enabled = false;
+                return false;
+            }
+            return true;
         }
     }
 }

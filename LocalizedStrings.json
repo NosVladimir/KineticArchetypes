@@ -405,8 +405,8 @@
 
   {
     "Key": "KineticLancer.DragoonDiveAbility.Description",
-    "enGB": "As a full round action, a kinetic lancer can use their kinetic leap to leap into the air, reducing the total burn cost of a chosen blast by 1 (akin to gather power), then making an attack with the associated kinetic blade at the end of their movement. This is treated as a charge for the purposes of bonuses and penalties. This ability can never reduce the burn cost of a blast below 0 points.\nAt 11th level, when using dragoon dive, a kinetic lancer can reduce the burn cost of their kinetic blast by 2 points instead of 1.\n(Note: the number on the top-right corner will be the actual burn cost of dragoon dive. Dragoon dive can be used as long as this number is not bigger than the remaining burn, even when a normal kinetic blade attack may be prohibited due to insufficient burn.)",
-    "zhCN": "以一个整轮动作，念枪可以用念力之跃跳到空中，将所选念袭的超载值消耗降低1点（与念力凝聚的效果类似），随后在移动结束时塑形念刃进行一次攻击。计算加值与惩罚时，此能力被视为冲锋。此能力永远无法使念袭的超载消耗降低到0点以下。\n11级起，念枪在使用龙骑飞袭时可以降低念袭的2点而非原本的1点超载消耗。\n（注：右上角的数字等于实际会消耗的超载值。只要该数字不大于剩余超载值，龙骑飞袭就可以使用，即使普通的念刃攻击可能会因为超载不足而无法进行。）"
+    "enGB": "As a full round action, a kinetic lancer can use their kinetic leap to leap into the air, reducing the total burn cost of a chosen blast by 1 (akin to gather power), then making an attack with the associated kinetic blade at the end of their movement. This is treated as a charge for the purposes of bonuses and penalties. This ability can never reduce the burn cost of a blast below 0 points.\nAt 11th level, when using dragoon dive, a kinetic lancer can reduce the burn cost of their kinetic blast by 2 points instead of 1.\n(Note: the top-right number shows the actual burn cost of dragoon dive. It can be used as long as this number is not bigger than the remaining burn, even when a normal kinetic blade attack may be prohibited due to insufficient burn. To prevent normal blade attacks, right click this ability to set as automatic.)",
+    "zhCN": "以一个整轮动作，念枪可以用念力之跃跳到空中，将所选念袭的超载值消耗降低1点（与念力凝聚的效果类似），随后在移动结束时塑形念刃进行一次攻击。计算加值与惩罚时，此能力被视为冲锋。此能力永远无法使念袭的超载消耗降低到0点以下。\n11级起，念枪在使用龙骑飞袭时可以降低念袭的2点而非原本的1点超载消耗。\n（注：右上角的数字等于实际会消耗的超载值。只要该数字不大于剩余超载值，龙骑飞袭就可以使用，即使普通的念刃攻击可能会因为超载不足而无法进行。为了防止普通念刃攻击，可以右键点击此能力将其设为自动释放。）"
   },
 
   {
@@ -527,6 +527,19 @@
   },
 
   {
+    "Key": "KineticLancer.FuriousDragoonAbility",
+    "ProcessTemplates": false,
+    "enGB": "Furious Dragoon",
+    "zhCN": "暴怒龙骑"
+  },
+
+  {
+    "Key": "KineticLancer.FuriousDragoonAbility.Description",
+    "enGB": "By accepting 1 points of burn when using dragoon dive, a kinetic lancer can make an additional attack with their kinetic blade.",
+    "zhCN": "通过在使用龙骑飞袭时承受1点超载值，念枪可以用念刃进行一次额外攻击。"
+  },
+
+  {
     "Key": "KineticLancer.BrutalDragoon",
     "ProcessTemplates": false,
     "enGB": "Brutal Dragoon",
@@ -540,31 +553,11 @@
   },
 
   {
-    "Key": "KineticLancer.KineticBarbs",
+    "Key": "KineticArchetypes.CancelCurrentBlade",
     "ProcessTemplates": false,
-    "enGB": "Kinetic Barbs",
-    "zhCN": "念力倒钩"
-  },
-
-  {
-    "Key": "KineticLancer.KineticBarbs.Description",
-    "enGB": "Whenever you impale a creature with your impaling crash ability, when the creature successfully removes the spike, they must succeed a Fortitude save (DC 10 + 1/2 your kinetic lancer level + your Constitution modifier) or become sickened for a number of rounds equal to your Constitution modifier. If the creature fails this save by 5 or more, they also take bleed damage equal to your Constitution modifier.",
-    "zhCN": "每当你用穿刺撞击刺穿了敌人，其成功移除尖刺时必须进行强韧豁免检定（DC 10+1/2念枪等级+你的体质调整值），失败将在等同于你的体质调整值的轮数内陷入恶心。如果检定失败5点及以上，它还会受到等同于你的体质调整值的流血伤害。"
-  },
-
-  {
-    "Key": "KineticLancer.KineticHarpoon",
-    "ProcessTemplates": false,
-    "enGB": "Kinetic Harpoon",
-    "zhCN": "念力鱼叉"
-  },
-
-  {
-    "Key": "KineticLancer.KineticHarpoon.Description",
-    "enGB": "Whenever you impale a creature with your impaling crash ability, that creature becomes entangled for the duration of their impalement. They must also attempt a Reflex save (DC 10 + 1/2 your kinetic lancer level + your Constitution modifier) to avoid having elemental matter spear them in place, reducing their movement speeds to 0 feet. Either way, a successful Strength check to remove the spike ends the entangled condition and the reduced movement speed.",
-    "zhCN": "每当你用穿刺撞击刺穿了敌人，其在相等的轮数内会陷入纠缠。他们也必须进行反射豁免检定（DC 10+1/2念枪等级+你的体质调整值）以避免元素物质将其叉在原地，降低其移速至0英尺。不论如何，一次成功的力量检定在移除尖刺的同时也会终止纠缠和移速降低的效果。"
+    "enGB": "Deactivate Kinetic Blade",
+    "zhCN": "取消念刃"
   }
-
 
 
   /*

@@ -622,13 +622,6 @@ namespace KineticArchetypes
             {
                 var bladeOffHand = (ResourcesLibrary.TryGetBlueprint(__instance.m_Blade.Guid) as BlueprintItemWeapon).CreateEntity<ItemEntityWeapon>();
                 bladeOffHand.MakeNotLootable();
-                // Workaround to prevent spamming exception of missing BloodyFaceController
-                try 
-                { 
-                    if (bladeOffHand.WeaponVisualParameters.Model.GetComponent<UnitEntityView>() is null)
-                        bladeOffHand.WeaponVisualParameters.Model.AddComponent<UnitEntityView>(); 
-                }
-                catch { }
 
                 if (owner.Body.SecondaryHand.HasItem || !owner.Body.SecondaryHand.CanInsertItem(bladeOffHand))
                 {
@@ -670,12 +663,6 @@ namespace KineticArchetypes
                     Main.Logger.Info($"Overriding visual for kinetic blade of {hand.IsPrimaryHand} into {rememberedWeapon}");
 
                     hand.Weapon.VisualSourceItemBlueprint = rememberedWeapon;
-                    try
-                    {
-                        if (hand.Weapon.WeaponVisualParameters.Model.GetComponent<UnitEntityView>() is null)
-                            hand.Weapon.WeaponVisualParameters.Model.AddComponent<UnitEntityView>();
-                    }
-                    catch { }
                     owner.View.HandsEquipment.UpdateActiveWeaponSetImmediately();
                 }
             // Fix kinetic spear not on back
