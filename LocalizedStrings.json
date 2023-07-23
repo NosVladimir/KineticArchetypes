@@ -550,13 +550,6 @@
     "Key": "KineticLancer.BrutalDragoon.Description",
     "enGB": "At 17th level, when a kinetic lancer uses dragoon dive, they deal 1 additional damage for each damage die their kinetic blast deals.\nThis replaces the 17th-level infusion.",
     "zhCN": "17级起，当念枪使用龙骑飞袭时，他的念袭每个伤害骰额外造成1点伤害。\n此能力替换了17级时获得的注能。"
-  },
-
-  {
-    "Key": "KineticArchetypes.CancelCurrentBlade",
-    "ProcessTemplates": false,
-    "enGB": "Deactivate Kinetic Blade",
-    "zhCN": "取消念刃"
   }
 
 
