@@ -11,8 +11,7 @@ Should be compatible with DarkCodex and KineticistElementsExpanded.
 
 # Contents
 ### Fixes
-Fixed the problem where taking burn from a kinetic blade would deactivate the blade after the first attack due to insufficient remaining burn.
-- Implemented by checking the blade availability using your burn at the start of round and not considering any burn taken during the round, and thus has a side effect that if you spend some burn before doing your first attack, the attacks may not happen when there is indeed no burn left. E.g. you are at 4/5 burn at start of round and your blade would cost 1 burn - you use Shroud of Water to increase AC and accept 1 burn - you're now at 5/5 burn - blade still shows available but you cannot accept the burn to attack. In turn based this should be a minor issue, but in real time it could lock you out of doing anything. If this ever happens, manually deactivate the blade.
+Fixed the problem where taking burn from a kinetic blade would deactivate the blade after the first attack due to insufficient remaining burn. Kinetic blades now only deactivate if there is indeed no burn left for an attack, either at the start of a round, or during a round immediately after an attack command is issued.
 
 ### General
 Added an ability to allow for remembering a currently held weapon, so that when kinetic blades are formed, the remembered weapon's shape is used instead of a never-changing scimitar. This works the same way as the base game transmog system with the golem, but any visual effect coming from the remembered weapon's enchants sometimes appears sometimes not. I have no idea how to fix that.
@@ -35,12 +34,19 @@ Fire-focused kineticist with a horse.
 - Trades 4th, 8th, 12th wild talents for a horse animal companion at level -3
 
 ### Esoteric Blade
-A fighter archetype that has access to an energy kinetic blade, can make AoOs with it and use it for Cleaving Finishes and Vital Strikes.
+A homebrew fighter archetype that has access to an energy kinetic blade, can make AoOs with it and use it for Cleaving Finishes and Vital Strikes.
 - Trades 1st level combat feat for a full-progression simple energy kinetic blade, and Str modifier for KB damage
 - Can multiclass with proper kineticist, adds up kinetic blast damage progression but reverts KB damage modifier to conform kineticist main stat (Con/Int/Wis/Cha)
 - Trades 4th level combat feat for KB AoO and KB combat feats including all Cleaving Finishes and all Vital Strikes
 - Trades weapon training 1/2/3/4 for weapon training (kinetic blade). Retains additional weapon type choices and advanced weapon training options. Works with anything dependent on weapon training, e.g. golves of dueling, all advanced weapon training features and Sohei's flurry
 - Trades 10th and 20th level combat feats for changing KB critical range and multiplier to be the same as remembered weapon's base type stats (see above for remembering a weapon). This doesn't account for weapon crit enchants
+
+### [Kinetic Lancer](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/kinetic-lancer/)
+Using kinetic spear, leaping around the battlefield to full-attack foes.
+- Trades 1st level infusion for a 0 burn kinetic blade and the ability to [jump](https://www.d20pfsrd.com/skills/Acrobatics/#jumping-and-falling)
+- Signature ability: Dragoon Dive, leaping to a target and making a kinetic blade attack, with gather power during jumping. Trades some wilds talents and infusions to enhance Dragoon Dive, including lower jump DC, jumping full-attack, higher gather power burn reduction, extra attack, and bonus damage  
+- Trades 5th level infusion for Kinetic Spear, a longspear-shaped kinetic blade with reach and crit range 19-20
+- Trades 9th level infusion for impaling the target of Dragoon Dive, denying their standard actions
 
 # Known issues
 **If you encounter any bug, feel free to fire an issue!**
@@ -48,10 +54,8 @@ A fighter archetype that has access to an energy kinetic blade, can make AoOs wi
 Taking levels first in an esoteric blade then a proper kineticist would give you associated composite blasts right away. Not a big deal so not going to fix.
 
 # Planned contents
-### [Kinetic Lancer](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/kinetic-lancer/)
-Using kinetic lance instead of blade, leaping around the battlefield to full-attack foes.
+Currently no guaranteed future contents. Below is a list of archetypes I'm interested in and might try to implement, but given how bizzarre they are I cannot promise anything. Maybe also some more base game fixes around blade whirlwind.
 
-## Technically challenging planned contents
 ### [Elemental Annihilator](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/paizo-llc-kineticist-archetypes/elemental-annihilator-kineticist-archetype/)
 Features Devastating Infusion that can full-attack foes at 120 feet, but only deals a fixed 1d8+ConModifier dmg. Trades all wild talents for extra combat feats. Has a very powerful capstone at 20th level that's a composite infusion at 4 burn dealing 5*(10d6+10) bludgeoning+cold+electricity+fire+force dmg. I suppose it can also be used together with form infusions.
 
@@ -65,6 +69,7 @@ Evil only. Forces others to take burn. Drains creatures souls to create soulston
 Null element - empty blast and zero blast, dealing direct non-lethal damage. Can convert into lethal damage with a standard action, plus some conditions to the target.
 
 # Acknowledgements
-- WittleWolfie for BPCore and Vek17 for TTT-Core. I wouldn't have started modding myself without the amazing modding environments thanks to them
-- WittleWolfie (again) for CharacterOptionsPlus and Trunito for DarkCodex. Their code provided the best examples for me to learn and gave me tons of inspirations of how things could be done
+- [WittleWolfie](https://github.com/WittleWolfie) for [BPCore](https://wittlewolfie.github.io/WW-Blueprint-Core/articles/intro.html) and [Vek17](https://github.com/Vek17) for [TTT-Core](https://github.com/Vek17/TabletopTweaks-Core). I wouldn't have started modding myself without the amazing modding environments thanks to them
+- WittleWolfie (again) for [CharacterOptionsPlus](https://github.com/WittleWolfie/CharacterOptionsPlus) and [Truinto](https://github.com/Truinto) for [DarkCodex](https://github.com/Truinto/DarkCodex). Their code provided the best examples for me to learn and gave me tons of inspirations of how things could be done
+- Special thanks to: Freyja, who was the first user of this mod and provided lots of valuable feedback; [pheonix99](https://github.com/pheonix99) for providing some starting code for the jump and helpful discussions around rules; [Spencer](https://github.com/SpencerMycek) for [KineticistElementsExpanded](https://github.com/SpencerMycek/KineticistExpandedElements), who kept his mod consistent with the base game kineticist code, so cross-mod support isn't a headache
 - All people in the discord modding community!

@@ -353,8 +353,8 @@
 
   {
     "Key": "KineticLancer.Leap.Description",
-    "enGB": "A kinetic lancer can make a Acrobatics (Mobility) skill check to jump as a standard action. The base DC to make a jump is equal to the horizontal distance to be crossed plus four times the vertical height to be reached (in feet). For every 10 feet of base land speed above/below 30 feet, a kinetic lancer receives +4/-4 racial bonus on this Acrobatics (Mobility) check. A failed Acrobatics (Mobility) check results in a proportionally shorter or lower jump; if the check fails by 5 or more, a kinetic lancer lands prone.",
-    "zhCN": "以一个标准动作，念枪可以通过特技（灵巧）技能检定进行跳跃。跳跃的基础DC等同于跳远的水平距离加上4倍的垂直高度（英尺）。念枪的基本速度每比30英尺多/少10英尺都会在该特技（灵巧）检定上获得+4/-4种族加值。失败的特技（灵巧）检定意味着按比例缩短或变矮的跳跃；如果检定失败5点或更多，念枪着陆时会倒地俯卧。"
+    "enGB": "While not mounted, a kinetic lancer can make a Acrobatics (Mobility) skill check to jump as a standard action. The base DC to make a jump is equal to the horizontal distance to be crossed plus four times the vertical height to be reached (in feet). For every 10 feet of base land speed above/below 30 feet, a kinetic lancer receives +4/-4 racial bonus on this Acrobatics (Mobility) check. A failed Acrobatics (Mobility) check results in a proportionally shorter or lower jump; if the check fails by 5 or more, a kinetic lancer lands prone.",
+    "zhCN": "以一个标准动作，念枪在未骑乘时可以通过特技（灵巧）技能检定进行跳跃。跳跃的基础DC等同于跳远的水平距离加上4倍的垂直高度（英尺）。念枪的基本速度每比30英尺多/少10英尺都会在该特技（灵巧）检定上获得+4/-4种族加值。失败的特技（灵巧）检定意味着按比例缩短或变矮的跳跃；如果检定失败5点或更多，念枪着陆时会倒地俯卧。"
   },
 
   {
@@ -366,8 +366,8 @@
 
   {
     "Key": "KineticLancer.KineticLeap.Description",
-    "enGB": "At 1st level, a kinetic lancer can make a Acrobatics (Mobility) skill check to jump as a standard action. The base DC to make a jump is equal to the horizontal distance to be crossed plus four times the vertical height to be reached (in feet). For every 10 feet of base land speed above/below 30 feet, a kinetic lancer receives +4/-4 racial bonus on this Acrobatics (Mobility) check. A failed Acrobatics (Mobility) check results in a proportionally shorter or lower jump; if the check fails by 5 or more, a kinetic lancer lands prone.\nAs a swift action, a kinetic lancer can conjure a burst of energy from their kinetic blast to help them jump a long distance, adding a +10 bonus on their Acrobatics (Mobility) check to jump; if they have at least 10 ranks in Mobility, the bonus increases to +20. All movement during a round in which a kinetic lancer has used Kinetic Leap does not provoke attacks of opportunity.",
-    "zhCN": "1级起，以一个标准动作，念枪可以通过特技（灵巧）技能检定进行跳跃。跳跃的基础DC等同于跳远的水平距离加上4倍的垂直高度（英尺）。念枪的基本速度每比30英尺多/少10英尺都会在该特技（灵巧）检定上获得+4/-4种族加值。失败的特技（灵巧）检定意味着按比例缩短或变矮的跳跃；如果检定失败5点或更多，念枪着陆时会倒地俯卧。\n以一个迅捷动作，念枪可以通过念袭创造出爆发能量以助其跃过一段长距离，从而在跳跃的特技（灵巧）检定上获得+10加值；此加值在灵巧技能等级达到10时提升至+20。念枪使用念力之跃后的一轮内，所有移动均不触发借机攻击。"
+    "enGB": "At 1st level, while not mounted, a kinetic lancer can make a Acrobatics (Mobility) skill check to jump as a standard action. The base DC to make a jump is equal to the horizontal distance to be crossed plus four times the vertical height to be reached (in feet). For every 10 feet of base land speed above/below 30 feet, a kinetic lancer receives +4/-4 racial bonus on this Acrobatics (Mobility) check. A failed Acrobatics (Mobility) check results in a proportionally shorter or lower jump; if the check fails by 5 or more, a kinetic lancer lands prone.\nAs a swift action, a kinetic lancer can conjure a burst of energy from their kinetic blast to help them jump a long distance, adding a +10 bonus on their Acrobatics (Mobility) check to jump; if they have at least 10 ranks in Mobility, the bonus increases to +20. All movement during a round in which a kinetic lancer has used Kinetic Leap does not provoke attacks of opportunity.",
+    "zhCN": "1级起，以一个标准动作，念枪在未骑乘时可以通过特技（灵巧）技能检定进行跳跃。跳跃的基础DC等同于跳远的水平距离加上4倍的垂直高度（英尺）。念枪的基本速度每比30英尺多/少10英尺都会在该特技（灵巧）检定上获得+4/-4种族加值。失败的特技（灵巧）检定意味着按比例缩短或变矮的跳跃；如果检定失败5点或更多，念枪着陆时会倒地俯卧。\n以一个迅捷动作，念枪可以通过念袭创造出爆发能量以助其跃过一段长距离，从而在跳跃的特技（灵巧）检定上获得+10加值；此加值在灵巧技能等级达到10时提升至+20。念枪使用念力之跃后的一轮内，所有移动均不触发借机攻击。"
   },
 
   {
@@ -405,7 +405,7 @@
 
   {
     "Key": "KineticLancer.DragoonDiveAbility.Description",
-    "enGB": "As a full round action, a kinetic lancer can use their kinetic leap to leap into the air, reducing the total burn cost of a chosen blast by 1 (akin to gather power), then making an attack with the associated kinetic blade at the end of their movement. This is treated as a charge for the purposes of bonuses and penalties. This ability can never reduce the burn cost of a blast below 0 points.\nAt 11th level, when using dragoon dive, a kinetic lancer can reduce the burn cost of their kinetic blast by 2 points instead of 1.\n(Note: the top-right number shows the actual burn cost of dragoon dive. It can be used as long as this number is not bigger than the remaining burn, even when a normal kinetic blade attack may be prohibited due to insufficient burn. To prevent normal blade attacks, right click this ability to set as automatic.)",
+    "enGB": "As a full round action, a kinetic lancer can use their kinetic leap to leap into the air, reducing the total burn cost of a chosen blast by 1 (akin to gather power), then making an attack with the associated kinetic blade at the end of their movement. This is treated as a charge for the purposes of bonuses and penalties. This ability can never reduce the burn cost of a blast below 0 points.\nAt 11th level, when using dragoon dive, a kinetic lancer can reduce the burn cost of their kinetic blast by 2 points instead of 1.\n(Note: the top-right number shows the actual burn cost of dragoon dive. It can be used as long as this number is not bigger than the remaining burn, even when a normal kinetic blade attack may be prohibited due to insufficient burn. To prevent normal blade attacks, right click this ability to set it as auto-use.)",
     "zhCN": "以一个整轮动作，念枪可以用念力之跃跳到空中，将所选念袭的超载值消耗降低1点（与念力凝聚的效果类似），随后在移动结束时塑形念刃进行一次攻击。计算加值与惩罚时，此能力被视为冲锋。此能力永远无法使念袭的超载消耗降低到0点以下。\n11级起，念枪在使用龙骑飞袭时可以降低念袭的2点而非原本的1点超载消耗。\n（注：右上角的数字等于实际会消耗的超载值。只要该数字不大于剩余超载值，龙骑飞袭就可以使用，即使普通的念刃攻击可能会因为超载不足而无法进行。为了防止普通念刃攻击，可以右键点击此能力将其设为自动释放。）"
   },
 

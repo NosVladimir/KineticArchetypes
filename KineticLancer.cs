@@ -87,8 +87,6 @@ namespace KineticArchetypes
         internal const string DragoonDiveAbilityDescription = "KineticLancer.DragoonDiveAbility.Description";
         internal const string DragoonDiveBurnBuffName = "KineticLancer.DragoonDiveBurnBuff";
         internal const string DragoonDiveBurnBuffGuid = "C7D9AA8C-FC3E-403E-9288-34E5B796F6F0";
-        /*internal const string DragoonDiveLessBurnRescName = "KineticLancer.DragoonDiveLessBurnResc";
-        internal const string DragoonDiveLessBurnRescGuid = "312B4894-D184-4B75-A49F-DEAF45ECE3D1";*/
 
         internal const string DragoonLeapName = "KineticLancer.DragoonLeap";
         internal const string DragoonLeapGuid = "9D6CCD93-F1F5-4BB0-95CF-04320BA0DEED";
@@ -307,15 +305,9 @@ namespace KineticArchetypes
                 .AddNotDispelable()
                 .Configure();
 
-            // Indicator for the actual burn reduction number
-            /*var lessBurnResc = AbilityResourceConfigurator.New(DragoonDiveLessBurnRescName, DragoonDiveLessBurnRescGuid)
-                .SetMin(2)
-                .SetMax(2)
-                .Configure();*/
-
             var ability = AbilityConfigurator.New(DragoonDiveAbilityName, DragoonDiveAbilityGuid)
                 .SetDisplayName(DragoonDiveAbilityName)
-                .SetDescription (DragoonDiveAbilityDescription)
+                .SetDescription(DragoonDiveAbilityDescription)
                 .SetIcon(AbilityRefs.FeatherStep.Reference.Get().Icon)
                 .AddAbilityRequirementCanMove()
                 .SetType(AbilityType.Special)
@@ -341,7 +333,6 @@ namespace KineticArchetypes
                 .SetIsClassFeature()
                 .AddComponent(reduceBladeCost)
                 .AddFacts(new List<Blueprint<BlueprintUnitFactReference>> { ability, FeatureRefs.KineticBladeInfusion.Reference.Get() })
-                //.AddAbilityResources(2, lessBurnResc)
                 .Configure();
         }
 
@@ -564,7 +555,7 @@ namespace KineticArchetypes
             var CreateAddMechanicsFeature = AccessTools.Method("CodexLib.Helper, CodexLib:CreateAddMechanicsFeature", new[] { Type.GetType("CodexLib.MechanicFeature, CodexLib") });
             var comp = CreateAddMechanicsFeature?.Invoke(null, new object[] { 8 }) as BlueprintComponent;
             if (comp != null)
-                FeatureConfigurator.For(KineticSpearRealBuffGuid).AddComponent(comp).Configure();
+                BuffConfigurator.For(KineticSpearRealBuffGuid).AddComponent(comp).Configure();
         }
     }
 
@@ -863,11 +854,11 @@ namespace KineticArchetypes
 
         private bool CheckTargetRestriction(UnitEntityData caster, TargetWrapper targetWrapper, [CanBeNull] out LocalizedString failReason)
         {
-            /*if (caster.RiderPart || caster.SaddledPart)
+            if (caster.RiderPart || caster.SaddledPart)
             {
                 failReason = BlueprintRoot.Instance.LocalizedTexts.Reasons.UnavailableGeneric;
                 return false;
-            }*/
+            }
 
             if (LineOfSightGeometry.Instance.HasObstacle(caster.Position, targetWrapper.Point))
             {
@@ -1105,7 +1096,7 @@ namespace KineticArchetypes
 
     // Following are patches to make sure kinetic blades do not deactivate when dragoon dive is available
     // And should deactivate on performing a normal kinetic blade attack, not when a unit wants to attack
-    // These also prevent unit stuck forever if there is indeed no burn left for blade but atk is issued
+    // These also prevent unit stuck forever if there is indeed no burn left for blade when atk is issued
     [HarmonyPatch(typeof(UnitUseAbility))]
     public class Patch_UnitUseAbility
     {
