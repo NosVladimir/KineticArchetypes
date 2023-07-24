@@ -401,6 +401,11 @@ namespace KineticArchetypes
 
         private static BlueprintFeature CreateImpalingCrash()
         {
+            // Restrict metakinesis maximize
+            FeatureConfigurator.For(FeatureRefs.MetakinesisMasterMaximize)
+                .AddPrerequisiteNoArchetype(ArchetypeGuid, CharacterClassRefs.KineticistClass.Reference.Get())
+                .Configure();
+
             var increaseBladeCost = new AddKineticistBurnModifier
             {
                 Value = 1,

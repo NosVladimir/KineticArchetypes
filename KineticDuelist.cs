@@ -304,6 +304,11 @@ namespace KineticArchetypes
 
         private static BlueprintFeature KineticAssaultFeature()
         {
+            // Restrict metakinesis quicken
+            FeatureConfigurator.For(FeatureRefs.MetakinesisMasterQuicken)
+                .AddPrerequisiteNoArchetype(ArchetypeGuid, CharacterClassRefs.KineticistClass.Reference.Get())
+                .Configure();
+
             var abilityKineticistComponent = new AbilityKineticist
             {
                 InfusionBurnCost = 3
@@ -681,11 +686,6 @@ namespace KineticArchetypes
         {
             var owner = __instance.Owner;
 
-            bool spearBuff = false;
-            foreach (var buff in owner.Buffs)
-                if (buff.Blueprint.ToString().Equals(KineticLancer.KineticSpearBuffName))
-                    spearBuff = true;
-
             var handsSets = owner.Body.HandsEquipmentSets;
             foreach (var handsSet in handsSets)
             {
@@ -707,7 +707,9 @@ namespace KineticArchetypes
                         weapon.Dispose();
                     }
                 }
-                if (spearBuff && mainhand != null && mainhand.HasWeapon && mainhand.HasItem && (mainhand.Item as ItemEntityWeapon).Blueprint.Type.Category == WeaponCategory.KineticBlast)
+                if (owner.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.KineticSpearGuid)) != null &&
+                    mainhand != null && mainhand.HasWeapon && mainhand.HasItem &&
+                    (mainhand.Item as ItemEntityWeapon).Blueprint.Type.Category == WeaponCategory.KineticBlast)
                     offhand.Lock.ReleaseAll();
             }
 
