@@ -248,6 +248,7 @@ namespace KineticArchetypes
                 .SetShouldTurnToTarget(true)
                 .SetSpellResistance(false)
                 .SetAnimation(UnitAnimationActionCastSpell.CastAnimationStyle.Immediate)
+                .AddAbilityRequirementHasCondition(new UnitCondition[] { UnitCondition.Fatigued, UnitCondition.Exhausted, UnitCondition.Entangled }, not: true)
                 .AddComponent<AbilityDragoonDive>()
                 .Configure();
 
@@ -320,6 +321,7 @@ namespace KineticArchetypes
                 .SetSpellResistance(false)
                 .SetEffectOnEnemy(AbilityEffectOnUnit.Harmful)
                 .SetAnimation(UnitAnimationActionCastSpell.CastAnimationStyle.Immediate)
+                .AddAbilityRequirementHasCondition(new UnitCondition[] { UnitCondition.Fatigued, UnitCondition.Exhausted, UnitCondition.Entangled }, not: true)
                 .AddComponent(new AbilityIsFullRoundInTurnBased() { FullRoundIfTurnBased = true })
                 .AddComponent<AbilityDragoonDive>()
                 .AddComponent(new MustHaveEquippedKineticBlade())
@@ -573,11 +575,13 @@ namespace KineticArchetypes
         public override void Cleanup(AbilityExecutionContext context)
         {
             isActivating = false;
+            context.Caster.State.Features.IsUntargetable.Release();
         }
 
         public override IEnumerator<AbilityDeliveryTarget> Deliver(AbilityExecutionContext context, TargetWrapper target)
         {
             UnitEntityData caster = context.Caster;
+            caster.State.Features.IsUntargetable.Retain();
             UnitEntityData mount = caster.GetSaddledUnit();
             if (mount != null || isActivating || caster.State.HasCondition(UnitCondition.CantMove))
                 yield break;
