@@ -355,6 +355,7 @@ namespace KineticArchetypes
                 .SetDescription(KineticSpearAbilityDescription)
                 .SetIcon(AbilityRefs.CrusadersEdge.Reference.Get().Icon)
                 .AddNotDispelable()
+                .AddComponent(new ReactivateKineticBladeComponent())
                 .Configure();
 
             var increaseBladeCost = new AddKineticistBurnModifier
@@ -372,14 +373,13 @@ namespace KineticArchetypes
                 .AddNotDispelable()
                 .Configure();
 
-            var ability = AbilityConfigurator.New(KineticSpearAbilityName, KineticSpearAbilityGuid)
+            var ability = ActivatableAbilityConfigurator.New(KineticSpearAbilityName, KineticSpearAbilityGuid)
                 .SetDisplayName(KineticSpearAbilityName)
                 .SetDescription(KineticSpearAbilityDescription)
                 .SetIcon(AbilityRefs.CrusadersEdge.Reference.Get().Icon)
-                .AddAbilityEffectRunAction(ActionsBuilder.New().ApplyBuffPermanent(buff, isNotDispelable: true))
-                .SetType(AbilityType.Special)
-                .SetRange(AbilityRange.Personal)
-                .SetActionType(UnitCommand.CommandType.Free)
+                .SetBuff(buff)
+                .SetDeactivateImmediately()
+                .SetDoNotTurnOffOnRest()
                 .Configure();
 
             return FeatureConfigurator.New(KineticSpearName, KineticSpearGuid)

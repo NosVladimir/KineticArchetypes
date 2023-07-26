@@ -24,17 +24,16 @@ using Kingmaker.RuleSystem.Rules;
 using Kingmaker.Utility;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
 using BlueprintCore.Actions.Builder;
-using BlueprintCore.Actions.Builder.ContextEx;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Abilities;
 using Kingmaker.UnitLogic.Mechanics.Actions;
 using Kingmaker.UnitLogic.Abilities.Components.CasterCheckers;
-using Kingmaker.View;
 using Kingmaker.EntitySystem.Entities;
 using Kingmaker.UnitLogic.Class.Kineticist.ActivatableAbility;
-using Kingmaker.UnitLogic.FactLogic;
-using Owlcat.Runtime.Core.Physics.PositionBasedDynamics.Bodies;
 using Kingmaker.Items.Slots;
 using Kingmaker.View.Equipment;
+using BlueprintCore.Blueprints.Configurators.UnitLogic.ActivatableAbilities;
+using Kingmaker.UnitLogic.ActivatableAbilities;
+using Kingmaker.Blueprints.JsonSystem;
 
 namespace KineticArchetypes
 {
@@ -249,18 +248,19 @@ namespace KineticArchetypes
                 .SetDisplayName(KineticDualBladesBuffName)
                 .SetDescription(KineticDualBladesBuffDescription)
                 .SetIcon(AbilityRefs.DivineFavor.Reference.Get().Icon)
+                .AddNotDispelable()
                 .AddComponent(increaseBladeCost)
+                .AddComponent(new ReactivateKineticBladeComponent())
                 .Configure();
 
             // Dual blade ability
-            var ability = AbilityConfigurator.New(KineticDualBladesAbilityName, KineticDualBladesAbilityGuid)
+            var ability = ActivatableAbilityConfigurator.New(KineticDualBladesAbilityName, KineticDualBladesAbilityGuid)
                 .SetDisplayName(KineticDualBladesAbilityName)
                 .SetDescription(KineticDualBladesAbilityDescription)
                 .SetIcon(AbilityRefs.DivineFavor.Reference.Get().Icon)
-                .AddAbilityEffectRunAction(ActionsBuilder.New().ApplyBuffPermanent(buff, isNotDispelable: true))
-                .SetType(AbilityType.Special)
-                .SetRange(AbilityRange.Personal)
-                .SetActionType(Kingmaker.UnitLogic.Commands.Base.UnitCommand.CommandType.Free)
+                .SetBuff(buff)
+                .SetDeactivateImmediately()
+                .SetDoNotTurnOffOnRest()
                 .Configure();
 
             return FeatureConfigurator.New(KineticDualBladesFeatureName, KineticDualBladesFeatureGuid)
@@ -543,6 +543,7 @@ namespace KineticArchetypes
         }
     }
 
+    [TypeId("0ABAAC72-2ED7-4170-992A-6AEBFA5FD440")]
     public class Heal1BurnAcceptedThisTurn : ContextAction
     {
         public override string GetCaption()
@@ -565,6 +566,7 @@ namespace KineticArchetypes
         }
     }
 
+    [TypeId("E0240606-8CD2-4858-8510-4C328E342152")]
     public class ExtraAttackWithOffhanBlade : ContextAction
     {
         public override string GetCaption()
@@ -594,6 +596,42 @@ namespace KineticArchetypes
         }
     }
 
+    [TypeId("4C86281E-8574-4A1C-8CAA-8098679E76B0")]
+    public class ReactivateKineticBladeComponent : UnitFactComponentDelegate
+    {
+        public override void OnTurnOn() { ReactivateKineticBlade(); }
+
+        public override void OnTurnOff() { ReactivateKineticBlade(); }
+
+        private void ReactivateKineticBlade()
+        {
+            var kineticist = Owner.Parts.Get<UnitPartKineticist>();
+            BlueprintItemWeapon bladeBP = Owner?.Body.PrimaryHand.MaybeWeapon?.Blueprint;
+            WeaponKineticBlade blade = bladeBP?.GetComponent<WeaponKineticBlade>();
+            if (kineticist == null || blade == null)
+                return;
+
+            ActivatableAbility activeBlade = null;
+            foreach (var activatable in Owner.Descriptor.ActivatableAbilities.RawFacts)
+            {
+                if (activatable.IsOn && activatable.Blueprint.Buff?.GetComponent<AddKineticistBlade>()?.Blade == bladeBP)
+                {
+                    activeBlade = activatable;
+                    break;
+                }
+            }
+
+            if (activeBlade == null)
+                return;
+
+            activeBlade.SetIsOn(value: false, null);
+            activeBlade.Stop(forceRemovedBuff: true);
+
+            if (activeBlade.IsAvailable)
+                activeBlade.SetIsOn(true, null);
+        }
+    }
+
     [HarmonyPatch(typeof(AddKineticistBlade))]
     public class Patch_AddKineticistBlade
     {
@@ -606,13 +644,8 @@ namespace KineticArchetypes
             UnitEntityData owner = __instance.Owner;
             if (owner is null)
                 return;
-
-            // Allow AoO if having KD blade feature or EsotericBlade feature
-            if (owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(KineticDuelist.KDKineticBladeGuid)) != null ||
-                owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(EsotericBlade.ConstantEnergyGuid)) != null)
-                owner.State.RemoveCondition(UnitCondition.DisableAttacksOfOpportunity);
-
-            // Spawn off-hand blade if dual blade activated
+            
+            // Check for activatables
             bool dualbuff = false;
             bool spearbuff = false;
             foreach (var buff in owner.Buffs)
@@ -622,7 +655,13 @@ namespace KineticArchetypes
                 else if (buff.Blueprint.ToString().Equals(KineticLancer.KineticSpearBuffName))
                     spearbuff = true;
             }
-                
+
+            // Allow AoO if having KD blade feature or EsotericBlade feature
+            if (owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(KineticDuelist.KDKineticBladeGuid)) != null ||
+                owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(EsotericBlade.ConstantEnergyGuid)) != null || spearbuff)
+                owner.State.RemoveCondition(UnitCondition.DisableAttacksOfOpportunity);
+
+            // Spawn off-hand blade if dual blade activated
             if (dualbuff && !spearbuff)
             {
                 var bladeOffHand = (ResourcesLibrary.TryGetBlueprint(__instance.m_Blade.Guid) as BlueprintItemWeapon).CreateEntity<ItemEntityWeapon>();
@@ -653,7 +692,6 @@ namespace KineticArchetypes
                 if (owner.Body.SecondaryHand.HasItem)
                     owner.Body.SecondaryHand.RemoveItem();
                 owner.Body.SecondaryHand.Lock.Retain();
-                owner.State.RemoveCondition(UnitCondition.DisableAttacksOfOpportunity);
                 owner.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.KineticSpearRealBuffGuid), owner);
             }
 
@@ -713,13 +751,11 @@ namespace KineticArchetypes
                     offhand.Lock.ReleaseAll();
             }
 
-            // Remove dual blade buff and extra attack buffs and spear buff
+            // Remove extra attack buffs and spear buff
             foreach (var buff in owner.Buffs)
             {
-                if (buff.Blueprint.ToString().Equals(KineticDuelist.KineticDualBladesBuffName)   ||
-                    buff.Blueprint.ToString().Equals(KineticDuelist.DualBlades2ndAttackBuffName) || 
+                if (buff.Blueprint.ToString().Equals(KineticDuelist.DualBlades2ndAttackBuffName) || 
                     buff.Blueprint.ToString().Equals(KineticDuelist.DualBlades3rdAttackBuffName) ||
-                    buff.Blueprint.ToString().Equals(KineticLancer.KineticSpearBuffName)         || 
                     buff.Blueprint.ToString().Equals(KineticLancer.KineticSpearRealBuffName))
                 {
                     buff.SetDuration(TimeSpan.FromSeconds(0));
