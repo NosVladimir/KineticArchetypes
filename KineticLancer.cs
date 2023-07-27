@@ -55,6 +55,7 @@ using Kingmaker.UnitLogic.Buffs.Components;
 using Kingmaker.Visual;
 using Kingmaker.TurnBasedMode.Controllers;
 using Kingmaker.RuleSystem.Rules.Abilities;
+using Kingmaker.UnitLogic.ActivatableAbilities;
 
 namespace KineticArchetypes
 {
@@ -378,7 +379,7 @@ namespace KineticArchetypes
                 .SetDescription(KineticSpearAbilityDescription)
                 .SetIcon(AbilityRefs.CrusadersEdge.Reference.Get().Icon)
                 .SetBuff(buff)
-                .SetDeactivateImmediately()
+                // .SetDeactivateImmediately() // No deactivate immediately, because of infinite AoOs
                 .SetDoNotTurnOffOnRest()
                 .Configure();
 
@@ -563,6 +564,10 @@ namespace KineticArchetypes
             var comp = CreateAddMechanicsFeature?.Invoke(null, new object[] { 8 }) as BlueprintComponent;
             if (comp != null)
                 BuffConfigurator.For(KineticSpearRealBuffGuid).AddComponent(comp).Configure();
+
+            // Fix whip to delay deactivate
+            if (BlueprintTool.TryGet<BlueprintActivatableAbility>("a95f76e9cb344bef8d8bc3839d1a75dd", out var whip))
+                whip.DeactivateImmediately = false;
         }
     }
 
