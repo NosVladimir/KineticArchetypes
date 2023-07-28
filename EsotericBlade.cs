@@ -38,6 +38,7 @@ using Kingmaker.Items.Slots;
 using Kingmaker.UnitLogic.Abilities.Components.Base;
 using Newtonsoft.Json;
 using Kingmaker.View;
+using Kingmaker.View.Equipment;
 
 namespace KineticArchetypes
 {
@@ -247,6 +248,7 @@ namespace KineticArchetypes
                 .SetRanks(10)
                 .SetGroups(FeatureGroup.WeaponTraining)
                 .SetIsClassFeature(true)
+                .SkipAddToSelections()
                 .Configure();
         }
 
@@ -590,41 +592,13 @@ namespace KineticArchetypes
         }
     }
 
-    [HarmonyPatch(typeof(AddKineticistBlade))]
-    public class Patch_AddKineticistBladeVisual
-    {
-        [HarmonyPatch(nameof(AddKineticistBlade.OnActivate))]
-        [HarmonyPostfix]
-        [HarmonyPriority(Priority.Low)]
-        public static void Postfix1(AddKineticistBlade __instance)
-        {
-            var owner = __instance.Owner;
-            if (owner is null)
-                return;
-
-            var rememberedWeapon = owner.Parts.Ensure<RememberWeaponPart>().RememberedWeapon;
-            foreach (var hand in new HandSlot[] {
-                owner.Body.CurrentHandsEquipmentSet.PrimaryHand, owner.Body.CurrentHandsEquipmentSet.SecondaryHand })
-                if (hand.Weapon?.Blueprint.Type.Category == WeaponCategory.KineticBlast && rememberedWeapon != null)
-                {
-                    Main.Logger.Info($"Overriding visual for kinetic blade of {hand.IsPrimaryHand} into {rememberedWeapon}");
-
-                    hand.Weapon.VisualSourceItemBlueprint = rememberedWeapon;
-                    try 
-                    {
-                        if (hand.Weapon.WeaponVisualParameters.Model.GetComponent<UnitEntityView>() is null)
-                            hand.Weapon.WeaponVisualParameters.Model.AddComponent<UnitEntityView>(); 
-                    }
-                    catch { }
-                    owner.View.HandsEquipment.UpdateActiveWeaponSetImmediately();
-                }
-        }
-    }
-
     internal class RememberWeaponPart : UnitPart
     {
         [JsonProperty]
         public BlueprintItemWeapon RememberedWeapon { get; set; }
+
+        [JsonProperty]
+        public BlueprintItemWeapon RememberedLongSpear { get; set; }
     }
 
     internal class RememberWeaponShape : AbilityCustomLogic
@@ -635,11 +609,19 @@ namespace KineticArchetypes
 
         public override IEnumerator<AbilityDeliveryTarget> Deliver(AbilityExecutionContext context, TargetWrapper target)
         {
-            var weapon = context.MaybeCaster?.Body.PrimaryHand.Weapon?.Blueprint;
+            var caster = context.MaybeCaster;
+            if (caster is null)
+                yield break;
+
+            var weapon = caster.Body.PrimaryHand.Weapon?.Blueprint;
             if (weapon is not null && weapon.Type.Category != WeaponCategory.KineticBlast && !weapon.IsTwoHanded && !weapon.IsRanged && !weapon.IsNatural)
-                context.MaybeCaster.Parts.Ensure<RememberWeaponPart>().RememberedWeapon = weapon;
+                caster.Parts.Ensure<RememberWeaponPart>().RememberedWeapon = weapon;
+            else if (weapon is not null && weapon.Type.Category == WeaponCategory.Longspear &&
+                caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.KineticSpearGuid)) != null)
+                caster.Parts.Ensure<RememberWeaponPart>().RememberedLongSpear = weapon;
             else
-                context.MaybeCaster.Parts.Ensure<RememberWeaponPart>().RememberedWeapon = null;
+                caster.Parts.Ensure<RememberWeaponPart>().RememberedWeapon = null;
+
             yield break;
         }
     }

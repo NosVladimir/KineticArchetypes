@@ -44,6 +44,9 @@
     <Reference Include="Assembly-CSharp-firstpass.dll">
       <HintPath>$(WrathPath)\Wrath_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="AstarPathfindingProject">
+      <HintPath>..\..\..\Steam\steamapps\common\Pathfinder Second Adventure\Wrath_Data\Managed\AstarPathfindingProject.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(WrathPath)\Wrath_Data\Managed\Newtonsoft.Json.dll</HintPath>
     </Reference>
