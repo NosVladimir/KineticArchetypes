@@ -597,11 +597,13 @@ namespace KineticArchetypes
     }
 
     [TypeId("4C86281E-8574-4A1C-8CAA-8098679E76B0")]
-    public class ReactivateKineticBladeComponent : UnitFactComponentDelegate
+    public class ReactivateKineticBladeComponent : UnitFactComponentDelegate, IAreaActivationHandler, IGlobalSubscriber, ISubscriber
     {
-        public override void OnTurnOn() { ReactivateKineticBlade(); }
+        public void OnAreaActivated() { ReactivateKineticBlade(); }
 
-        public override void OnTurnOff() { ReactivateKineticBlade(); }
+        public override void OnActivate() { ReactivateKineticBlade(); }
+
+        public override void OnDeactivate() { ReactivateKineticBlade(); }
 
         private void ReactivateKineticBlade()
         {
