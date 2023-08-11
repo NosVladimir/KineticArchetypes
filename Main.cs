@@ -58,6 +58,7 @@ namespace KineticArchetypes
                     CinderAdept.Configure();
                     EsotericBlade.Configure();
                     KineticLancer.Configure();
+                    OnslaughtBlaster.Configure();
                 }
                 catch (Exception e)
                 {
