@@ -5,9 +5,11 @@ using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Abilities;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
 using BlueprintCore.Blueprints.References;
 using BlueprintCore.Utils;
+using JetBrains.Annotations;
 using Kingmaker;
 using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
+using Kingmaker.Controllers;
 using Kingmaker.Designers.Mechanics.EquipmentEnchants;
 using Kingmaker.Designers.Mechanics.Facts;
 using Kingmaker.ElementsSystem;
@@ -23,6 +25,7 @@ using Kingmaker.UnitLogic.Abilities.Components.Base;
 using Kingmaker.UnitLogic.Buffs.Blueprints;
 using Kingmaker.UnitLogic.Class.Kineticist;
 using Kingmaker.UnitLogic.Commands;
+using Kingmaker.UnitLogic.Mechanics.Actions;
 using Kingmaker.UnitLogic.Mechanics.ContextData;
 using Kingmaker.Utility;
 using Kingmaker.Visual.Animation.Kingmaker.Actions;
@@ -120,8 +123,8 @@ namespace KineticArchetypes
         {
             var buff = BuffConfigurator.New(OnslaughtBlastBuffName, OnslaughtBlastBuffGuid)
                 .SetFlags(BlueprintBuff.Flags.HiddenInUi)
+                .AddComponent(new OnslaughtBlastBuffComponent())
                 .AddNotDispelable()
-                .AddNewRoundTrigger(newRoundActions: ActionsBuilder.New().RemoveSelf())
                 .Configure();
             
             var ability = AbilityConfigurator.New(OnslaughtBlastAbilityName, OnslaughtBlastAbilityGuid)
@@ -200,18 +203,16 @@ namespace KineticArchetypes
 
     internal class OnslaughtBlastPart : UnitPart
     {
-        public bool Started = false;
         public bool Repeating = false;
-        public int Repetitions = 0;
-        public int BlastRank = 0;
         public AbilityData Blast = null;
         public TargetWrapper Target = null;
 
+        [SerializeField]
+        public int BlastRank = 0;
+
         public void ClearAttributes()
         {
-            Started = false;
             Repeating = false;
-            Repetitions = 0;
             BlastRank = 0;
             Blast = null;
             Target = null;
@@ -225,33 +226,41 @@ namespace KineticArchetypes
             Owner.Ensure<OnslaughtBlastPart>();
         }
 
+        private bool Restricted([CanBeNull]OnslaughtBlastPart part, RuleCastSpell evt)
+        {
+            return evt.IsDuplicateSpellApplied || evt.Spell.Blueprint.GetComponent<AbilityKineticist>() == null ||
+                evt.Spell.Blueprint.GetComponent<AbilityDeliveredByWeapon>() != null ||
+                evt.Spell.Blueprint.GetComponent<AbilityEffectRunAction>()?.Actions.Actions[0] is ContextActionSpawnAreaEffect ||
+                part == null || part.Repeating;
+        }
+
         public void OnEventAboutToTrigger(RuleCastSpell evt)
         {
             var part = Owner.Parts.Get<OnslaughtBlastPart>();
-            if (evt.IsDuplicateSpellApplied || evt.Spell.Blueprint.GetComponent<AbilityKineticist>() == null || 
-                evt.Spell.Blueprint.GetComponent<AbilityDeliveredByWeapon>() != null || part == null || part.Started)
+            if (Restricted(part, evt))
                 return;
-            part.Started = true;
+
             part.BlastRank = Owner.GetFeature(FeatureRefs.KineticBlastFeature.Reference).Rank;
-            part.Repetitions = part.BlastRank;
             part.Blast = evt.Spell;
             part.Target = evt.SpellTarget;
+
+            Owner.AddBuff(BlueprintTool.Get<BlueprintBuff>(OnslaughtBlaster.OnslaughtBlastBuffGuid), Owner, duration: 5.Seconds());
             Owner.GetFeature(FeatureRefs.KineticBlastFeature.Reference).Rank = 1;
         }
 
         public void OnEventDidTrigger(RuleCastSpell evt)
         {
             var part = Owner.Parts.Get<OnslaughtBlastPart>();
-            if (evt.IsDuplicateSpellApplied || !evt.Success || 
-                evt.Spell.Blueprint.GetComponent<AbilityKineticist>() == null ||
-                evt.Spell.Blueprint.GetComponent<AbilityDeliveredByWeapon>() != null || part == null || part.Repeating)
+            if (Restricted(part, evt))
                 return;
 
             part.Repeating = true;
+
             UnitUseAbility unitUseAbility = new(CommandType.Free, Owner.Descriptor.Abilities.GetAbility(BlueprintTool.Get<BlueprintAbility>(OnslaughtBlaster.OnslaughtBlastAbilityGuid)).Data, new TargetWrapper(Owner));
             unitUseAbility.IgnoreCooldown();
             unitUseAbility.DisableLog = true;
             unitUseAbility.Init(Owner);
+
             Owner.Commands.AddToQueueOrRun(unitUseAbility, false);
         }
     }
@@ -267,7 +276,7 @@ namespace KineticArchetypes
 
         public void OnEventDidTrigger(RuleDealDamage evt)
         {
-            if (evt.Reason?.Ability?.Blueprint != _part.Blast.Blueprint || _part.Repetitions != 0)
+            if (evt.Reason?.Ability?.Blueprint != _part.Blast.Blueprint || _part.Repeating)
                 return;
 
             Owner.Buffs.RemoveFact(Fact.Blueprint);
@@ -275,55 +284,58 @@ namespace KineticArchetypes
 
         public override void OnActivate()
         {
+            Owner.Body.AllSlots.ForEach(slot => { slot.Lock.Retain(); });
             _part = Owner.Parts.Get<OnslaughtBlastPart>();
-            if (_part = null)
+            if (_part == null || _part.Blast == null || _part.BlastRank == 0)
                 Owner.Buffs.RemoveFact(Fact.Blueprint);
         }
 
         public override void OnDeactivate()
         {
-            if (_part = null)
+            Owner.Body.AllSlots.ForEach(slot => { slot.Lock.Release(); });
+            if (_part == null || _part.Blast == null || _part.BlastRank == 0)
                 return;
             var blastFeature = FeatureRefs.KineticBlastFeature.Reference;
             if (Owner.GetFeature(blastFeature) == null)
                 Owner.AddFact(blastFeature);
             Owner.GetFeature(blastFeature).Rank = _part.BlastRank;
             _part.ClearAttributes();
-            Owner.Body.AllSlots.ForEach(slot => { slot.Lock.Release(); });
         }
     }
 
     internal class AbilityOnslaughtBlast : AbilityCustomLogic
     {
-        public override void Cleanup(AbilityExecutionContext context) { }
+        public override void Cleanup(AbilityExecutionContext context)
+        {
+            var part = context.Caster.Parts.Get<OnslaughtBlastPart>();
+            if (part == null)
+                return;
+            part.Repeating = false;
+        }
 
         public override IEnumerator<AbilityDeliveryTarget> Deliver(AbilityExecutionContext context, TargetWrapper target)
         {
             // OnslaughtBlaster.Logger.Info("Onslaught blast ability");
-            context.Caster.Body.AllSlots.ForEach(slot => { slot.Lock.Retain(); });
-
             var part = context.Caster.Parts.Get<OnslaughtBlastPart>();
             if (part == null) 
                 yield break;
             // OnslaughtBlaster.Logger.Info("Onslaught blast repeat");
-            IEnumerator routine = RepeatBlast(context, part);
+            int repetitions = part.BlastRank;
+            IEnumerator routine = RepeatBlast(context, repetitions - 1, part.Blast, part.Target);
             while (routine.MoveNext())
-            {
                 yield return null;
-            }
-            OnslaughtBlaster.Logger.Info("Onslaught blast complete");
+            // OnslaughtBlaster.Logger.Info("Onslaught blast complete");
         }
 
-        private IEnumerator RepeatBlast(AbilityExecutionContext context, OnslaughtBlastPart part)
+        private IEnumerator RepeatBlast(AbilityExecutionContext context, int repetitions, AbilityData blast, TargetWrapper target)
         {
+            if (repetitions == 0)
+                yield break;
             float timeSinceStart = 0f;
-            float interval = (1f / part.Repetitions) + 1f / 32f;
-            while (part.Repetitions > 0)
+            float interval = (1f / repetitions) + 1f / 32f;
+            while (repetitions > 0)
             {
-                // OnslaughtBlaster.Logger.Info($"{part.Blast.Blueprint} repetitions count: {part.BlastRank - part.Repetitions + 1}");
-                part.Repetitions--;
-                if (part.Repetitions <= 0)
-                    yield break;
+                // OnslaughtBlaster.Logger.Info($"{blast.Blueprint} repetitions count: {repetitions}");
                 while (timeSinceStart < interval)
                 {
                     timeSinceStart += Game.Instance.TimeController.GameDeltaTime;
@@ -331,17 +343,19 @@ namespace KineticArchetypes
                 }
                 timeSinceStart = 0f;
 
-                // OnslaughtBlaster.Logger.Info($"Now Repeat Cast {part.Blast} to {part.Target}");
-                RuleCastSpell ruleCastSpell = new(part.Blast, part.Target)
+                // OnslaughtBlaster.Logger.Info($"Now Repeat Cast {blast} to {target}");
+                RuleCastSpell ruleCastSpell = new(blast, target)
                 {
                     IsDuplicateSpellApplied = true,
                 };
-                ruleCastSpell.SetSuccess(true);
+                // ruleCastSpell.SetSuccess(true);
                 Rulebook.Trigger(ruleCastSpell);
                 /*if (evt.Result != null && ruleCastSpell.Result != null)
                 {
                     ruleCastSpell.Result.Context.AttackRoll = evt.Result.Context.AttackRoll;
                 }*/
+
+                repetitions--;
             }
             yield return null;
         }
