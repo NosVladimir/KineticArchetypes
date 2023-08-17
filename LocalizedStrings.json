@@ -575,7 +575,33 @@
   {
     "Key": "OnslaughtBlaster.OnslaughtBlast.Description",
     "enGB": "At 1st level, whenever the onslaught blaster uses their kinetic blast without applying any form infusion which has a long-lasting effect or emulates a melee attack, they can fire multiple blasts. For every 2 kineticist levels beyond 1st, an onslaught blaster fires an additional blast instead of gaining additional damage dices. The targets of each attack are decided before any attack roll is made. If the onslaught blaster applies a substance infusion or an applicable form infusion to their blast, it applies to all blasts.\nThis alters kinetic blast.",
-    "zhCN": "1级起，每当狂轰使施展念袭，并且没有应用持续型或近战类塑形注能，他们可以施放多重念袭。在1级之后的每2个操念使等级，狂轰使会多施放一次念袭，而不是获得额外的伤害骰。每次念袭攻击的目标在攻击投骰前声明。如果狂轰使对念袭应用了性质注能或合适的塑形注能，其会对施放的所有念袭生效。\n此能力改变了念袭。"
+    "zhCN": "1级起，每当狂轰使施展念袭，并且没有应用持续型或近战类塑形注能，他们就会施放多重念袭。在1级之后的每2个操念使等级，狂轰使会多施放一次念袭，而不是获得额外的伤害骰。每次念袭攻击的目标在攻击投骰前声明。如果狂轰使对念袭应用了性质注能或合适的塑形注能，其会对施放的所有念袭生效。\n此能力改变了念袭。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.AutoTargetAbility",
+    "ProcessTemplates": false,
+    "enGB": "Onslaught Blast — Automatically distribute blasts",
+    "zhCN": "狂轰滥袭 — 自动分配念袭"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.AutoTargetAbility.Description",
+    "enGB": "Turned on: onslaught blast will automatically distribute the number of blasts over targets. Each enemy within range with positive HP will be blasted at least once if there are enough blasts, then enemies with more HP will be blasted for more times.\nTurned off: all blasts will target the same enemy or target point.",
+    "zhCN": "开启时：狂轰滥袭会自动分配施放念袭的目标与次数。如果有足够的施放次数，范围内每个HP为正的敌人都会被轰击至少一次，然后HP更多的敌人会被轰击更多次。\n关闭时：所有念袭都会以同一个敌人或地点为目标。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.AutoTargetBuff",
+    "ProcessTemplates": false,
+    "enGB": "Onslaught Blast — Automatically distribute blasts",
+    "zhCN": "狂轰滥袭 — 自动分配念袭"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.AutoTargetBuff.Description",
+    "enGB": "Onslaught blast will automatically distribute the number of blasts over targets. Each enemy will be blasted at least once if there are enough blasts, then enemies with more remaining health will be blasted for more times.",
+    "zhCN": "狂轰滥袭会自动分配施放念袭的目标与次数。如果有足够的施放次数，每个敌人都会被轰击至少一次，然后剩余血量更多的敌人会被轰击更多次。"
   },
 
   {
