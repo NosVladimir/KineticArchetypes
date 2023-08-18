@@ -587,8 +587,8 @@
 
   {
     "Key": "OnslaughtBlaster.AutoTargetAbility.Description",
-    "enGB": "Turned on: onslaught blast will automatically distribute the number of blasts over targets. Each enemy within range with positive HP will be blasted at least once if there are enough blasts, then enemies with more HP will be blasted for more times.\nTurned off: all blasts will target the same enemy or target point.",
-    "zhCN": "开启时：狂轰滥袭会自动分配施放念袭的目标与次数。如果有足够的施放次数，范围内每个HP为正的敌人都会被轰击至少一次，然后HP更多的敌人会被轰击更多次。\n关闭时：所有念袭都会以同一个敌人或地点为目标。"
+    "enGB": "Top right shows the number of blasts to be fired with onslaught blast.\nTurn on this mode: onslaught blast will automatically distribute the number of blasts over targets. Each enemy within range with positive HP will be blasted at least once if there are enough blasts, then enemies with more HP will be blasted for more times.\nTurn off this mode: all blasts will be fired towards the same enemy or target point.",
+    "zhCN": "右上角显示狂轰滥袭的念袭施放次数。\n开启此模式：狂轰滥袭会自动分配施放念袭的目标与次数。如果有足够的施放次数，范围内每个HP为正的敌人都会被轰击至少一次，然后HP更多的敌人会被轰击更多次。\n关闭此模式：所有念袭都会以同一个敌人或地点为目标。"
   },
 
   {
@@ -600,8 +600,8 @@
 
   {
     "Key": "OnslaughtBlaster.AutoTargetBuff.Description",
-    "enGB": "Onslaught blast will automatically distribute the number of blasts over targets. Each enemy will be blasted at least once if there are enough blasts, then enemies with more remaining health will be blasted for more times.",
-    "zhCN": "狂轰滥袭会自动分配施放念袭的目标与次数。如果有足够的施放次数，每个敌人都会被轰击至少一次，然后剩余血量更多的敌人会被轰击更多次。"
+    "enGB": "Onslaught blast will automatically distribute the number of blasts over targets. Each enemy within range with positive HP will be blasted at least once if there are enough blasts, then enemies with more HP will be blasted for more times.",
+    "zhCN": "狂轰滥袭会自动分配施放念袭的目标与次数。如果有足够的施放次数，范围内每个HP为正的敌人都会被轰击至少一次，然后HP更多的敌人会被轰击更多次。"
   },
 
   {
@@ -644,6 +644,12 @@
   },
 
   {
+    "Key": "OnslaughtBlaster.ExcessiveBlasterAbility.Description",
+    "enGB": "At 5th level, an onslaught blaster can increase the burn cost of their onslaught blast by 1 to create one additional blast. At 7th level they instead create two additional blasts, plus one more for every 4 onslaught blaster levels beyond 7th.",
+    "zhCN": "5级起，狂轰使可以提高狂轰滥袭的超载值1点以额外施放一次念袭。7级起提升至额外施放两次，且狂轰使等级每比7级高4级再额外施放一次。"
+  },
+
+  {
     "Key": "OnslaughtBlaster.TargetedStrike",
     "ProcessTemplates": false,
     "enGB": "Targeted Strike",
@@ -667,6 +673,12 @@
     "Key": "OnslaughtBlaster.ExtremeBlaster.Description",
     "enGB": "At 13th level, an onslaught blaster can increase the burn cost of their onslaught blast by 3 to create seven additional blasts. At 15th level they instead create eight additional blasts, plus one more for every 2 onslaught blaster levels beyond 15th.\nThis replaces metakinesis (quicken).",
     "zhCN": "13级起，狂轰使可以提高狂轰滥袭的超载值3点以额外施放七次念袭。15级起提升至额外施放八次，且狂轰使等级每比15级高2级再额外施放一次。\n此能力替换了超念（瞬发）。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.ExtremeBlasterAbility.Description",
+    "enGB": "At 13th level, an onslaught blaster can increase the burn cost of their onslaught blast by 3 to create seven additional blasts. At 15th level they instead create eight additional blasts, plus one more for every 2 onslaught blaster levels beyond 15th.",
+    "zhCN": "13级起，狂轰使可以提高狂轰滥袭的超载值3点以额外施放七次念袭。15级起提升至额外施放八次，且狂轰使等级每比15级高2级再额外施放一次。"
   },
 
   {

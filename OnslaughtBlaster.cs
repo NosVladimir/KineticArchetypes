@@ -7,12 +7,14 @@ using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Abilities;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
 using BlueprintCore.Blueprints.References;
 using BlueprintCore.Utils;
+using HarmonyLib;
 using JetBrains.Annotations;
 using Kingmaker;
 using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
 using Kingmaker.Blueprints.Root;
 using Kingmaker.Controllers;
+using Kingmaker.Designers.Mechanics.Buffs;
 using Kingmaker.Designers.Mechanics.EquipmentEnchants;
 using Kingmaker.Designers.Mechanics.Facts;
 using Kingmaker.ElementsSystem;
@@ -21,6 +23,7 @@ using Kingmaker.PubSubSystem;
 using Kingmaker.RuleSystem;
 using Kingmaker.RuleSystem.Rules.Abilities;
 using Kingmaker.RuleSystem.Rules.Damage;
+using Kingmaker.UI.UnitSettings;
 using Kingmaker.UnitLogic;
 using Kingmaker.UnitLogic.Abilities;
 using Kingmaker.UnitLogic.Abilities.Blueprints;
@@ -37,9 +40,11 @@ using Kingmaker.UnitLogic.Mechanics.Actions;
 using Kingmaker.UnitLogic.Mechanics.ContextData;
 using Kingmaker.Utility;
 using Kingmaker.Visual.Animation.Kingmaker.Actions;
+using Pathfinding.Voxels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using UnityEngine;
@@ -77,6 +82,11 @@ namespace KineticArchetypes
         internal const string ExcessiveBlasterName = "OnslaughtBlaster.ExcessiveBlaster";
         internal const string ExcessiveBlasterGuid = "3F4EFC7B-7D27-43B2-916C-9CEA68682E43";
         internal const string ExcessiveBlasterDescription = "OnslaughtBlaster.ExcessiveBlaster.Description";
+        internal const string ExcessiveBlasterAbilityName = "OnslaughtBlaster.ExcessiveBlasterAbility";
+        internal const string ExcessiveBlasterAbilityGuid = "7FB1ABD3-3BA1-4CBC-825B-0EC889BC7BC9";
+        internal const string ExcessiveBlasterAbilityDescription = "OnslaughtBlaster.ExcessiveBlasterAbility.Description";
+        internal const string ExcessiveBlasterBuffName = "OnslaughtBlaster.ExcessiveBlasterBuff";
+        internal const string ExcessiveBlasterBuffGuid = "98B9AD77-DD65-4647-B480-8B3C21AC635D";
 
         internal const string TargetedStrikeName = "OnslaughtBlaster.TargetedStrike";
         internal const string TargetedStrikeGuid = "97ABCEDF-6339-43CA-A6C8-DF45DB8AF383";
@@ -85,11 +95,19 @@ namespace KineticArchetypes
         internal const string ExtremeBlasterName = "OnslaughtBlaster.ExtremeBlaster";
         internal const string ExtremeBlasterGuid = "1C27F829-3A7C-474D-9E8A-DA3EA38BD644";
         internal const string ExtremeBlasterDescription = "OnslaughtBlaster.ExtremeBlaster.Description";
+        internal const string ExtremeBlasterAbilityName = "OnslaughtBlaster.ExtremeBlasterAbility";
+        internal const string ExtremeBlasterAbilityGuid = "FB5521B8-8DE3-431E-AF57-3DF6D3F72B67";
+        internal const string ExtremeBlasterAbilityDescription = "OnslaughtBlaster.ExtremeBlasterAbility.Description";
+        internal const string ExtremeBlasterBuffName = "OnslaughtBlaster.ExtremeBlasterBuff";
+        internal const string ExtremeBlasterBuffGuid = "2A64427A-A5B8-4121-8748-60A9468976F4";
 
         internal const string OmniBlasterName = "OnslaughtBlaster.OmniBlaster";
         internal const string OmniBlasterGuid = "AD496984-3A4C-499C-A94C-B1E579AAC181";
         internal const string OmniBlasterDescription = "OnslaughtBlaster.OmniBlaster.Description";
-
+        internal const string OmniBlasterAbilityName = "OnslaughtBlaster.OmniBlasterAbility";
+        internal const string OmniBlasterAbilityGuid = "FB25ADD7-1A58-4169-8EA8-92C0A3E79B01";
+        internal const string OmniBlasterBuffName = "OnslaughtBlaster.OmniBlasterBuff";
+        internal const string OmniBlasterBuffGuid = "D08956F9-DB1D-4331-BBF2-853910B6DCED";
 
         internal static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes.OnslaughtBlaster");
 
@@ -145,6 +163,7 @@ namespace KineticArchetypes
                 .SetDescription(AutoTargetAbilityDescription)
                 .SetIcon(AbilityRefs.HolySmite.Reference.Get().Icon)
                 .SetBuff(autoTargetBuff)
+                .AddComponent(new ShowNumberOfBlasts())
                 .SetDeactivateImmediately()
                 .SetDoNotTurnOffOnRest()
                 .Configure();
@@ -171,6 +190,7 @@ namespace KineticArchetypes
                 .SetIcon(AbilityRefs.HolySmite.Reference.Get().Icon)
                 .AddComponent(new InitiateOnslaughtBlast())
                 .AddFacts(new List<Blueprint<BlueprintUnitFactReference>> { ability, autoTargetAbility })
+                .SetIsClassFeature()
                 .Configure();
         }
 
@@ -185,6 +205,8 @@ namespace KineticArchetypes
                 .SetDisplayName(FocusedBlasterName)
                 .SetDescription(FocusedBlasterDescription)
                 .SetIcon(ActivatableAbilityRefs.GatherPowerModeLow.Reference.Get().Icon)
+                .AddComponent(new FocusedBlasterBurnReduction())
+                .SetIsClassFeature()
                 .Configure();
         }
 
@@ -194,15 +216,37 @@ namespace KineticArchetypes
                 .SetDisplayName(BurnedBlasterName)
                 .SetDescription(BurnedBlasterDescription)
                 .SetIcon(AbilityRefs.ThunderingDrums.Reference.Get().Icon)
+                .SetIsClassFeature()
                 .Configure();
         }
 
         private static BlueprintFeature CreateExcessiveBlaster()
         {
+            var icon = AbilityRefs.CallLightning.Reference.Get().Icon;
+
+            var buff = BuffConfigurator.New(ExcessiveBlasterBuffName, ExcessiveBlasterBuffGuid)
+                .SetDisplayName(ExcessiveBlasterName)
+                .SetDescription(ExcessiveBlasterAbilityDescription)
+                .SetIcon(icon)
+                .AddNotDispelable()
+                .AddComponent(new ExBlastBurnIncrease() { Increase = 1 })
+                .Configure();
+
+            var ability = ActivatableAbilityConfigurator.New(ExcessiveBlasterAbilityName, ExcessiveBlasterAbilityGuid)
+                .SetDisplayName(ExcessiveBlasterName)
+                .SetDescription(ExcessiveBlasterAbilityDescription)
+                .SetIcon(icon)
+                .SetBuff(buff)
+                .SetDeactivateImmediately()
+                .SetDoNotTurnOffOnRest()
+                .Configure();
+
             return FeatureConfigurator.New(ExcessiveBlasterName, ExcessiveBlasterGuid)
                 .SetDisplayName(ExcessiveBlasterName)
                 .SetDescription(ExcessiveBlasterDescription)
-                .SetIcon(AbilityRefs.CallLightning.Reference.Get().Icon)
+                .SetIcon(icon)
+                .AddFacts(new List<Blueprint<BlueprintUnitFactReference>> { ability })
+                .SetIsClassFeature()
                 .Configure();
         }
 
@@ -212,25 +256,75 @@ namespace KineticArchetypes
                 .SetDisplayName(TargetedStrikeName)
                 .SetDescription(TargetedStrikeDescription)
                 .SetIcon(FeatureRefs.CripplingStrike.Reference.Get().Icon)
+                .SetIsClassFeature()
                 .Configure();
         }
 
         private static BlueprintFeature CreateExtremeBlaster()
         {
+            var icon = AbilityRefs.CallLightningStorm.Reference.Get().Icon;
+
+            var buff = BuffConfigurator.New(ExtremeBlasterBuffName, ExtremeBlasterBuffGuid)
+                .SetDisplayName(ExtremeBlasterName)
+                .SetDescription(ExtremeBlasterAbilityDescription)
+                .SetIcon(icon)
+                .AddNotDispelable()
+                .AddComponent(new ExBlastBurnIncrease() { Increase = 3 })
+                .Configure();
+
+            var ability = ActivatableAbilityConfigurator.New(ExtremeBlasterAbilityName, ExtremeBlasterAbilityGuid)
+                .SetDisplayName(ExtremeBlasterName)
+                .SetDescription(ExtremeBlasterAbilityDescription)
+                .SetIcon(icon)
+                .SetBuff(buff)
+                .SetDeactivateImmediately()
+                .SetDoNotTurnOffOnRest()
+                .Configure();
+
             return FeatureConfigurator.New(ExtremeBlasterName, ExtremeBlasterGuid)
                 .SetDisplayName(ExtremeBlasterName)
                 .SetDescription(ExtremeBlasterDescription)
-                .SetIcon(AbilityRefs.CallLightningStorm.Reference.Get().Icon)
+                .SetIcon(icon)
+                .AddFacts(new List<Blueprint<BlueprintUnitFactReference>> { ability })
+                .SetIsClassFeature()
                 .Configure();
         }
 
         private static BlueprintFeature CreateOmniBlaster()
         {
+            var icon = AbilityRefs.Stormbolts.Reference.Get().Icon;
+
+            var buff = BuffConfigurator.New(OmniBlasterBuffName, OmniBlasterBuffGuid)
+                .SetDisplayName(OmniBlasterName)
+                .SetDescription(OmniBlasterDescription)
+                .SetIcon(icon)
+                .AddNotDispelable()
+                .AddComponent(new ExBlastBurnIncrease() { Increase = 4 })
+                .Configure();
+
+            var ability = ActivatableAbilityConfigurator.New(OmniBlasterAbilityName, OmniBlasterAbilityGuid)
+                .SetDisplayName(OmniBlasterName)
+                .SetDescription(OmniBlasterDescription)
+                .SetIcon(icon)
+                .SetBuff(buff)
+                .SetDeactivateImmediately()
+                .SetDoNotTurnOffOnRest()
+                .Configure();
+
             return FeatureConfigurator.New(OmniBlasterName, OmniBlasterGuid)
                 .SetDisplayName(OmniBlasterName)
                 .SetDescription(OmniBlasterDescription)
-                .SetIcon(AbilityRefs.Stormbolts.Reference.Get().Icon)
+                .SetIcon(icon)
+                .AddFacts(new List<Blueprint<BlueprintUnitFactReference>> { ability })
+                .SetIsClassFeature()
                 .Configure();
+        }
+
+        public static bool InappropriateBlast(BlueprintAbility ability)
+        {
+            return ability.GetComponent<AbilityKineticist>() == null ||
+                ability.GetComponent<AbilityDeliveredByWeapon>() != null ||
+                ability.GetComponent<AbilityEffectRunAction>()?.Actions.Actions[0] is ContextActionSpawnAreaEffect;
         }
     }
 
@@ -262,6 +356,77 @@ namespace KineticArchetypes
             Target = null;
             RodRank = 0;
         }
+
+        public int CalculateNumberOfBlasts()
+        {
+            int number = BlastRank != 0 ? BlastRank : Owner.GetFeature(FeatureRefs.KineticBlastFeature.Reference).Rank;
+            int level = Owner.Descriptor.Progression.GetClassLevel(CharacterClassRefs.KineticistClass.Reference);
+            if (Owner.GetFeature(BlueprintTool.Get<BlueprintFeature>(OnslaughtBlaster.BurnedBlasterGuid)) != null)
+            {
+                int burn = Owner.Parts.Get<UnitPartKineticist>().AcceptedBurn;
+                if (level > 2 && burn > 0)
+                    number++;
+                if (level > 8 && burn > 1)
+                    number++;
+                if (level > 14 && burn > 2)
+                    number++;
+            }
+
+            bool excessive = false, extreme = false, omni = false;
+            foreach (var buff in Owner.Buffs)
+            {
+                if (buff.Blueprint.ToString().Equals(OnslaughtBlaster.ExcessiveBlasterBuffName))
+                    excessive = true;
+                else if (buff.Blueprint.ToString().Equals(OnslaughtBlaster.ExtremeBlasterBuffName))
+                    extreme = true;
+                else if (buff.Blueprint.ToString().Equals(OnslaughtBlaster.OmniBlasterBuffName))
+                    omni = true;
+            }
+
+            if (omni)
+                number *= 2;
+            else 
+            {
+                if (excessive)
+                    number += Math.Max(level - 3, 0) / 4 + 1;
+                if (extreme)
+                    number += Math.Max(level - 13, 0) / 2 + 7;
+            }
+
+            return number;
+        }
+    }
+
+    internal class ShowNumberOfBlasts : BlueprintComponent
+    {
+        /*[SerializeField]
+        public UnitEntityData Unit = null;
+
+        public override void OnTurnOn()
+        {
+            base.OnTurnOn();
+            Unit = Owner;
+        }*/
+
+        public int GetNumber(UnitEntityData Unit)
+        {
+            return Unit.Parts.Get<OnslaughtBlastPart>()?.CalculateNumberOfBlasts() ?? 0;
+        }
+    }
+
+    [HarmonyPatch(typeof(MechanicActionBarSlotActivableAbility))]
+    public class Patch_MechanicActionBarSlotActivableAbility
+    {
+        [HarmonyPrefix]
+        [HarmonyPatch(nameof(MechanicActionBarSlotActivableAbility.GetResource))]
+        public static bool Prefix1(MechanicActionBarSlotActivableAbility __instance, ref int __result)
+        {
+            var component = __instance.ActivatableAbility.Blueprint.GetComponent<ShowNumberOfBlasts>();
+            if (component == null)
+                return true;
+            __result = component.GetNumber(__instance.Unit);
+            return false;
+        }
     }
 
     internal class InitiateOnslaughtBlast : UnitFactComponentDelegate, IGlobalRulebookHandler<RuleCastSpell>, IRulebookHandler<RuleCastSpell>, ISubscriber, IGlobalRulebookSubscriber
@@ -271,18 +436,11 @@ namespace KineticArchetypes
             Owner.Ensure<OnslaughtBlastPart>();
         }
 
-        private bool Restricted([CanBeNull]OnslaughtBlastPart part, RuleCastSpell evt)
-        {
-            return evt.IsDuplicateSpellApplied || evt.Spell.Blueprint.GetComponent<AbilityKineticist>() == null ||
-                evt.Spell.Blueprint.GetComponent<AbilityDeliveredByWeapon>() != null ||
-                evt.Spell.Blueprint.GetComponent<AbilityEffectRunAction>()?.Actions.Actions[0] is ContextActionSpawnAreaEffect ||
-                part == null || part.Repeating;
-        }
-
         public void OnEventAboutToTrigger(RuleCastSpell evt)
         {
             var part = Owner.Parts.Get<OnslaughtBlastPart>();
-            if (Restricted(part, evt))
+            if (evt.IsDuplicateSpellApplied || evt.Spell?.Blueprint == null ||
+                OnslaughtBlaster.InappropriateBlast(evt.Spell.Blueprint) || part == null || part.Repeating)
                 return;
 
             foreach (var buff in Owner.Buffs)
@@ -307,7 +465,8 @@ namespace KineticArchetypes
         public void OnEventDidTrigger(RuleCastSpell evt)
         {
             var part = Owner.Parts.Get<OnslaughtBlastPart>();
-            if (Restricted(part, evt))
+            if (evt.IsDuplicateSpellApplied || evt.Spell?.Blueprint == null ||
+                OnslaughtBlaster.InappropriateBlast(evt.Spell.Blueprint) || part == null || part.Repeating)
                 return;
 
             part.Repeating = true;
@@ -379,13 +538,11 @@ namespace KineticArchetypes
 
         public override IEnumerator<AbilityDeliveryTarget> Deliver(AbilityExecutionContext context, TargetWrapper target)
         {
-            // OnslaughtBlaster.Logger.Info("Onslaught blast ability");
             var part = context.Caster.Parts.Get<OnslaughtBlastPart>();
             if (part == null) 
                 yield break;
-            // OnslaughtBlaster.Logger.Info("Onslaught blast repeat");
 
-            var repetitions = new List<int>() { part.BlastRank - 1 };
+            var repetitions = new List<int>() { part.CalculateNumberOfBlasts() - 1 };
             var targets = new List<TargetWrapper> { part.Target };
             _targeted.Add(part.Target);
 
@@ -444,9 +601,6 @@ namespace KineticArchetypes
                     casting |= r.MoveNext();
                 yield return null;
             }
-            /*while (routines.Where(r => r.MoveNext()).Any())
-                yield return null;*/
-            // OnslaughtBlaster.Logger.Info("Onslaught blast complete");
         }
 
         private IEnumerator RepeatBlast(AbilityExecutionContext context, int repetition, AbilityData blast, TargetWrapper target)
@@ -457,7 +611,6 @@ namespace KineticArchetypes
             float interval = 2f / (repetition + 2) + 1f / 45f;
             while (repetition > 0)
             {
-                // OnslaughtBlaster.Logger.Info($"{blast.Blueprint} repetition count: {repetition}");
                 if (_targeted.Contains(target))
                 {
                     while (timeSinceStart < interval)
@@ -478,7 +631,6 @@ namespace KineticArchetypes
                     timeSinceStart = 0f;
                 }
 
-                // OnslaughtBlaster.Logger.Info($"Now Repeat Cast {blast} to {target}");
                 RuleCastSpell ruleCastSpell = new(blast, target)
                 {
                     IsDuplicateSpellApplied = true,
@@ -486,6 +638,55 @@ namespace KineticArchetypes
                 Rulebook.Trigger(ruleCastSpell);
 
                 repetition--;
+            }
+        }
+    }
+
+    internal class FocusedBlasterBurnReduction : UnitFactComponentDelegate, IKineticistCalculateAbilityCostHandler, IGlobalSubscriber, ISubscriber, IUnitSubscriber
+    {
+        public void HandleKineticistCalculateAbilityCost(UnitDescriptor caster, BlueprintAbility abilityBlueprint, ref KineticistAbilityBurnCost cost)
+        {
+            if (!caster.Equals(Owner.Descriptor) || Owner.Parts.Get<OnslaughtBlastPart>() == null ||
+                OnslaughtBlaster.InappropriateBlast(abilityBlueprint))
+                return;
+
+            int level = caster.Progression.GetClassLevel(CharacterClassRefs.KineticistClass.Reference);
+            if (level > 10)
+                cost.GatherPower++;
+            if (level > 18)
+                cost.GatherPower++;
+        }
+    }
+
+    internal class ExBlastBurnIncrease : UnitFactComponentDelegate, IKineticistCalculateAbilityCostHandler, IGlobalSubscriber, ISubscriber, IUnitSubscriber
+    {
+        [SerializeField]
+        public int Increase { get; set; }
+
+        public void HandleKineticistCalculateAbilityCost(UnitDescriptor caster, BlueprintAbility abilityBlueprint, ref KineticistAbilityBurnCost cost)
+        {
+            if (!caster.Equals(Owner.Descriptor) || Owner.Parts.Get<OnslaughtBlastPart>() == null ||
+                OnslaughtBlaster.InappropriateBlast(abilityBlueprint))
+                return;
+
+            cost.Increase(Increase, KineticistBurnType.Metakinesis);
+        }
+
+        public override void OnActivate()
+        {
+            var excessive = BlueprintTool.Get<BlueprintActivatableAbility>(OnslaughtBlaster.ExcessiveBlasterAbilityGuid);
+            var extreme = BlueprintTool.Get<BlueprintActivatableAbility>(OnslaughtBlaster.ExtremeBlasterAbilityGuid);
+            var omni = BlueprintTool.Get<BlueprintActivatableAbility>(OnslaughtBlaster.OmniBlasterAbilityGuid);
+            foreach (var a in Owner.Descriptor.ActivatableAbilities.RawFacts)
+            {
+                if (!a.IsOn)
+                    continue;
+                if (((Increase == 1 || Increase == 3) && a.Blueprint == omni) ||
+                    (Increase == 4 && (a.Blueprint == excessive || a.Blueprint == extreme)))
+                {
+                    a.SetIsOn(value: false, null);
+                    a.Stop(forceRemovedBuff: true);
+                }
             }
         }
     }
