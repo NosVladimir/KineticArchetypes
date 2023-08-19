@@ -62,6 +62,8 @@ Taking levels first in an esoteric blade then a proper kineticist would give you
 
 Using dragoon dive to initiate a battle would sometimes cause you to lose your attacks - that's because the enemy was moving too fast and by the end of the fixed-point jump it's out of reach. This can be partially mitigated by increasing the speed of the character, so jumping time is reduced. It would be too complicated to factor in moving targets in real time, so this is not going to be fixed.
 
+Onslaught blaster's targeted strike sometimes counts fewer blasts than actually fired.
+
 # Planned contents
 Currently no guaranteed future contents. Below is a list of archetypes I'm interested in and might try to implement, but given how bizzarre they are I cannot promise anything. Maybe also some more base game fixes around blade whirlwind.
 
