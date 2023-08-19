@@ -326,7 +326,8 @@ namespace KineticArchetypes
 
         public static bool InappropriateBlast(BlueprintAbility ability)
         {
-            return ability.GetComponent<AbilityKineticist>() == null ||
+            return ability.ToString().Equals("FoeThrowInfusionThrowAbility") ||
+                ability.GetComponent<AbilityKineticist>() == null ||
                 ability.GetComponent<AbilityDeliveredByWeapon>() != null ||
                 ability.GetComponent<AbilityEffectRunAction>()?.Actions.Actions[0] is ContextActionSpawnAreaEffect ||
                 !(Blasts.Contains(ability.ToReference<BlueprintAbilityReference>()) || 
