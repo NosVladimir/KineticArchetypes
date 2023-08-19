@@ -1,6 +1,4 @@
-﻿using BlueprintCore.Actions.Builder;
-using BlueprintCore.Actions.Builder.ContextEx;
-using BlueprintCore.Blueprints.Configurators.UnitLogic.ActivatableAbilities;
+﻿using BlueprintCore.Blueprints.Configurators.UnitLogic.ActivatableAbilities;
 using BlueprintCore.Blueprints.CustomConfigurators;
 using BlueprintCore.Blueprints.CustomConfigurators.Classes;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Abilities;
@@ -8,17 +6,13 @@ using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
 using BlueprintCore.Blueprints.References;
 using BlueprintCore.Utils;
 using HarmonyLib;
-using JetBrains.Annotations;
 using Kingmaker;
 using Kingmaker.Blueprints;
 using Kingmaker.Blueprints.Classes;
-using Kingmaker.Blueprints.Root;
 using Kingmaker.Controllers;
-using Kingmaker.Designers.Mechanics.Buffs;
-using Kingmaker.Designers.Mechanics.EquipmentEnchants;
-using Kingmaker.Designers.Mechanics.Facts;
-using Kingmaker.ElementsSystem;
 using Kingmaker.EntitySystem.Entities;
+using Kingmaker.EntitySystem.Stats;
+using Kingmaker.Enums;
 using Kingmaker.PubSubSystem;
 using Kingmaker.RuleSystem;
 using Kingmaker.RuleSystem.Rules.Abilities;
@@ -31,22 +25,17 @@ using Kingmaker.UnitLogic.Abilities.Components;
 using Kingmaker.UnitLogic.Abilities.Components.Base;
 using Kingmaker.UnitLogic.ActivatableAbilities;
 using Kingmaker.UnitLogic.ActivatableAbilities.Restrictions;
-using Kingmaker.UnitLogic.Buffs;
 using Kingmaker.UnitLogic.Buffs.Blueprints;
 using Kingmaker.UnitLogic.Class.Kineticist;
 using Kingmaker.UnitLogic.Commands;
 using Kingmaker.UnitLogic.Commands.Base;
 using Kingmaker.UnitLogic.Mechanics.Actions;
-using Kingmaker.UnitLogic.Mechanics.ContextData;
 using Kingmaker.Utility;
 using Kingmaker.Visual.Animation.Kingmaker.Actions;
-using Pathfinding.Voxels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using UnityEngine;
 namespace KineticArchetypes
 {
@@ -91,6 +80,9 @@ namespace KineticArchetypes
         internal const string TargetedStrikeName = "OnslaughtBlaster.TargetedStrike";
         internal const string TargetedStrikeGuid = "97ABCEDF-6339-43CA-A6C8-DF45DB8AF383";
         internal const string TargetedStrikeDescription = "OnslaughtBlaster.TargetedStrike.Description";
+        internal const string TargetedStrikeDebuffName = "OnslaughtBlaster.TargetedStrikeDebuff";
+        internal const string TargetedStrikeDebuffGuid = "41E91BC0-9C19-4DD2-B1D5-DAC2A85D7027";
+        internal const string TargetedStrikeDebuffDescription = "OnslaughtBlaster.TargetedStrikeDebuff.Description";
 
         internal const string ExtremeBlasterName = "OnslaughtBlaster.ExtremeBlaster";
         internal const string ExtremeBlasterGuid = "1C27F829-3A7C-474D-9E8A-DA3EA38BD644";
@@ -131,7 +123,7 @@ namespace KineticArchetypes
                 ArchetypeConfigurator.New(ArchetypeName, ArchetypeGuid, CharacterClassRefs.KineticistClass)
                     .SetLocalizedName(ArchetypeDisplayName)
                     .SetLocalizedDescription(ArchetypeDescription);
-            // holy smite, thundering drums, call lightning, word of chaos, call lightning storm, storm bolts 
+
             archetype
                 .AddToRemoveFeatures(5, FeatureRefs.MetakinesisEmpowerFeature.ToString())
                 .AddToRemoveFeatures(9, FeatureRefs.MetakinesisMaximizedFeature.ToString())
@@ -168,12 +160,12 @@ namespace KineticArchetypes
                 .SetDoNotTurnOffOnRest()
                 .Configure();
 
-            var buff = BuffConfigurator.New(OnslaughtBlastBuffName, OnslaughtBlastBuffGuid)
+            BuffConfigurator.New(OnslaughtBlastBuffName, OnslaughtBlastBuffGuid)
                 .SetFlags(BlueprintBuff.Flags.HiddenInUi)
                 .AddComponent(new OnslaughtBlastBuffComponent())
                 .AddNotDispelable()
                 .Configure();
-            
+
             var ability = AbilityConfigurator.New(OnslaughtBlastAbilityName, OnslaughtBlastAbilityGuid)
                 .SetRange(AbilityRange.Personal)
                 .SetActionType(UnitCommand.CommandType.Free)
@@ -252,6 +244,15 @@ namespace KineticArchetypes
 
         private static BlueprintFeature CreateTargetedStrike()
         {
+            BuffConfigurator.New(TargetedStrikeDebuffName, TargetedStrikeDebuffGuid)
+                .SetDisplayName(TargetedStrikeDebuffName)
+                .SetDescription(TargetedStrikeDebuffDescription)
+                .SetIcon(FeatureRefs.CripplingStrike.Reference.Get().Icon)
+                .AddNotDispelable()
+                .AddStatBonus(ModifierDescriptor.UntypedStackable, stat: StatType.AC, value: -1)
+                .SetStacking(StackingType.Stack)
+                .Configure();
+
             return FeatureConfigurator.New(TargetedStrikeName, TargetedStrikeGuid)
                 .SetDisplayName(TargetedStrikeName)
                 .SetDescription(TargetedStrikeDescription)
@@ -385,7 +386,7 @@ namespace KineticArchetypes
 
             if (omni)
                 number *= 2;
-            else 
+            else
             {
                 if (excessive)
                     number += Math.Max(level - 3, 0) / 4 + 1;
@@ -399,15 +400,6 @@ namespace KineticArchetypes
 
     internal class ShowNumberOfBlasts : BlueprintComponent
     {
-        /*[SerializeField]
-        public UnitEntityData Unit = null;
-
-        public override void OnTurnOn()
-        {
-            base.OnTurnOn();
-            Unit = Owner;
-        }*/
-
         public int GetNumber(UnitEntityData Unit)
         {
             return Unit.Parts.Get<OnslaughtBlastPart>()?.CalculateNumberOfBlasts() ?? 0;
@@ -485,17 +477,42 @@ namespace KineticArchetypes
         [SerializeField]
         public OnslaughtBlastPart Part = null;
 
-        public void OnEventAboutToTrigger(RuleDealDamage evt)
-        {
+        private List<UnitEntityData> _targets = new();
+        private List<int> _hits = new();
+        private TimeSpan _lastFrameTime = TimeSpan.Zero;
 
-        }
+        public void OnEventAboutToTrigger(RuleDealDamage evt) { }
 
         public void OnEventDidTrigger(RuleDealDamage evt)
         {
-            if (evt.Reason?.Ability?.Blueprint != Part.Blast.Blueprint || Part.Repeating)
+            if (evt.Reason?.Ability?.Blueprint != Part.Blast.Blueprint)
                 return;
 
-            Owner.Buffs.RemoveFact(Fact.Blueprint);
+            if (Owner.GetFeature(BlueprintTool.Get<BlueprintFeature>(OnslaughtBlaster.TargetedStrikeGuid)) != null)
+            {
+                TimeSpan gameTime = Game.Instance.TimeController.GameTime;
+                if (_lastFrameTime != gameTime)
+                {
+                    int index = _targets.IndexOf(evt.Target);
+                    if (index != -1)
+                    {
+                        _hits[index]++;
+                        OnslaughtBlaster.Logger.Info($"{_hits[index]} Hit, {_hits[index] % 5 == 0}");
+                        if (_hits[index] % 5 == 0)
+                            evt.Target.AddBuff(BlueprintTool.Get<BlueprintBuff>(OnslaughtBlaster.TargetedStrikeDebuffGuid), Owner, 6.Seconds());
+                    }
+                    else
+                    {
+                        _targets.Add(evt.Target);
+                        _hits.Add(1);
+                        OnslaughtBlaster.Logger.Info("First hit");
+                    }
+                    _lastFrameTime = gameTime;
+                }
+            }
+
+            if (!Part.Repeating)
+                Owner.Buffs.RemoveFact(Fact.Blueprint);
         }
 
         public override void OnActivate()
@@ -519,6 +536,8 @@ namespace KineticArchetypes
                 Owner.AddFact(blastFeature);
             Owner.GetFeature(blastFeature).Rank = Part.BlastRank - Part.RodRank + rodRank;
             Part.ClearAttributes();
+            _targets.Clear();
+            _hits.Clear();
         }
     }
 
@@ -539,7 +558,7 @@ namespace KineticArchetypes
         public override IEnumerator<AbilityDeliveryTarget> Deliver(AbilityExecutionContext context, TargetWrapper target)
         {
             var part = context.Caster.Parts.Get<OnslaughtBlastPart>();
-            if (part == null) 
+            if (part == null)
                 yield break;
 
             var repetitions = new List<int>() { part.CalculateNumberOfBlasts() - 1 };
@@ -568,7 +587,7 @@ namespace KineticArchetypes
             var totalHealth = targets.Select(t => t.Unit?.HPLeft ?? 0).Sum();
             if (targets.Count > 1 && totalHealth > 0)
             {
-                targets.Sort(delegate(TargetWrapper a, TargetWrapper b)
+                targets.Sort(delegate (TargetWrapper a, TargetWrapper b)
                 {
                     if (a.Unit is null) return 1;
                     else if (b.Unit is null) return -1;
@@ -592,7 +611,7 @@ namespace KineticArchetypes
                     repetitions[i % repetitions.Count] += 1;
             }
 
-            var routines = repetitions.Zip(targets, Tuple.Create).Select(t => RepeatBlast(context, t.Item1, part.Blast, t.Item2)).ToArray();
+            var routines = repetitions.Zip(targets, Tuple.Create).Select(t => RepeatBlast(t.Item1, part.Blast, t.Item2)).ToArray();
             var casting = true;
             while (casting)
             {
@@ -603,7 +622,7 @@ namespace KineticArchetypes
             }
         }
 
-        private IEnumerator RepeatBlast(AbilityExecutionContext context, int repetition, AbilityData blast, TargetWrapper target)
+        private IEnumerator RepeatBlast(int repetition, AbilityData blast, TargetWrapper target)
         {
             if (repetition == 0)
                 yield break;

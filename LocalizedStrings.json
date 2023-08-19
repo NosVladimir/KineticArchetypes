@@ -581,7 +581,7 @@
   {
     "Key": "OnslaughtBlaster.AutoTargetAbility",
     "ProcessTemplates": false,
-    "enGB": "Onslaught Blast — Automatically distribute blasts",
+    "enGB": "Onslaught Blast — Automatically Distribute Blasts",
     "zhCN": "狂轰滥袭 — 自动分配念袭"
   },
 
@@ -594,7 +594,7 @@
   {
     "Key": "OnslaughtBlaster.AutoTargetBuff",
     "ProcessTemplates": false,
-    "enGB": "Onslaught Blast — Automatically distribute blasts",
+    "enGB": "Onslaught Blast — Automatically Distribute Blasts",
     "zhCN": "狂轰滥袭 — 自动分配念袭"
   },
 
@@ -659,7 +659,20 @@
   {
     "Key": "OnslaughtBlaster.TargetedStrike.Description",
     "enGB": "At 9th level, whenever an onslaught blaster uses their onslaught blast, for every five blasts that successfully hit the same creature, that creature takes a -1 penalty to their AC for one round. This penalty cannot exceed the onslaught blaster's Constitution modifier.\nThis replaces metakinesis (maximize).",
-    "zhCN": "9级起，每当狂轰使施展狂轰滥袭，每有五次念袭成功命中同一目标，目标的AC就会受到-1惩罚，持续一轮。\n此能力替换了超念（极效）。"
+    "zhCN": "9级起，每当狂轰使施展狂轰滥袭，每有五次念袭成功命中同一目标，目标的AC就会受到-1惩罚，持续一轮。此惩罚不能超过狂轰使的体质调整值。\n此能力替换了超念（极效）。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.TargetedStrikeDebuff",
+    "ProcessTemplates": false,
+    "enGB": "Targeted Strike — AC Penalty",
+    "zhCN": "定点打击 — AC惩罚"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.TargetedStrikeDebuff.Description",
+    "enGB": "Takes a -1 penalty to AC for one round due to targeted strike.",
+    "zhCN": "由于定点打击，AC受到-1惩罚，持续一轮。"
   },
 
   {
