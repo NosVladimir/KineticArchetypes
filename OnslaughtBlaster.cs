@@ -103,6 +103,9 @@ namespace KineticArchetypes
 
         internal static readonly LogWrapper Logger = LogWrapper.Get("KineticArchetypes.OnslaughtBlaster");
 
+        internal static List<BlueprintAbilityReference> Blasts =
+            FeatureRefs.BurnFeature.Reference.Get().GetComponent<AddKineticistPart>().m_Blasts.ToList();
+
         internal static void Configure()
         {
             try
@@ -325,7 +328,14 @@ namespace KineticArchetypes
         {
             return ability.GetComponent<AbilityKineticist>() == null ||
                 ability.GetComponent<AbilityDeliveredByWeapon>() != null ||
-                ability.GetComponent<AbilityEffectRunAction>()?.Actions.Actions[0] is ContextActionSpawnAreaEffect;
+                ability.GetComponent<AbilityEffectRunAction>()?.Actions.Actions[0] is ContextActionSpawnAreaEffect ||
+                !(Blasts.Contains(ability.ToReference<BlueprintAbilityReference>()) || 
+                    (ability.m_Parent != null && Blasts.Contains(ability.m_Parent)));
+        }
+
+        internal static void HandleOtherMods()
+        {
+            Blasts = FeatureRefs.BurnFeature.Reference.Get().GetComponent<AddKineticistPart>().m_Blasts.ToList();
         }
     }
 

@@ -102,6 +102,7 @@ namespace KineticArchetypes
                     CinderAdept.HandleOtherMods();
                     EsotericBlade.HandleOtherMods();
                     KineticLancer.HandleOtherMods();
+                    OnslaughtBlaster.HandleOtherMods();
                 }
                 catch (Exception e)
                 {
