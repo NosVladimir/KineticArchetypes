@@ -58,6 +58,7 @@ namespace KineticArchetypes
                     CinderAdept.Configure();
                     EsotericBlade.Configure();
                     KineticLancer.Configure();
+                    OnslaughtBlaster.Configure();
                 }
                 catch (Exception e)
                 {
@@ -101,6 +102,7 @@ namespace KineticArchetypes
                     CinderAdept.HandleOtherMods();
                     EsotericBlade.HandleOtherMods();
                     KineticLancer.HandleOtherMods();
+                    OnslaughtBlaster.HandleOtherMods();
                 }
                 catch (Exception e)
                 {

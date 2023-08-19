@@ -48,6 +48,13 @@ Using kinetic spear, leaping around the battlefield to full-attack foes.
 - Trades 5th level infusion for Kinetic Spear, a longspear-shaped kinetic blade with reach and crit range 19-20
 - Trades 9th level infusion for impaling the target of Dragoon Dive, denying their standard actions
 
+### [Onslaught Blaster](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/onslaught-blaster/)
+Convert every single dice increase of kinetic blasts into an additional blast fired. Also works with AOE form infusions. **WARNING:** be careful when firing a lot of AOE form infusions, as it will likely cause frame rate drops for a short moment due to too much FX.
+- For every 1d6 damage increase of a normal blast (or every 2d6 for composites), convert it into one more blast fired at 1d6 (or 2d6), except for kinetic blades and wall/cloud/deadly ground
+- Has an automatic targeting mode for distributing the number of blasts among targets, based on their HP
+- Trades all metakinesis for increasing the number of blasts
+- In base game, can fire at most 34 blasts in a single cast with greater kinetic diadem and lesser kineticist rod equipped
+
 # Known issues
 **If you encounter any bug, feel free to fire an issue!**
 
@@ -60,9 +67,6 @@ Currently no guaranteed future contents. Below is a list of archetypes I'm inter
 
 ### [Elemental Annihilator](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/paizo-llc-kineticist-archetypes/elemental-annihilator-kineticist-archetype/)
 Features Devastating Infusion that can full-attack foes at 120 feet, but only deals a fixed 1d8+ConModifier dmg. Trades all wild talents for extra combat feats. Has a very powerful capstone at 20th level that's a composite infusion at 4 burn dealing 5*(10d6+10) bludgeoning+cold+electricity+fire+force dmg. I suppose it can also be used together with form infusions.
-
-### [Onslaught Blaster](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/onslaught-blaster/)
-Convert every single dice increase of kinetic blasts into an additional blast fired. Maybe also works with AOE form infusions but it will be a disaster to any pc.
 
 ### [Dread Soul](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/dread-soul/)
 Evil only. Forces others to take burn. Drains creatures souls to create soulstones.
