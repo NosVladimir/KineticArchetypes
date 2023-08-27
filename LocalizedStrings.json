@@ -574,8 +574,8 @@
 
   {
     "Key": "OnslaughtBlaster.OnslaughtBlast.Description",
-    "enGB": "At 1st level, whenever the onslaught blaster uses their kinetic blast without applying any form infusion which has a long-lasting effect or emulates a melee attack, they can fire multiple blasts. For every 2 kineticist levels beyond 1st, an onslaught blaster fires an additional blast instead of gaining additional damage dices. The targets of each attack are decided before any attack roll is made. If the onslaught blaster applies a substance infusion or an applicable form infusion to their blast, it applies to all blasts.\nThis alters kinetic blast.",
-    "zhCN": "1级起，每当狂轰使施展念袭，并且没有应用持续型或近战类塑形注能，他们就会施放多重念袭。在1级之后的每2个操念使等级，狂轰使会多施放一次念袭，而不是获得额外的伤害骰。每次念袭攻击的目标在攻击投骰前声明。如果狂轰使对念袭应用了性质注能或合适的塑形注能，其会对施放的所有念袭生效。\n此能力改变了念袭。"
+    "enGB": "At 1st level, whenever the onslaught blaster uses their kinetic blast without applying any form infusion which has a long-lasting effect or emulates a melee attack, they can fire multiple blasts. For every 2 kineticist levels beyond 1st, an onslaught blaster fires an additional blast instead of gaining additional damage dices. The targets of each attack are decided before any attack roll is made. If the onslaught blaster applies a substance infusion or an applicable form infusion to their blast, it applies to all blasts.\nIf onslaught blast is used with the Foe Throw infusion, an onslaught blaster can throw a number of creatures up to the number of blasts into one target. For each successful throw, both the thrown creature and the target take an amount of damage from the telekinetic blast as if the onslaught blaster's kineticist level was one.\nThis alters kinetic blast.",
+    "zhCN": "1级起，每当狂轰使施展念袭，并且没有应用持续型或近战类塑形注能，他们就会施放多重念袭。在1级之后的每2个操念使等级，狂轰使会多施放一次念袭，而不是获得额外的伤害骰。每次念袭攻击的目标在攻击投骰前声明。如果狂轰使对念袭应用了性质注能或合适的塑形注能，其会对施放的所有念袭生效。\n如果狂轰滥袭应用了抛敌塑形注能，狂轰使可以将至多等于念袭次数的生物投掷至一个目标。每次成功的投掷都会使被投掷的生物和目标受到相当于1级操念使的念动念袭伤害。\n此能力改变了念袭。"
   },
 
   {
