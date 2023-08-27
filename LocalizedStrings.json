@@ -551,7 +551,160 @@
     "enGB": "At 17th level, when a kinetic lancer uses dragoon dive, they deal 1 additional damage for each damage die their kinetic blast deals.\nThis replaces the 17th-level infusion.",
     "zhCN": "17级起，当念枪使用龙骑飞袭时，他的念袭每个伤害骰额外造成1点伤害。\n此能力替换了17级时获得的注能。"
   },
+  {
+    "Key": "OnslaughtBlaster.Name",
+    "ProcessTemplates": false,
+    "enGB": "Onslaught Blaster",
+    "zhCN": "狂轰使"
+  },
 
+  {
+    "Key": "OnslaughtBlaster.Description",
+    "enGB": "Sometimes the tide of enemies refuses to recede, and one has no choice but to meet barrage with barrage. Onslaught blasters are an often skittish and paranoid breed of blaster, preferring widespread accuracy over a single path of destruction. Adepts at sending their blasts out in volleys, they ensure that no enemies draw too near without severe risk.",
+    "zhCN": "若敌人不绝如潮，有时只有火力压制是唯一的选择。狂轰使是一群容易被惊动且偏执的爆破狂，他们宁愿追求广泛的打击面，而不是单一的歼灭手段。他们擅长连发念袭，确保每一个接近的敌人都要承受惨重的代价。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.OnslaughtBlast",
+    "ProcessTemplates": false,
+    "enGB": "Onslaught Blast",
+    "zhCN": "狂轰滥袭"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.OnslaughtBlast.Description",
+    "enGB": "At 1st level, whenever the onslaught blaster uses their kinetic blast without applying any form infusion which has a long-lasting effect or emulates a melee attack, they can fire multiple blasts. For every 2 kineticist levels beyond 1st, an onslaught blaster fires an additional blast instead of gaining additional damage dices. The targets of each attack are decided before any attack roll is made. If the onslaught blaster applies a substance infusion or an applicable form infusion to their blast, it applies to all blasts.\nThis alters kinetic blast.",
+    "zhCN": "1级起，每当狂轰使施展念袭，并且没有应用持续型或近战类塑形注能，他们就会施放多重念袭。在1级之后的每2个操念使等级，狂轰使会多施放一次念袭，而不是获得额外的伤害骰。每次念袭攻击的目标在攻击投骰前声明。如果狂轰使对念袭应用了性质注能或合适的塑形注能，其会对施放的所有念袭生效。\n此能力改变了念袭。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.AutoTargetAbility",
+    "ProcessTemplates": false,
+    "enGB": "Onslaught Blast — Automatically Distribute Blasts",
+    "zhCN": "狂轰滥袭 — 自动分配念袭"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.AutoTargetAbility.Description",
+    "enGB": "Top right shows the number of blasts to be fired with onslaught blast.\nTurn on this mode: onslaught blast will automatically distribute the number of blasts over targets. Each enemy within range with positive HP will be blasted at least once if there are enough blasts, then enemies with more HP will be blasted for more times.\nTurn off this mode: all blasts will be fired towards the same enemy or target point.",
+    "zhCN": "右上角显示狂轰滥袭的念袭施放次数。\n开启此模式：狂轰滥袭会自动分配施放念袭的目标与次数。如果有足够的施放次数，范围内每个HP为正的敌人都会被轰击至少一次，然后HP更多的敌人会被轰击更多次。\n关闭此模式：所有念袭都会以同一个敌人或地点为目标。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.AutoTargetBuff",
+    "ProcessTemplates": false,
+    "enGB": "Onslaught Blast — Automatically Distribute Blasts",
+    "zhCN": "狂轰滥袭 — 自动分配念袭"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.AutoTargetBuff.Description",
+    "enGB": "Onslaught blast will automatically distribute the number of blasts over targets. Each enemy within range with positive HP will be blasted at least once if there are enough blasts, then enemies with more HP will be blasted for more times.",
+    "zhCN": "狂轰滥袭会自动分配施放念袭的目标与次数。如果有足够的施放次数，范围内每个HP为正的敌人都会被轰击至少一次，然后HP更多的敌人会被轰击更多次。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.FocusedBlaster",
+    "ProcessTemplates": false,
+    "enGB": "Focused Blaster",
+    "zhCN": "专注轰炸"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.FocusedBlaster.Description",
+    "enGB": "An onslaught blaster can only gather power as a move action. At 11th and 19th level, the burn cost of their onslaught blast is reduced by 1.\nThis alters gather power and replaces supercharge and metakinesis master.",
+    "zhCN": "狂轰使只能使用移动动作凝聚念力。在11级和19级时，狂轰滥袭的超载值降低1点。\n此能力改变了念力凝聚并替换了超聚合和超念大师。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.BurnedBlaster",
+    "ProcessTemplates": false,
+    "enGB": "Burned Blaster",
+    "zhCN": "超载轰炸"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.BurnedBlaster.Description",
+    "enGB": "At 3rd level, whenever an onslaught blaster uses their onslaught blast while they possess at least 1 point of burn, they create one additional blast. At 9th level if the onslaught blaster possesses at least 3 points of burn, they create two additional blasts, and at 15th level if they possess at least 5 points of burn, they create three additional blasts.",
+    "zhCN": "3级起，在施展狂轰滥袭时如果狂轰使已承受至少1点超载值，则额外施放一次念袭。9级起，若已承受至少2点超载值，则额外施放两次。15级起，若已承受至少3点超载值，则额外施放三次。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.ExcessiveBlaster",
+    "ProcessTemplates": false,
+    "enGB": "Excessive Blaster",
+    "zhCN": "过量轰炸"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.ExcessiveBlaster.Description",
+    "enGB": "At 5th level, an onslaught blaster can increase the burn cost of their onslaught blast by 1 to create one additional blast. At 7th level they instead create two additional blasts, plus one more for every 4 onslaught blaster levels beyond 7th.\nThis replaces metakinesis (empower).",
+    "zhCN": "5级起，狂轰使可以提高狂轰滥袭的超载值1点以额外施放一次念袭。7级起提升至额外施放两次，且狂轰使等级每比7级高4级再额外施放一次。\n此能力替换了超念（强效）。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.ExcessiveBlasterAbility.Description",
+    "enGB": "At 5th level, an onslaught blaster can increase the burn cost of their onslaught blast by 1 to create one additional blast. At 7th level they instead create two additional blasts, plus one more for every 4 onslaught blaster levels beyond 7th.",
+    "zhCN": "5级起，狂轰使可以提高狂轰滥袭的超载值1点以额外施放一次念袭。7级起提升至额外施放两次，且狂轰使等级每比7级高4级再额外施放一次。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.TargetedStrike",
+    "ProcessTemplates": false,
+    "enGB": "Targeted Strike",
+    "zhCN": "定点打击"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.TargetedStrike.Description",
+    "enGB": "At 9th level, whenever an onslaught blaster uses their onslaught blast, for every five blasts that successfully hit the same creature, that creature takes a -1 penalty to their AC for one round. This penalty cannot exceed the onslaught blaster's Constitution modifier.\nThis replaces metakinesis (maximize).",
+    "zhCN": "9级起，每当狂轰使施展狂轰滥袭，每有五次念袭成功命中同一目标，目标的AC就会受到-1惩罚，持续一轮。此惩罚不能超过狂轰使的体质调整值。\n此能力替换了超念（极效）。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.TargetedStrikeDebuff",
+    "ProcessTemplates": false,
+    "enGB": "Targeted Strike — AC Penalty",
+    "zhCN": "定点打击 — AC惩罚"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.TargetedStrikeDebuff.Description",
+    "enGB": "Takes a -1 penalty to AC for one round due to targeted strike.",
+    "zhCN": "由于定点打击，AC受到-1惩罚，持续一轮。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.ExtremeBlaster",
+    "ProcessTemplates": false,
+    "enGB": "Extreme Blaster",
+    "zhCN": "极端轰炸"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.ExtremeBlaster.Description",
+    "enGB": "At 13th level, an onslaught blaster can increase the burn cost of their onslaught blast by 3 to create seven additional blasts. At 15th level they instead create eight additional blasts, plus one more for every 2 onslaught blaster levels beyond 15th.\nThis replaces metakinesis (quicken).",
+    "zhCN": "13级起，狂轰使可以提高狂轰滥袭的超载值3点以额外施放七次念袭。15级起提升至额外施放八次，且狂轰使等级每比15级高2级再额外施放一次。\n此能力替换了超念（瞬发）。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.ExtremeBlasterAbility.Description",
+    "enGB": "At 13th level, an onslaught blaster can increase the burn cost of their onslaught blast by 3 to create seven additional blasts. At 15th level they instead create eight additional blasts, plus one more for every 2 onslaught blaster levels beyond 15th.",
+    "zhCN": "13级起，狂轰使可以提高狂轰滥袭的超载值3点以额外施放七次念袭。15级起提升至额外施放八次，且狂轰使等级每比15级高2级再额外施放一次。"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.OmniBlaster",
+    "ProcessTemplates": false,
+    "enGB": "Omni Blaster",
+    "zhCN": "全方位轰炸"
+  },
+
+  {
+    "Key": "OnslaughtBlaster.OmniBlaster.Description",
+    "enGB": "At 17th level, an onslaught blaster can increase the burn cost of their onslaught blast by 4 to double the number of blasts they create. This ability takes effect after burned blaster, but cannot be used with excessive blaster or extreme blaster.",
+    "zhCN": "17级起，狂轰使可以提高狂轰滥袭的超载值4点使施放念袭的次数翻倍。此能力在超载轰炸之后生效，但不能与过量轰炸或极端轰炸同时启用。"
+  },
   {
     "Key": "KineticistGeneral.VitalBladeInfusion",
     "ProcessTemplates": false,
