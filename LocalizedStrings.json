@@ -550,8 +550,36 @@
     "Key": "KineticLancer.BrutalDragoon.Description",
     "enGB": "At 17th level, when a kinetic lancer uses dragoon dive, they deal 1 additional damage for each damage die their kinetic blast deals.\nThis replaces the 17th-level infusion.",
     "zhCN": "17级起，当念枪使用龙骑飞袭时，他的念袭每个伤害骰额外造成1点伤害。\n此能力替换了17级时获得的注能。"
-  }
+  },
 
+  {
+    "Key": "KineticistGeneral.VitalBladeInfusion",
+    "ProcessTemplates": false,
+    "enGB": "Vital Blade Infusion",
+    "zhCN": "Vital Blade Infusion"
+  },
+  {
+    "Key": "KineticistGeneral.VitalBladeInfusion.Description",
+    "enGB": "Element: universal\nType: form infusion\nLevel: 8\nBurn: 4\nAssociated Blasts: any\nSaving Throw: none\nThis infusion functions as kinetic blade, except it can benefit from Vital Strike and Improved Vital Strike even when used as part of a charge attack if you possess those feats. If you have kinetic whip, you can instead have this infusion function as kinetic whip, although it does not benefit from Vital Strike feats on attacks of opportunity.",
+    "zhCN": "Element: universal\nType: form infusion\nLevel: 8\nBurn: 4\nAssociated Blasts: any\nSaving Throw: none\nThis infusion functions as kinetic blade, except it can benefit from Vital Strike and Improved Vital Strike even when used as part of a charge attack if you possess those feats. If you have kinetic whip, you can instead have this infusion function as kinetic whip, although it does not benefit from Vital Strike feats on attacks of opportunity."
+  },
+  {
+    "Key": "KineticistGeneral.VitalBladeInfusionAbility",
+    "ProcessTemplates": false,
+    "enGB": "Vital Blade Infusion",
+    "zhCN": "Vital Blade Infusion"
+  },
+  {
+    "Key": "KineticistGeneral.VitalBladeInfusionAbility.Description",
+    "enGB": "Element: universal\nType: form infusion\nLevel: 8\nBurn: 4\nAssociated Blasts: any\nSaving Throw: none\nWhile active, this ability limits your attacks per round to just one attack, but applies the effects of vital strikes to all kinetic blade attacks. Unless those attacks are made as part of an attack of opportunity.",
+    "zhCN": "Element: universal\nType: form infusion\nLevel: 8\nBurn: 4\nAssociated Blasts: any\nSaving Throw: none\nWhile active, this ability limits your attacks per round to just one attack, but applies the effects of vital strikes to all kinetic blade attacks. Unless those attacks are made as part of an attack of opportunity."
+  },
+  {
+    "Key": "Restriction.VitalStrikeForKineticBlade",
+    "enGB": "Cannot accept enough burn this round.",
+    "zhCN": "Cannot accept enough burn this round."
+  }
+  
 
   /*
   {
