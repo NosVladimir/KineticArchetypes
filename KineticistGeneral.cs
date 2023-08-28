@@ -154,7 +154,7 @@ namespace KineticArchetypes
 
         public static void HandleOtherMods()
         {
-
+            // Empty since I don't think I actually need anything
         }
 
         internal class VitalBladeComponent : VitalStrikeForKineticBlade
