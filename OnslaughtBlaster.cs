@@ -327,7 +327,7 @@ namespace KineticArchetypes
 
         public static bool InappropriateBlast(BlueprintAbility ability)
         {
-            return ability.ToString().Equals("FoeThrowInfusionThrowAbility") ||
+            return //ability.ToString().Equals("FoeThrowInfusionThrowAbility") ||
                 ability.GetComponent<AbilityKineticist>() == null ||
                 ability.GetComponent<AbilityDeliveredByWeapon>() != null ||
                 ability.GetComponent<AbilityEffectRunAction>()?.Actions.Actions[0] is ContextActionSpawnAreaEffect ||
@@ -475,6 +475,11 @@ namespace KineticArchetypes
 
             part.Repeating = true;
 
+            if (evt.Spell.Blueprint.ToString().Equals("FoeThrowInfusionThrowAbility"))
+            {
+                part.Repeating = false;
+                return;
+            }
             UnitUseAbility unitUseAbility = new(UnitCommand.CommandType.Free, Owner.Descriptor.Abilities.GetAbility(BlueprintTool.Get<BlueprintAbility>(OnslaughtBlaster.OnslaughtBlastAbilityGuid)).Data, new TargetWrapper(Owner));
             unitUseAbility.IgnoreCooldown();
             unitUseAbility.DisableLog = true;
