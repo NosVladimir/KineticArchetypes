@@ -78,6 +78,7 @@ namespace KineticArchetypes
         internal const string VitalBladeBuffGuid = "7B8A66D6-EAFD-4FA7-A241-4CC46374244F";
         internal const string VitalBladeRealBuffName = "KineticistGeneral.VitalBladeInfusionRealBuff";
         internal const string VitalBladeRealBuffGuid = "3B9249F9-226F-4C4F-972D-8A7DBD7B0ABC";
+        internal const string VitalBladeDamageName = "KineticistGeneral.VitalBladeDamageName";
 
         internal const string InfusionFeatureSelection = "58d6f8e9-eea6-3f64-18b1-07ce64f315ea";
 
@@ -101,7 +102,7 @@ namespace KineticArchetypes
 
             var vitalBlade = CreateVitalBlade();
 
-            FeatureSelectionConfigurator.For(InfusionFeatureSelection).AddToAllFeatures(vitalBlade).Configure();
+            //FeatureSelectionConfigurator.For(InfusionFeatureSelection).AddToAllFeatures(vitalBlade).Configure();
         }
 
         private static BlueprintFeature CreateVitalBlade()
@@ -116,13 +117,14 @@ namespace KineticArchetypes
 
             var increaseBladeCost = new AddKineticistBurnModifier
             {
-                Value = 4, // Should be 4, but another somewhere another +1 is being added, I think
+                Value = 4,
                 BurnType = KineticistBurnType.Infusion,
                 m_AppliableTo = KineticDuelist.allBlades
             };
             var vital_strike_component = AbilityRefs.VitalStrikeAbility.Reference.Get().GetComponent<AbilityCustomVitalStrike>();
 
             var realBuff = BuffConfigurator.New(VitalBladeRealBuffName, VitalBladeRealBuffGuid)
+                .SetDisplayName (VitalBladeDamageName)
                 .SetFlags(BlueprintBuff.Flags.HiddenInUi)
                 .AddComponent(increaseBladeCost)
                 .AddComponent(new VitalBladeComponent())
@@ -141,7 +143,7 @@ namespace KineticArchetypes
                 .SetDeactivateImmediately()
                 .Configure();
 
-            return FeatureConfigurator.New(VitalBladeName, VitalBladeGuid)
+            return FeatureConfigurator.New(VitalBladeName, VitalBladeGuid, FeatureGroup.KineticBlastInfusion)
                 .SetDisplayName(VitalBladeName)
                 .SetDescription(VitalBladeDescription)
                 .SetIcon(AbilityRefs.VitalStrikeAbility.Reference.Get().Icon)
@@ -197,6 +199,8 @@ namespace KineticArchetypes
                     vital_modifier = 2;
                 }
                 Fact.Blueprint.GetComponent<AbilityCustomVitalStrike>().VitalStrikeMod = vital_modifier;
+
+
 
                 // Using the damage changing components of VitalStrikeForKineticBlade
                 this.Fact.GetComponent<VitalBladeComponent>().OnEventAboutToTrigger(evt);
