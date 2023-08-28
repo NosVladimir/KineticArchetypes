@@ -670,7 +670,6 @@ namespace KineticArchetypes
             }
             AbilityKineticist abilityKineticist = KineticistController.GetKineticistAbilityComponent(activation_ability.Data);
             int acceptedBurn = kineticist.AcceptBurn(abilityKineticist.CalculateBurnCost(ability).Total, ability);
-            Main.Logger?.Info($"Burn Cost Pre gather?: {acceptedBurn}");
             abilityKineticist.Spend(activation_ability.Data);
         }
     }

@@ -57,6 +57,10 @@ using Kingmaker.TurnBasedMode.Controllers;
 using Kingmaker.RuleSystem.Rules.Abilities;
 using Kingmaker.UnitLogic.ActivatableAbilities;
 using BlueprintCore.Blueprints.CustomConfigurators.Classes.Selection;
+using System.Runtime.Remoting.Contexts;
+using Kingmaker.Blueprints.Facts;
+using Kingmaker.Designers.Mechanics.Buffs;
+using System.Drawing.Text;
 
 namespace KineticArchetypes
 {
@@ -112,15 +116,19 @@ namespace KineticArchetypes
 
             var increaseBladeCost = new AddKineticistBurnModifier
             {
-                Value = 2,
+                Value = 4, // Should be 4, but another somewhere another +1 is being added, I think
                 BurnType = KineticistBurnType.Infusion,
                 m_AppliableTo = KineticDuelist.allBlades
             };
+            var vital_strike_component = AbilityRefs.VitalStrikeAbility.Reference.Get().GetComponent<AbilityCustomVitalStrike>();
 
             var realBuff = BuffConfigurator.New(VitalBladeRealBuffName, VitalBladeRealBuffGuid)
                 .SetFlags(BlueprintBuff.Flags.HiddenInUi)
                 .AddComponent(increaseBladeCost)
                 .AddComponent(new VitalBladeComponent())
+                .AddComponent(new VitalBladeDragoonDiveComponent())
+                .AddComponent(new UnitFactVitalBladeLimitAttacks())
+                .AddComponent(new AbilityCustomVitalStrike() { m_MythicBlueprint = vital_strike_component.m_MythicBlueprint, m_RowdyFeature = vital_strike_component.m_RowdyFeature, VitalStrikeMod = vital_strike_component.VitalStrikeMod })
                 .AddNotDispelable()
                 .Configure();
 
@@ -149,7 +157,91 @@ namespace KineticArchetypes
 
         internal class VitalBladeComponent : VitalStrikeForKineticBlade
         {
+        }
 
+        internal class VitalBladeDragoonDiveComponent : UnitFactComponentDelegate, IRulebookHandler<RuleDealDamage>, IInitiatorRulebookHandler<RuleDealDamage>, IInitiatorRulebookSubscriber, ISubscriber
+        {
+            public void OnEventDidTrigger(RuleDealDamage evt)
+            {
+            }
+
+            public void OnEventAboutToTrigger(RuleDealDamage evt)
+            {
+                MechanicsContext context = evt.Reason.Context;
+                UnitEntityData maybeCaster = context.MaybeCaster;
+                Main.Logger.Info($"VitalBladeDragoonDiveComponent\n\tMaybeCaster: {maybeCaster != null}");
+                Main.Logger.Info($"\tFact: {Fact.Blueprint}");
+                if (maybeCaster == null) return;
+
+                // Confirm that we are using Dragoon Dive
+                Main.Logger.Info($"\tDragoon Dive: {evt.Reason.Ability.Blueprint.ToString()}");
+                if (evt.Reason.Ability.Blueprint.ToString().Equals(KineticLancer.DragoonDiveAbilityName)) return;
+
+                // Add Vital Strike Buff required for VitalStrikeForKineticBlade
+                Main.Logger.Info($"\tAdd Buff: {(maybeCaster.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid)) != null)}");
+                if (maybeCaster.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid)) != null)
+                {
+                    maybeCaster.AddBuff(BlueprintTool.Get<BlueprintBuff>(EsotericBlade.VitalStrikeKineticBladeBuffGuid), maybeCaster);
+                }
+
+                // Changing the Modifier Based on Feats
+                int vital_modifier = 1;
+                if (Owner.HasFact(AbilityRefs.VitalStrikeAbilityGreater.Reference.Get()))
+                {
+                    vital_modifier = 3; // Limited to 3, from 4, since Vital Blade only works for Improved Vital Strike
+                } else if (Owner.HasFact(AbilityRefs.VitalStrikeAbilityImproved.Reference.Get()))
+                {
+                    vital_modifier = 3;
+                } else if (Owner.HasFact(AbilityRefs.VitalStrikeAbility.Reference.Get()))
+                {
+                    vital_modifier = 2;
+                }
+                Fact.Blueprint.GetComponent<AbilityCustomVitalStrike>().VitalStrikeMod = vital_modifier;
+
+                // Using the damage changing components of VitalStrikeForKineticBlade
+                this.Fact.GetComponent<VitalBladeComponent>().OnEventAboutToTrigger(evt);
+            }
+        }
+
+        internal class UnitPartVitalBladeLimitAttacks : OldStyleUnitPart
+        {
+        }
+
+        internal class UnitFactVitalBladeLimitAttacks : UnitFactComponentDelegate
+        {
+
+            public override void OnTurnOff()
+            {
+                base.Owner.Remove<UnitPartVitalBladeLimitAttacks>();
+            }
+
+            public override void OnTurnOn()
+            {
+                base.Owner.Ensure<UnitPartVitalBladeLimitAttacks>();
+            }
+        }
+
+        [HarmonyPatch(typeof(RuleCalculateAttacksCount))]
+        internal class Patch_RuleCalculateAttacksCount
+        {
+            [HarmonyPatch(nameof(RuleCalculateAttacksCount.OnTrigger))]
+            [HarmonyPostfix]
+            public static void Postfix1(ref RuleCalculateAttacksCount __instance, RulebookEventContext context)
+            {
+                var maybeCaster = __instance.Initiator;
+                if (maybeCaster == null) return;
+                var part = maybeCaster.Get<UnitPartVitalBladeLimitAttacks>();
+                if (part == null) return;
+                var weapon = maybeCaster.Body.PrimaryHand.MaybeItem?.Blueprint.GetComponent<WeaponKineticBlade>();
+                if (weapon == null) return;
+
+                __instance.Result.PrimaryHand.PenalizedAttacks = 0;
+                __instance.Result.PrimaryHand.AdditionalAttacks = 1;
+                __instance.Result.PrimaryHand.HasteAttacks = 0;
+                __instance.Result.SecondaryHand.PenalizedAttacks = 0;
+                __instance.Result.SecondaryHand.AdditionalAttacks = 0;
+                __instance.Result.SecondaryHand.HasteAttacks = 0;
+            }
         }
     }
 }

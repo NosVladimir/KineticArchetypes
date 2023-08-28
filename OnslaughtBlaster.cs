@@ -39,6 +39,7 @@ using System.Linq;
 using UnityEngine;
 namespace KineticArchetypes
 {
+    // TODO : I want to add Kinetic Railgun feat
     internal class OnslaughtBlaster
     {
         internal const string ArchetypeName = "OnslaughtBlasterArchetype";
