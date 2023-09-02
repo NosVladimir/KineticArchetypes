@@ -1,7 +1,6 @@
 ﻿using BlueprintCore.Blueprints.Configurators.UnitLogic.ActivatableAbilities;
 using BlueprintCore.Blueprints.CustomConfigurators;
 using BlueprintCore.Blueprints.CustomConfigurators.Classes;
-using BlueprintCore.Blueprints.CustomConfigurators.Classes.Selection;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Abilities;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
 using BlueprintCore.Blueprints.References;
@@ -38,9 +37,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+
 namespace KineticArchetypes
 {
-    // TODO : I want to add Kinetic Railgun feat
     internal class OnslaughtBlaster
     {
         internal const string ArchetypeName = "OnslaughtBlasterArchetype";
@@ -149,12 +148,12 @@ namespace KineticArchetypes
                 .AddToAddFeatures(17, CreateOmniBlaster())
                 .Configure();
 
-            var kinetic_railgun_feat = FeatureConfigurator.New(KineticRailgunName, KineticRailgunGuid, FeatureGroup.Feat)
+            FeatureConfigurator.New(KineticRailgunName, KineticRailgunGuid, FeatureGroup.Feat)
                 .SetDisplayName(KineticRailgunName)
                 .SetDescription(KineticRailgunDescription)
                 .SetIcon(AbilityRefs.ClashingRocks.Reference.Get().Icon)
                 .AddComponent(new KineticRailgunBurnReduction())
-                .AddPrerequisiteFeature(OnslaughtBlaster.ExcessiveBlasterGuid)
+                .AddPrerequisiteFeature(ExcessiveBlasterGuid)
                 .Configure();
         }
 
@@ -722,7 +721,7 @@ namespace KineticArchetypes
 
             bool isHasted = caster.Buffs.HasFact(BuffRefs.HasteBuff.Reference.Get());
             if (isHasted)
-                cost.Decrease(1, KineticistBurnType.Blast);
+                cost.GatherPower++;
         }
     }
 

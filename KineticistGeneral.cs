@@ -101,8 +101,6 @@ namespace KineticArchetypes
             Logger.Info($"Configuring {ModuleName}");
 
             var vitalBlade = CreateVitalBlade();
-
-            //FeatureSelectionConfigurator.For(InfusionFeatureSelection).AddToAllFeatures(vitalBlade).Configure();
         }
 
         private static BlueprintFeature CreateVitalBlade()
@@ -121,6 +119,7 @@ namespace KineticArchetypes
                 BurnType = KineticistBurnType.Infusion,
                 m_AppliableTo = KineticDuelist.allBlades
             };
+
             var vital_strike_component = AbilityRefs.VitalStrikeAbility.Reference.Get().GetComponent<AbilityCustomVitalStrike>();
 
             var realBuff = BuffConfigurator.New(VitalBladeRealBuffName, VitalBladeRealBuffGuid)
@@ -154,7 +153,9 @@ namespace KineticArchetypes
 
         public static void HandleOtherMods()
         {
-            // Empty since I don't think I actually need anything
+            // Update vital blade cost for expanded elements blades
+            BlueprintTool.Get<BlueprintBuff>(VitalBladeRealBuffGuid)
+                .GetComponent<AddKineticistBurnModifier>().m_AppliableTo = KineticDuelist.allBlades;
         }
 
         internal class VitalBladeComponent : VitalStrikeForKineticBlade
@@ -171,39 +172,29 @@ namespace KineticArchetypes
             {
                 MechanicsContext context = evt.Reason.Context;
                 UnitEntityData maybeCaster = context.MaybeCaster;
-                Main.Logger.Info($"VitalBladeDragoonDiveComponent\n\tMaybeCaster: {maybeCaster != null}");
-                Main.Logger.Info($"\tFact: {Fact.Blueprint}");
                 if (maybeCaster == null) return;
 
                 // Confirm that we are using Dragoon Dive
-                Main.Logger.Info($"\tDragoon Dive: {evt.Reason.Ability.Blueprint.ToString()}");
                 if (evt.Reason.Ability.Blueprint.ToString().Equals(KineticLancer.DragoonDiveAbilityName)) return;
 
                 // Add Vital Strike Buff required for VitalStrikeForKineticBlade
-                Main.Logger.Info($"\tAdd Buff: {(maybeCaster.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid)) != null)}");
-                if (maybeCaster.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid)) != null)
-                {
+                bool bufNotYetApplied = maybeCaster.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(VitalBladeRealBuffGuid)) != null;
+                Main.Logger.Info($"\tAdd Buff: {bufNotYetApplied}");
+                if (bufNotYetApplied)
                     maybeCaster.AddBuff(BlueprintTool.Get<BlueprintBuff>(EsotericBlade.VitalStrikeKineticBladeBuffGuid), maybeCaster);
-                }
 
                 // Changing the Modifier Based on Feats
-                int vital_modifier = 1;
+                int vitalModifier = 1;
                 if (Owner.HasFact(AbilityRefs.VitalStrikeAbilityGreater.Reference.Get()))
-                {
-                    vital_modifier = 3; // Limited to 3, from 4, since Vital Blade only works for Improved Vital Strike
-                } else if (Owner.HasFact(AbilityRefs.VitalStrikeAbilityImproved.Reference.Get()))
-                {
-                    vital_modifier = 3;
-                } else if (Owner.HasFact(AbilityRefs.VitalStrikeAbility.Reference.Get()))
-                {
-                    vital_modifier = 2;
-                }
-                Fact.Blueprint.GetComponent<AbilityCustomVitalStrike>().VitalStrikeMod = vital_modifier;
-
-
+                    vitalModifier = 3; // Limited to 3, from 4, since Vital Blade only works for Improved Vital Strike
+                else if (Owner.HasFact(AbilityRefs.VitalStrikeAbilityImproved.Reference.Get()))
+                    vitalModifier = 3;
+                else if (Owner.HasFact(AbilityRefs.VitalStrikeAbility.Reference.Get()))
+                    vitalModifier = 2;
+                Fact.Blueprint.GetComponent<AbilityCustomVitalStrike>().VitalStrikeMod = vitalModifier;
 
                 // Using the damage changing components of VitalStrikeForKineticBlade
-                this.Fact.GetComponent<VitalBladeComponent>().OnEventAboutToTrigger(evt);
+                Fact.GetComponent<VitalBladeComponent>().OnEventAboutToTrigger(evt);
             }
         }
 

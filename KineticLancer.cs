@@ -56,8 +56,6 @@ using Kingmaker.Visual;
 using Kingmaker.TurnBasedMode.Controllers;
 using Kingmaker.RuleSystem.Rules.Abilities;
 using Kingmaker.UnitLogic.ActivatableAbilities;
-using Kingmaker.Armies.TacticalCombat.Grid;
-using System.Runtime.Remoting.Contexts;
 
 namespace KineticArchetypes
 {
@@ -297,8 +295,6 @@ namespace KineticArchetypes
                 m_AppliableTo = KineticDuelist.allBlades
             };
 
-            var vital_strike_component = FeatureRefs.VitalStrikeFeature.Reference.Get().GetComponent<AbilityCustomVitalStrike>();
-
             // Gather power-alike buff that reduces burn by 1 or 2
             var buff = BuffConfigurator.New(DragoonDiveBurnBuffName, DragoonDiveBurnBuffGuid)
                 .SetFlags(BlueprintBuff.Flags.HiddenInUi)
@@ -331,7 +327,7 @@ namespace KineticArchetypes
                 .AddComponent<AbilityDragoonDive>()
                 .AddComponent(new MustHaveEquippedKineticBlade())
                 .AddComponent(new DragoonDiveBurnDisplay())
-                .AddComponent(new AbilityCustomVitalStrike()) // Maybe?
+                //.AddComponent(new AbilityCustomVitalStrike()) // Maybe?
                 .Configure();
 
             return FeatureConfigurator.New(DragoonDiveName, DragoonDiveGuid)
@@ -872,9 +868,8 @@ namespace KineticArchetypes
 
             foreach (UnitEntityData unit in Game.Instance.State.Units)
             {
-                if (unit.IsUnitInRange(target.Point, 5.0f, true) && unit.IsEnemy(caster) && unit != target.Unit)
+                if (unit.IsUnitInRange(target.Point, 5.Feet().Meters, true) && unit.IsEnemy(caster) && unit != target.Unit)
                 {
-                    
                     RuleDealDamage ruleDealDamage = new(caster, unit, new DamageBundle(baseDamage))
                     {
                         DisablePrecisionDamage = true,

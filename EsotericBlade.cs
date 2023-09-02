@@ -34,12 +34,9 @@ using System.Linq;
 using Kingmaker.Utility;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Abilities;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
-using Kingmaker.Items.Slots;
 using Kingmaker.UnitLogic.Abilities.Components.Base;
 using Newtonsoft.Json;
-using Kingmaker.View;
-using Kingmaker.View.Equipment;
-using static Kingmaker.Visual.Animation.IKController;
+using Kingmaker.Blueprints.Root;
 
 namespace KineticArchetypes
 {
@@ -513,7 +510,7 @@ namespace KineticArchetypes
 
         public string GetAbilityRestrictionUIText()
         {
-            return LocalizationTool.GetString("Restriction.VitalStrikeForKineticBlade");
+            return LocalizedTexts.Instance.Reasons.KineticNotEnoughBurnLeft;
         }
 
         public bool IsAbilityRestrictionPassed(AbilityData ability)
@@ -526,17 +523,12 @@ namespace KineticArchetypes
             // Check if wielding kinetic blade; Ignore if not
             WeaponKineticBlade weaponKineticBlade = kineticist.Owner.Body.PrimaryHand.MaybeWeapon?.Blueprint.GetComponent<WeaponKineticBlade>();
             if (weaponKineticBlade == null)
-            {
                 return true;
-            }
-            Ability activation_ability = kineticist.Owner.GetFact(weaponKineticBlade.ActivationAbility) as Ability;
-            if (activation_ability == null)
-            {
+            if (kineticist.Owner.GetFact(weaponKineticBlade.ActivationAbility) is not Ability activationAbility)
                 return true;
-            }
 
             // Can the caster accept enough burn?
-            AbilityKineticist abilityKineticist = KineticistController.GetKineticistAbilityComponent(activation_ability.Data);
+            AbilityKineticist abilityKineticist = KineticistController.GetKineticistAbilityComponent(activationAbility.Data);
             if (abilityKineticist == null)
                 return true;
             return abilityKineticist.IsAbilityRestrictionPassed(ability);
@@ -604,51 +596,11 @@ namespace KineticArchetypes
                 var bonusSneakAttackDmg = damageDescription2.CreateDamage();
                 evt.Add(bonusSneakAttackDmg);
             }
-            /*
-            // Accept Burn if not using Esoteric Constant Energy
-            if (Owner.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid)) == null)
-                return;
-
-            UnitPartKineticist unitPartKineticist = Owner.Get<UnitPartKineticist>();
-            if (!unitPartKineticist)
-            {
-                Main.Logger?.Info("No Unit Park Kineticist");
-                return;
-            }
-            AbilityData abilityData = evt.Reason?.Ability;
-            if (abilityData is null)
-            {
-                Main.Logger?.Info("No Ability Data");
-                return;
-            }
-            var slots = new HandSlot[] { Owner.Body.CurrentHandsEquipmentSet.PrimaryHand, Owner.Body.CurrentHandsEquipmentSet.SecondaryHand };
-            foreach (var hand in slots)
-            {
-                if (hand.Weapon?.Blueprint.Type.Category == WeaponCategory.KineticBlast)
-                {
-                    AbilityKineticist blade_burn_ability = hand.Weapon?.Blueprint.GetComponent<WeaponKineticBlade>()?.ActivationAbility.GetComponent<AbilityKineticist>();
-                    if (blade_burn_ability is null)
-                    {
-                        Main.Logger?.Info("No Burn Ability");
-                        return;
-                    }
-                    int cost = blade_burn_ability.CalculateCost(abilityData);
-                    Main.Logger?.Info($"Burn Before: [{abilityData.Blueprint.ToString()}] {cost}:{unitPartKineticist.AcceptedBurn}:{unitPartKineticist.AcceptedBurnThisRound}");
-                    unitPartKineticist.AcceptBurn(cost, abilityData);
-                    Main.Logger?.Info($"Burn After: [{abilityData.Blueprint.ToString()}] {cost}:{unitPartKineticist.AcceptedBurn}:{unitPartKineticist.AcceptedBurnThisRound}");
-                }
-            }
-            */
         }
 
-        public void OnEventAboutToTrigger(RuleAttackWithWeapon evt)
-        {
-            
-        }
+        public void OnEventAboutToTrigger(RuleAttackWithWeapon evt) { }
 
-        public void OnEventDidTrigger(RuleDealDamage evt)
-        {
-        }
+        public void OnEventDidTrigger(RuleDealDamage evt) { }
 
         public void OnEventDidTrigger(RuleAttackWithWeapon evt)
         {
@@ -660,17 +612,12 @@ namespace KineticArchetypes
             // Check if wielding kinetic blade; Ignore if not
             WeaponKineticBlade weaponKineticBlade = kineticist.Owner.Body.PrimaryHand.MaybeWeapon?.Blueprint.GetComponent<WeaponKineticBlade>();
             if (weaponKineticBlade == null)
-            {
                 return;
-            }
-            Ability activation_ability = kineticist.Owner.GetFact(weaponKineticBlade.ActivationAbility) as Ability;
-            if (activation_ability == null)
-            {
-                return;
-            }
-            AbilityKineticist abilityKineticist = KineticistController.GetKineticistAbilityComponent(activation_ability.Data);
-            int acceptedBurn = kineticist.AcceptBurn(abilityKineticist.CalculateBurnCost(ability).Total, ability);
-            abilityKineticist.Spend(activation_ability.Data);
+            if (kineticist.Owner.GetFact(weaponKineticBlade.ActivationAbility) is not Ability activationAbility) 
+                return; 
+            AbilityKineticist abilityKineticist = KineticistController.GetKineticistAbilityComponent(activationAbility.Data);
+            kineticist.AcceptBurn(abilityKineticist.CalculateBurnCost(ability).Total, ability);
+            abilityKineticist.Spend(activationAbility.Data);
         }
     }
 
