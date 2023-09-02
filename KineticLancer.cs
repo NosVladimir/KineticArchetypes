@@ -56,6 +56,8 @@ using Kingmaker.Visual;
 using Kingmaker.TurnBasedMode.Controllers;
 using Kingmaker.RuleSystem.Rules.Abilities;
 using Kingmaker.UnitLogic.ActivatableAbilities;
+using Kingmaker.Armies.TacticalCombat.Grid;
+using System.Runtime.Remoting.Contexts;
 
 namespace KineticArchetypes
 {
@@ -295,6 +297,8 @@ namespace KineticArchetypes
                 m_AppliableTo = KineticDuelist.allBlades
             };
 
+            var vital_strike_component = FeatureRefs.VitalStrikeFeature.Reference.Get().GetComponent<AbilityCustomVitalStrike>();
+
             // Gather power-alike buff that reduces burn by 1 or 2
             var buff = BuffConfigurator.New(DragoonDiveBurnBuffName, DragoonDiveBurnBuffGuid)
                 .SetFlags(BlueprintBuff.Flags.HiddenInUi)
@@ -327,6 +331,7 @@ namespace KineticArchetypes
                 .AddComponent<AbilityDragoonDive>()
                 .AddComponent(new MustHaveEquippedKineticBlade())
                 .AddComponent(new DragoonDiveBurnDisplay())
+                .AddComponent(new AbilityCustomVitalStrike()) // Maybe?
                 .Configure();
 
             return FeatureConfigurator.New(DragoonDiveName, DragoonDiveGuid)
@@ -821,6 +826,7 @@ namespace KineticArchetypes
             {
                 caster.View.AnimationManager?.StopActions(UnitAnimationType.CastSpell);
                 caster.Descriptor.State.Prone.ShouldBeActive = true;
+                yield break; // No attack or other effects if prone
             }
             // Make attack if it's dragoon dive
             else if (target.Unit != null && context.Ability.Blueprint.ToString().Equals(KineticLancer.DragoonDiveAbilityName))
@@ -830,9 +836,52 @@ namespace KineticArchetypes
                 attack.Init(caster);
                 attack.IsCharge = true;
                 
-                // Full attack for dragoon frenzy
-                attack.ForceFullAttack = caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.DragoonFrenzyGuid)) != null;
+                // Full attack for dragoon frenzy | Don't full attack if using Vital Blade
+                attack.ForceFullAttack = caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.DragoonFrenzyGuid)) != null && caster.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid)) == null;
                 caster.Commands.AddToQueueFirst(attack);
+            }
+
+            // If using vital blade and Dragoon Dive
+            if (target.Unit == null || !context.Ability.Blueprint.ToString().Equals(KineticLancer.DragoonDiveAbilityName) || caster.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid)) == null) yield break;
+
+            var bladeComponents = caster.Body.PrimaryHand.MaybeItem?.Blueprint.GetComponent<WeaponKineticBlade>()?.GetBlastAbility(caster).Blueprint.Components;
+
+            // Calculate values for Dragoon Dive w/ Vital Blade Damage (minumum) Same as impaling crash *See above*
+            foreach (var component in bladeComponents ?? new BlueprintComponent[] { })
+            {
+                if (component is ContextRankConfig config)
+                {
+                    if (config.m_Type == AbilityRankType.DamageDice)
+                        dice = config.GetValue(context);
+                    else if (config.m_Type == AbilityRankType.DamageBonus)
+                        bonus = config.GetValue(context);
+                }
+
+                else if (component is ContextCalculateSharedValue sharedValue &&
+                    sharedValue.ValueType == AbilitySharedValue.Damage &&
+                    sharedValue.Value.BonusValue.ValueType == ContextValueType.Rank &&
+                    sharedValue.Value.BonusValue.ValueRank == AbilityRankType.DamageDice)
+                {
+                    diceMult = 2;
+                }
+            }
+            var DMG = dice * diceMult + bonus;
+            DamageTypeDescription damageTypeDescription = new() { Type = DamageType.Direct };
+            BaseDamage baseDamage = damageTypeDescription.GetDamageDescriptor(DiceFormula.Zero, DMG).CreateDamage();
+            baseDamage.SourceFact = caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.DragoonDiveGuid));
+
+            foreach (UnitEntityData unit in Game.Instance.State.Units)
+            {
+                if (unit.IsUnitInRange(target.Point, 5.0f, true) && unit.IsEnemy(caster) && unit != target.Unit)
+                {
+                    
+                    RuleDealDamage ruleDealDamage = new(caster, unit, new DamageBundle(baseDamage))
+                    {
+                        DisablePrecisionDamage = true,
+                        Reason = baseDamage.SourceFact
+                    };
+                    context.TriggerRule(ruleDealDamage);
+                }
             }
         }
 

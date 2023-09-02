@@ -650,12 +650,15 @@ namespace KineticArchetypes
             // Check for activatables
             bool dualbuff = false;
             bool spearbuff = false;
+            bool vitalbuff = false;
             foreach (var buff in owner.Buffs)
             {
                 if (buff.Blueprint.ToString().Equals(KineticDuelist.KineticDualBladesBuffName))
                     dualbuff = true;
                 else if (buff.Blueprint.ToString().Equals(KineticLancer.KineticSpearBuffName))
                     spearbuff = true;
+                else if (buff.Blueprint.ToString().Equals(KineticistGeneral.VitalBladeBuffName))
+                    vitalbuff = true;
             }
 
             // Allow AoO if having KD blade feature or EsotericBlade feature
@@ -695,6 +698,11 @@ namespace KineticArchetypes
                     owner.Body.SecondaryHand.RemoveItem();
                 owner.Body.SecondaryHand.Lock.Retain();
                 owner.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.KineticSpearRealBuffGuid), owner);
+            }
+
+            if (vitalbuff)
+            {
+                owner.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid), owner);
             }
 
             var rememberedWeapon = owner.Parts.Ensure<RememberWeaponPart>().RememberedWeapon;
@@ -758,7 +766,8 @@ namespace KineticArchetypes
             {
                 if (buff.Blueprint.ToString().Equals(KineticDuelist.DualBlades2ndAttackBuffName) || 
                     buff.Blueprint.ToString().Equals(KineticDuelist.DualBlades3rdAttackBuffName) ||
-                    buff.Blueprint.ToString().Equals(KineticLancer.KineticSpearRealBuffName))
+                    buff.Blueprint.ToString().Equals(KineticLancer.KineticSpearRealBuffName)     ||
+                    buff.Blueprint.ToString().Equals(KineticistGeneral.VitalBladeRealBuffName))
                 {
                     buff.SetDuration(TimeSpan.FromSeconds(0));
                 }
