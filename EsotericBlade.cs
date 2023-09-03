@@ -36,6 +36,8 @@ using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Abilities;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
 using Kingmaker.UnitLogic.Abilities.Components.Base;
 using Newtonsoft.Json;
+using Pathfinding.Voxels;
+using static Kingmaker.UI.CanvasScalerWorkaround;
 
 namespace KineticArchetypes
 {
@@ -592,10 +594,18 @@ namespace KineticArchetypes
         public static void Prefix1(AbilityCustomVitalStrike __instance, AbilityExecutionContext context, TargetWrapper target)
         {
             UnitEntityData maybeCaster = context.MaybeCaster;
-            if (maybeCaster != null && (maybeCaster.HasFact(BlueprintTool.Get<BlueprintFeature>(EsotericBlade.ConstantEnergyGuid))
+            if (maybeCaster != null && maybeCaster.Parts.Get<UnitPartKineticist>() is UnitPartKineticist kineticist &&
+                (maybeCaster.HasFact(BlueprintTool.Get<BlueprintFeature>(EsotericBlade.ConstantEnergyGuid))
                 || maybeCaster.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid)) != null))
             {
                 maybeCaster.AddBuff(BlueprintTool.Get<BlueprintBuff>(EsotericBlade.VitalStrikeKineticBladeBuffGuid), maybeCaster);
+                if (maybeCaster.Body.PrimaryHand.MaybeItem is ItemEntityWeapon obj && 
+                    obj.Blueprint.Category == WeaponCategory.KineticBlast &&
+                    obj.Blueprint.GetComponent<WeaponKineticBlade>() is WeaponKineticBlade weaponKB)
+                {
+                    var data = weaponKB.GetActivationAbility(maybeCaster);
+                    kineticist.AcceptBurn(weaponKB.ActivationAbility.GetComponent<AbilityKineticist>().CalculateCost(data), data);
+                }
             }
         }
     }
