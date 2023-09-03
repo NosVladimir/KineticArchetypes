@@ -617,7 +617,7 @@ namespace KineticArchetypes
             Vector3 delta = end - initial;
 
             // Check if things are activated
-            bool kineticLeap = false, impalingCrash = false, furiousDragoon = false, 
+            bool kineticLeap = false, impalingCrash = false, furiousDragoon = false, vitalBlade = false ,
                 brutalDragoon = caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.BrutalDragoonGuid)) != null;
             foreach (var buff in caster.Buffs)
             {
@@ -627,6 +627,8 @@ namespace KineticArchetypes
                     impalingCrash = true;
                 if (buff.Blueprint.ToString().Equals(KineticLancer.FuriousDragoonBuffName))
                     furiousDragoon = true;
+                if (buff.Blueprint.ToString().Equals(KineticistGeneral.VitalBladeRealBuffName))
+                    vitalBlade = true;
             }
 
             // Apply dragoon dive burn buffs and real buffs
@@ -678,6 +680,11 @@ namespace KineticArchetypes
                 if (brutalDragoon)
                 {
                     caster.AddBuff(BlueprintTool.Get<BlueprintBuff>(KineticLancer.BrutalDragoonRealBuffGuid), caster);
+                }
+
+                if (vitalBlade)
+                {
+                    caster.AddBuff(BlueprintTool.Get<BlueprintBuff>(EsotericBlade.VitalStrikeKineticBladeBuffGuid), caster);
                 }
             }
 
@@ -838,7 +845,8 @@ namespace KineticArchetypes
             }
 
             // If using vital blade and Dragoon Dive
-            if (target.Unit == null || !context.Ability.Blueprint.ToString().Equals(KineticLancer.DragoonDiveAbilityName) || caster.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid)) == null) yield break;
+            if (target.Unit == null || !context.Ability.Blueprint.ToString().Equals(KineticLancer.DragoonDiveAbilityName) || !vitalBlade)
+                yield break;
 
             var bladeComponents = caster.Body.PrimaryHand.MaybeItem?.Blueprint.GetComponent<WeaponKineticBlade>()?.GetBlastAbility(caster).Blueprint.Components;
 

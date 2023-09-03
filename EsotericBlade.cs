@@ -36,7 +36,6 @@ using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Abilities;
 using BlueprintCore.Blueprints.CustomConfigurators.UnitLogic.Buffs;
 using Kingmaker.UnitLogic.Abilities.Components.Base;
 using Newtonsoft.Json;
-using Kingmaker.Blueprints.Root;
 
 namespace KineticArchetypes
 {
@@ -256,6 +255,7 @@ namespace KineticArchetypes
 
             BuffConfigurator.New(VitalStrikeKineticBladeBuffName, VitalStrikeKineticBladeBuffGuid)
                 .SetFlags(BlueprintBuff.Flags.HiddenInUi)
+                .AddComponent(new KineticistGeneral.UnitFactVitalBladeLimitAttacks())
                 .Configure();
             AbilityConfigurator.For(AbilityRefs.VitalStrikeAbility).AddComponent(new VitalStrikeForKineticBlade()).Configure();
             AbilityConfigurator.For(AbilityRefs.VitalStrikeAbilityImproved).AddComponent(new VitalStrikeForKineticBlade()).Configure();
@@ -505,60 +505,43 @@ namespace KineticArchetypes
         }
     }
 
-    internal class VitalStrikeForKineticBlade : UnitFactComponentDelegate, IInitiatorRulebookHandler<RuleDealDamage>, IRulebookHandler<RuleDealDamage>, ISubscriber, IInitiatorRulebookSubscriber, IInitiatorRulebookHandler<RuleAttackWithWeapon>, IRulebookHandler<RuleAttackWithWeapon>, IAbilityRestriction
+    internal class VitalStrikeForKineticBlade : UnitFactComponentDelegate, IInitiatorRulebookHandler<RuleDealDamage>, IRulebookHandler<RuleDealDamage>, ISubscriber, IInitiatorRulebookSubscriber
     {
-
-        public string GetAbilityRestrictionUIText()
-        {
-            return LocalizedTexts.Instance.Reasons.KineticNotEnoughBurnLeft;
-        }
-
-        public bool IsAbilityRestrictionPassed(AbilityData ability)
-        {
-            // Check if Kineticist; Ignore if not
-            UnitPartKineticist kineticist = ability.Caster.Get<UnitPartKineticist>();
-            if (!kineticist)
-                return true;
-
-            // Check if wielding kinetic blade; Ignore if not
-            WeaponKineticBlade weaponKineticBlade = kineticist.Owner.Body.PrimaryHand.MaybeWeapon?.Blueprint.GetComponent<WeaponKineticBlade>();
-            if (weaponKineticBlade == null)
-                return true;
-            if (kineticist.Owner.GetFact(weaponKineticBlade.ActivationAbility) is not Ability activationAbility)
-                return true;
-
-            // Can the caster accept enough burn?
-            AbilityKineticist abilityKineticist = KineticistController.GetKineticistAbilityComponent(activationAbility.Data);
-            if (abilityKineticist == null)
-                return true;
-            return abilityKineticist.IsAbilityRestrictionPassed(ability);
-        }
-
         public void OnEventAboutToTrigger(RuleDealDamage evt)
         {
-            var ability = evt.Reason?.Ability?.Blueprint;
-            if (ability == null || evt.Initiator != Owner ||
-                (Owner.GetFeature(BlueprintTool.GetRef<BlueprintFeatureReference>(EsotericBlade.ConstantEnergyGuid)) == null &&
-                    Owner.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid)) == null) ||
-                ability.GetComponent<AbilityKineticist>() == null || ability.GetComponent<AbilityDeliveredByWeapon>() == null)
+            // Check for IVS and GVS to avoid adding multipliers repeatedly
+            bool IVS = Owner.GetFeature(FeatureRefs.VitalStrikeFeatureImproved.Reference.Get()) != null;
+            bool GVS = Owner.GetFeature(FeatureRefs.VitalStrikeFeatureGreater.Reference.Get()) != null;
+
+            if (Fact.Blueprint == AbilityRefs.VitalStrikeAbility.Reference.Get() && (IVS || GVS))
+                return;
+            if (Fact.Blueprint == AbilityRefs.VitalStrikeAbilityImproved.Reference.Get() && GVS)
                 return;
 
-            var vitalStrikeMod = Fact.Blueprint.GetComponent<AbilityCustomVitalStrike>().VitalStrikeMod;
-            var mythicFact = Owner.HasFact(Fact.Blueprint.GetComponent<AbilityCustomVitalStrike>().MythicBlueprint);
-            var rowdy = Owner.HasFact(Fact.Blueprint.GetComponent<AbilityCustomVitalStrike>().RowdyFeature);
-
-            bool hasBuff = false;
+            bool hasBuff = false, vitalBlade = false;
             foreach (var buff in Owner.Buffs)
+            {
                 if (buff.Blueprint.ToString().Equals(EsotericBlade.VitalStrikeKineticBladeBuffName))
                 {
                     hasBuff = true;
                     if (buff.TimeLeft > 1.Seconds())
                         buff.SetDuration(1.Seconds());
-                    break;
                 }
+                else if (buff.Blueprint.ToString().Equals(KineticistGeneral.VitalBladeRealBuffName))
+                    vitalBlade = true;
+            }
 
-            if (!hasBuff)
+            var ability = evt.Reason?.Ability?.Blueprint;
+            if (!hasBuff || ability == null || evt.Initiator != Owner ||
+               (Owner.GetFeature(BlueprintTool.Get<BlueprintFeature>(EsotericBlade.ConstantEnergyGuid)) == null && !vitalBlade) ||
+                ability.GetComponent<AbilityKineticist>() == null || ability.GetComponent<AbilityDeliveredByWeapon>() == null)
                 return;
+
+            var vitalStrikeMod = Fact.Blueprint.GetComponent<AbilityCustomVitalStrike>().VitalStrikeMod;
+            if (vitalBlade && vitalStrikeMod == 4)  // Vital blade only works up to improved VS
+                vitalStrikeMod--;
+            var mythicFact = Owner.HasFact(Fact.Blueprint.GetComponent<AbilityCustomVitalStrike>().MythicBlueprint);
+            var rowdy = Owner.HasFact(Fact.Blueprint.GetComponent<AbilityCustomVitalStrike>().RowdyFeature);
 
             BaseDamage damage = evt.DamageBundle.WeaponDamage;
             damage.PostCritIncrements.AddDiceModifier((vitalStrikeMod - 1) * damage.Dice.ModifiedValue.Rolls, Fact);
@@ -598,27 +581,7 @@ namespace KineticArchetypes
             }
         }
 
-        public void OnEventAboutToTrigger(RuleAttackWithWeapon evt) { }
-
         public void OnEventDidTrigger(RuleDealDamage evt) { }
-
-        public void OnEventDidTrigger(RuleAttackWithWeapon evt)
-        {
-            AbilityData ability = evt.Reason?.Ability;
-            UnitPartKineticist kineticist = ability.Caster.Get<UnitPartKineticist>();
-            if (!kineticist)
-                return;
-
-            // Check if wielding kinetic blade; Ignore if not
-            WeaponKineticBlade weaponKineticBlade = kineticist.Owner.Body.PrimaryHand.MaybeWeapon?.Blueprint.GetComponent<WeaponKineticBlade>();
-            if (weaponKineticBlade == null)
-                return;
-            if (kineticist.Owner.GetFact(weaponKineticBlade.ActivationAbility) is not Ability activationAbility) 
-                return; 
-            AbilityKineticist abilityKineticist = KineticistController.GetKineticistAbilityComponent(activationAbility.Data);
-            kineticist.AcceptBurn(abilityKineticist.CalculateBurnCost(ability).Total, ability);
-            abilityKineticist.Spend(activationAbility.Data);
-        }
     }
 
     [HarmonyPatch(typeof(AbilityCustomVitalStrike))]
@@ -631,6 +594,22 @@ namespace KineticArchetypes
             UnitEntityData maybeCaster = context.MaybeCaster;
             if (maybeCaster != null && (maybeCaster.HasFact(BlueprintTool.Get<BlueprintFeature>(EsotericBlade.ConstantEnergyGuid))
                 || maybeCaster.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid)) != null))
+            {
+                maybeCaster.AddBuff(BlueprintTool.Get<BlueprintBuff>(EsotericBlade.VitalStrikeKineticBladeBuffGuid), maybeCaster);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(AbilityCustomCharge))]
+    public class Patch_AbilityCustomCharge
+    {
+        [HarmonyPatch(nameof(AbilityCustomCharge.Deliver))]
+        [HarmonyPrefix]
+        public static void Prefix1(AbilityCustomCharge __instance, AbilityExecutionContext context, TargetWrapper targetWrapper)
+        {
+            UnitEntityData maybeCaster = context.MaybeCaster;
+            if (maybeCaster != null && 
+                maybeCaster.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid)) != null)
             {
                 maybeCaster.AddBuff(BlueprintTool.Get<BlueprintBuff>(EsotericBlade.VitalStrikeKineticBladeBuffGuid), maybeCaster);
             }

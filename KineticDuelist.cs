@@ -761,7 +761,7 @@ namespace KineticArchetypes
                     offhand.Lock.ReleaseAll();
             }
 
-            // Remove extra attack buffs and spear buff
+            // Remove extra attack buffs and spear buff and vital blade buff
             foreach (var buff in owner.Buffs)
             {
                 if (buff.Blueprint.ToString().Equals(KineticDuelist.DualBlades2ndAttackBuffName) || 

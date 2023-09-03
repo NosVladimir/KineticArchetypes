@@ -715,42 +715,22 @@
 
   {
     "Key": "OnslaughtBlaster.KineticRailgun.Description",
-    "enGB": "Whenever you are affected by a haste spell or effect, you can fire 1 additional blast while using your onslaught blast. In addition, when you use your focused blaster ability while affected by haste spell or effect, you can reduce the cost of a blast’s burn by an additional 1 point of burn.",
+    "enGB": "Whenever you are affected by a haste spell or effect, you can fire 1 additional blast while using your onslaught blast. In addition, when you use your focused blaster ability while affected by a haste spell or effect, you can reduce the cost of a blast's burn by an additional 1 point of burn.",
     "zhCN": "当你处于加速术的影响下，你可以在施展狂轰滥袭时额外施放一次念袭，且专注轰炸额外降低1点念袭超载消耗。"
   },
 
   {
     "Key": "KineticistGeneral.VitalBladeInfusion",
     "ProcessTemplates": false,
-    "enGB": "Vital Blade Infusion",
+    "enGB": "Vital Blade",
     "zhCN": "要害之刃"
   },
 
   {
     "Key": "KineticistGeneral.VitalBladeInfusion.Description",
-    "enGB": "Element: universal\nType: form infusion\nLevel: 8\nBurn: 4\nAssociated Blasts: any\nSaving Throw: none\nThis infusion functions as kinetic blade, except it can benefit from Vital Strike and Improved Vital Strike even when used as part of a charge attack if you possess those feats. If you have kinetic whip, you can instead have this infusion function as kinetic whip, although it does not benefit from Vital Strike feats on attacks of opportunity.",
-    "zhCN": "元素：通用\n类别：塑形注能\n等级：8\n超载：4\n\n关联念袭类别：任意\n豁免检定：无\n此注能与念刃相同，但可以在冲锋攻击中使用要害打击和精通要害打击。如果你拥有念鞭，你可以改为念鞭应用此注能，但无法在借机攻击时享受要害打击的好处。"
-  },
-
-  {
-    "Key": "KineticistGeneral.VitalBladeInfusionAbility",
-    "ProcessTemplates": false,
-    "enGB": "Vital Blade Infusion",
-    "zhCN": "要害之刃"
-  },
-
-  {
-    "Key": "KineticistGeneral.VitalBladeInfusionAbility.Description",
-    "enGB": "Element: universal\nType: form infusion\nLevel: 8\nBurn: 4\nAssociated Blasts: any\nSaving Throw: none\nWhile active, this ability limits your attacks per round to just one attack, but applies the effects of vital strikes to all kinetic blade attacks except attacks of opportunity.",
-    "zhCN": "元素：通用\n类别：塑形注能\n等级：8\n超载：4\n\n关联念袭类别：任意\n豁免检定：无\n启用时，此能力会限制你每轮只能进行一次攻击，但是会让你所有除借机攻击以外的念刃攻击应用要害打击的效果。"
-  },
-
-  {
-    "Key": "KineticistGeneral.VitalBladeDamageName",
-    "enGB": "Vital Blade",
-    "zhCN": "要害之刃"
+    "enGB": "Element: universal\nType: form infusion\nLevel: 4\nBurn: 4\nAssociated Blasts: any\nSaving Throw: none\nThis infusion functions as kinetic blade, except it can benefit from Vital Strike and Improved Vital Strike even when used as part of a charge attack if you possess those feats. If you have kinetic whip, you can instead have this infusion function as kinetic whip, although it does not benefit from Vital Strike feats on attacks of opportunity.",
+    "zhCN": "元素：通用\n类别：塑形注能\n等级：4\n超载：4\n\n关联念袭类别：任意\n豁免检定：无\n此注能与念刃相同，但可以使用要害打击和精通要害打击，甚至可以作为冲锋攻击的一部分使用。如果你拥有念鞭，你可以改为让念鞭应用此注能，但无法在借机攻击时应用要害打击。"
   }
-
 
   /*
   {
