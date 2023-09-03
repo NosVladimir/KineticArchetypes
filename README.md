@@ -16,6 +16,8 @@ Fixed the problem where taking burn from a kinetic blade would deactivate the bl
 ### General
 Added an ability to allow for remembering a currently held weapon, so that when kinetic blades are formed, the remembered weapon's shape is used instead of a never-changing scimitar. This works the same way as the base game transmog system with the golem, but any visual effect coming from the remembered weapon's enchants sometimes appears sometimes not. I have no idea how to fix that.
 
+Added infusion [Vital Blade](https://libraryofmetzofitz.fandom.com/wiki/Kinetic_Blade#VITAL_BLADE) that allows kinetic blades to work with vital strike and improved vital strike.
+
 ### [Kinetic Duelist](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/kinetic-duelist/)
 
 A kineticist archetype that allows legit two-weapon fighting with kinetic blades. Heavily homebrewed since gaining dual blades at 17th level is not very appealing.
@@ -53,6 +55,7 @@ Convert every single dice increase of kinetic blasts into an additional blast fi
 - For every 1d6 damage increase of a normal blast (or every 2d6 for composites), convert it into one more blast fired at 1d6 (or 2d6), except for kinetic blades and wall/cloud/deadly ground
 - Has an automatic targeting mode for distributing the number of blasts among targets, based on their HP
 - Trades all metakinesis for increasing the number of blasts
+- Archetype exclusive feat [Kinetic Railgun](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/onslaught-blaster#Kinetic_Railgun) that further adds 1 blast and reduces burn cost when hasted
 - In base game, can fire at most 34 blasts in a single cast with greater kinetic diadem and lesser kineticist rod equipped
 
 # Known issues
