@@ -67,6 +67,8 @@ Using dragoon dive to initiate a battle would sometimes cause you to lose your a
 
 Onslaught blaster's targeted strike sometimes counts fewer blasts than actually fired.
 
+Levelling up during the casting animation of an onslaught blast may cause you to lose one dice permenantly. **Wait for some time until you see your equipments unlock, then level up!**
+
 # Planned contents
 Currently no guaranteed future contents. Below is a list of archetypes I'm interested in and might try to implement, but given how bizzarre they are I cannot promise anything. Maybe also some more base game fixes around blade whirlwind.
 
