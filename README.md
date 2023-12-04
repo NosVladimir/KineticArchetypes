@@ -59,7 +59,7 @@ Convert every single dice increase of kinetic blasts into an additional blast fi
 - In base game, can fire at most 34 blasts in a single cast with greater kinetic diadem and lesser kineticist rod equipped
 
 # Known issues
-**If you encounter any bug, feel free to fire an issue!**
+**If you encounter any bug, feel free to fire an issue!** English and Chinese are fine.
 
 Taking levels first in an esoteric blade then a proper kineticist would give you associated composite blasts right away. Not a big deal so not going to fix.
 
