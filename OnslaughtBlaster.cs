@@ -344,7 +344,8 @@ namespace KineticArchetypes
                 ability.GetComponent<AbilityDeliveredByWeapon>() != null ||
                 ability.GetComponent<AbilityEffectRunAction>()?.Actions.Actions[0] is ContextActionSpawnAreaEffect ||
                 !(Blasts.Contains(ability.ToReference<BlueprintAbilityReference>()) || 
-                    (ability.m_Parent != null && Blasts.Contains(ability.m_Parent)));
+                    (ability.m_Parent != null && Blasts.Contains(ability.m_Parent))) ||
+                ability == AbilityRefs.WallBlueFlameBlastAbility.Reference.GetBlueprint(); // Blue flame wall special case
         }
 
         internal static void HandleOtherMods()
@@ -557,6 +558,7 @@ namespace KineticArchetypes
 
         public override void OnDeactivate()
         {
+            Part = Owner.Parts.Get<OnslaughtBlastPart>();
             Owner.Body.AllSlots.ForEach(slot => { slot.Lock.Release(); });
             if (Part == null || Part.Blast == null || Part.BlastRank == 0)
                 return;
