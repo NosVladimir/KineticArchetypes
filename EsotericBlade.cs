@@ -367,7 +367,7 @@ namespace KineticArchetypes
                 return false;
             }
 
-            foreach (EntityFact weaponTraining in __instance.WeaponTrainings)
+            foreach (EntityFact weaponTraining in __instance.m_weaponTrainings)
             {
                 foreach (EntityFactComponent component in weaponTraining.Components)
                 {
