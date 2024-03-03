@@ -461,7 +461,7 @@ namespace KineticArchetypes
         public void OnEventAboutToTrigger(RuleCastSpell evt)
         {
             var part = Owner.Parts.Get<OnslaughtBlastPart>();
-            if (evt.IsDuplicateSpellApplied || evt.Spell?.Blueprint == null ||
+            if (evt.Initiator != Owner || evt.IsDuplicateSpellApplied || evt.Spell?.Blueprint == null ||
                 OnslaughtBlaster.InappropriateBlast(evt.Spell.Blueprint) || part == null || part.Repeating)
                 return;
 
