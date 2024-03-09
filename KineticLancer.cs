@@ -830,6 +830,9 @@ namespace KineticArchetypes
             {
                 caster.View.AnimationManager?.StopActions(UnitAnimationType.CastSpell);
                 caster.Descriptor.State.Prone.ShouldBeActive = true;
+                foreach (var buff in caster.Buffs)
+                    if (buff.Blueprint.ToString().Equals(KineticLancer.DragoonDiveBurnBuffName))
+                        buff.SetDuration(TimeSpan.FromSeconds(0));
                 yield break; // No attack or other effects if prone
             }
             // Make attack if it's dragoon dive
@@ -839,10 +842,11 @@ namespace KineticArchetypes
                 attack.IgnoreCooldown();
                 attack.Init(caster);
                 attack.IsCharge = true;
-                
+
                 // Full attack for dragoon frenzy | Don't full attack if using Vital Blade
                 attack.ForceFullAttack = caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.DragoonFrenzyGuid)) != null && caster.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid)) == null;
-                caster.Commands.AddToQueueFirst(attack);
+                //caster.Commands.AddToQueueFirst(attack);
+                caster.Commands.Run(attack);
             }
 
             // If using vital blade and Dragoon Dive
