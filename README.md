@@ -65,6 +65,8 @@ Taking levels first in an esoteric blade then a proper kineticist would give you
 
 Using dragoon dive to initiate a battle would sometimes cause you to lose your attacks - that's because the enemy was moving too fast and by the end of the fixed-point jump it's out of reach. This can be partially mitigated by increasing the speed of the character, so jumping time is reduced. It would be too complicated to factor in moving targets in real time, so this is not going to be fixed.
 
+The reach granted by kinetic spear also applies to natural attacks.
+
 Onslaught blaster's targeted strike sometimes counts fewer blasts than actually fired.
 
 Levelling up during the casting animation of an onslaught blast may cause you to lose one dice permenantly. **Wait for some time until you see your equipments unlock, then level up!**
