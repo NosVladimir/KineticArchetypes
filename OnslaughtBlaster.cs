@@ -610,6 +610,8 @@ namespace KineticArchetypes
                         if (!(unit == null || unit.View == null || unit == part.Target || unit.HPLeft <= 0 ||
                             !part.Blast.CanTarget(unit) || context.Caster.DistanceTo(unit) > part.Blast.GetApproachDistance(unit)))
                         {
+                            if (repetitions[0] == 0)
+                                break;
                             repetitions[0]--;
                             repetitions.Add(1);
                             targets.Add(unit);

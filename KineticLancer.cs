@@ -303,7 +303,8 @@ namespace KineticArchetypes
                     action: ActionsBuilder.New().RemoveSelf(),
                     checkWeaponCategory: true,
                     category: WeaponCategory.KineticBlast,
-                    triggerBeforeAttack: false)
+                    triggerBeforeAttack: false,
+                    onlyHit: false)
                 .AddNotDispelable()
                 .Configure();
 
