@@ -34,6 +34,7 @@ using Kingmaker.View.Equipment;
 using BlueprintCore.Blueprints.Configurators.UnitLogic.ActivatableAbilities;
 using Kingmaker.UnitLogic.ActivatableAbilities;
 using Kingmaker.Blueprints.JsonSystem;
+using Kingmaker.EntitySystem;
 
 namespace KineticArchetypes
 {
@@ -806,36 +807,56 @@ namespace KineticArchetypes
                 __result = false;
                 return false;
             }
+
+            BlueprintActivatableAbility factBlueprint = __instance.Fact.Blueprint;
+            AddKineticistBlade addKineticistBlade = factBlueprint.Buff?.GetComponent<AddKineticistBlade>();
+            BlueprintItemWeapon bladeWeapon = addKineticistBlade?.Blade;
+            if (bladeWeapon == null)
+            {
+                __result = false;
+                return false;
+            }
+            HandSlot targetHand = (addKineticistBlade.UseSecondaryHandInstead ? __instance.Owner.Body.SecondaryHand : __instance.Owner.Body.PrimaryHand);
+            BlueprintItemWeapon itemEquipped = targetHand.MaybeWeapon?.Blueprint;
+            if (!CheckCurrentHandSlot())
+            {
+                __result = false;
+                return false;
+            }
+            bool CheckCurrentHandSlot()
+            {
+                if (targetHand.HasWeapon && (bool)targetHand.Lock && bladeWeapon != itemEquipped)
+                {
+                    EntityFact entityFact = __instance.Owner.Facts.Get(factBlueprint.Buff);
+                    if (entityFact != null)
+                    {
+                        BlueprintComponentAndRuntime<AddKineticistBlade> componentWithRuntime = entityFact.GetComponentWithRuntime<AddKineticistBlade>();
+                        if (componentWithRuntime.Runtime != null && componentWithRuntime.Runtime.TryGetData<AddKineticistBladeData>(out var outData) && outData.Applied?.HoldingSlot != targetHand)
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                return true;
+            }
             UnitPartKineticist unitPartKineticist = unit.Get<UnitPartKineticist>();
-            if (!unitPartKineticist)
+            if (unitPartKineticist == null)
             {
-                __result = false;
-                return false;
-            }
-            BlueprintItemWeapon blueprintItemWeapon = body.PrimaryHand.MaybeWeapon?.Blueprint;
-            bool flag = blueprintItemWeapon.GetComponent<WeaponKineticBlade>() != null;
-            if (body.PrimaryHand.MaybeItem != null && !flag)
-            {
-                __result = false;
-                return false;
-            }
-            BlueprintItemWeapon blueprintItemWeapon2 = BlueprintComponentExtendAsObject.Or(__instance.Fact.Blueprint.Buff.GetComponent<AddKineticistBlade>(), null)?.Blade;
-            if (blueprintItemWeapon2 == null)
-            {
-                __result = false;
+                __result = __instance.IgnoreKineticClass;
                 return false;
             }
 
             // Trace back the burn at the start of round by adding this back to left burn this round
             // Will create situations of having used burn for other stuff but still passing check for blade
             var acceptedBurnThisRound = unitPartKineticist.AcceptedBurnThisRound;
-            int cost = AbilityKineticist.CalculateAbilityBurnCost(BlueprintComponentExtendAsObject.Or(blueprintItemWeapon2.GetComponent<WeaponKineticBlade>(), null)?.GetActivationAbility(unit))?.Total ?? 0;
+            int cost = AbilityKineticist.CalculateAbilityBurnCost(BlueprintComponentExtendAsObject.Or(bladeWeapon.GetComponent<WeaponKineticBlade>(), null)?.GetActivationAbility(unit))?.Total ?? 0;
             if (unit.GetFact(BlueprintTool.Get<BlueprintFeature>(KineticLancer.DragoonDiveGuid)) != null)
             {
-                cost = DragoonDiveBurnDisplay.CalculateCostForBlade(unit, blueprintItemWeapon2.GetComponent<WeaponKineticBlade>());
+                cost = DragoonDiveBurnDisplay.CalculateCostForBlade(unit, bladeWeapon.GetComponent<WeaponKineticBlade>());
             }
 
-            if ((blueprintItemWeapon != blueprintItemWeapon2 || !unitPartKineticist.IsBladeActivated) && cost > unitPartKineticist.LeftBurnThisRound + acceptedBurnThisRound)
+            if ((itemEquipped != bladeWeapon || !unitPartKineticist.IsBladeActivated) && cost > unitPartKineticist.LeftBurnThisRound + acceptedBurnThisRound)
             {
                 __result = false;
                 return false;

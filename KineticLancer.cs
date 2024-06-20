@@ -825,6 +825,9 @@ namespace KineticArchetypes
                 yield return null;
             }
 
+            // Force the position to be the end
+            caster.Position = end;
+
             // Land in prone if DC fails by 5 or more
             if (DC - checkResult > 4)
             {
