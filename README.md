@@ -18,6 +18,8 @@ Added an ability to allow for remembering a currently held weapon, so that when 
 
 Added infusion [Vital Blade](https://libraryofmetzofitz.fandom.com/wiki/Kinetic_Blade#VITAL_BLADE) that allows kinetic blades to work with vital strike and improved vital strike.
 
+Added back the supercharge feature for the DLC archetype Kinetic Sharpshooter. Although this functionally doesn't change anything for sharpshooter due to them not being able to gather power, by adding back supercharge it is therefore possible to multi-archetype sharpshooter with the Onslaught Blaster archetype of this mod.
+
 ### [Kinetic Duelist](https://www.d20pfsrd.com/alternative-rule-systems/occult-adventures/occult-classes/kineticist/archetypes/legendary-games-kineticist-archetypes/kinetic-duelist/)
 
 A kineticist archetype that allows legit two-weapon fighting with kinetic blades. Heavily homebrewed since gaining dual blades at 17th level is not very appealing.
