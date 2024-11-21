@@ -148,6 +148,9 @@ namespace KineticArchetypes
                 .AddToAddFeatures(17, CreateOmniBlaster())
                 .Configure();
 
+            var sharpshooter = ArchetypeRefs.KineticSharpshooterArchetype.Reference.Get();
+            sharpshooter.RemoveFeatures = (from e in sharpshooter.RemoveFeatures.ToList() where e.Level != 11 select e).ToArray();
+
             FeatureConfigurator.New(KineticRailgunName, KineticRailgunGuid, FeatureGroup.Feat)
                 .SetDisplayName(KineticRailgunName)
                 .SetDescription(KineticRailgunDescription)
