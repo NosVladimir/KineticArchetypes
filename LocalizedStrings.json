@@ -410,6 +410,32 @@
   },
 
   {
+    "Key": "KineticLancer.JumpStyle1Ability",
+    "ProcessTemplates": false,
+    "enGB": "Long Jump Style",
+    "zhCN": "跳远动作"
+  },
+
+  {
+    "Key": "KineticLancer.JumpStyle1Ability.Description",
+    "enGB": "Use this ability to set the style of Jump and Dragoon Dive as performing a long jump.",
+    "zhCN": "使用该能力以设置跳跃和龙骑飞袭的动作为进行一次远跳。"
+  },
+
+  {
+    "Key": "KineticLancer.JumpStyle2Ability",
+    "ProcessTemplates": false,
+    "enGB": "Vertical Jump Style",
+    "zhCN": "垂直动作"
+  },
+
+  {
+    "Key": "KineticLancer.JumpStyle2Ability.Description",
+    "enGB": "Use this ability to set the style of Jump and Dragoon Dive as flying vertically up, then landing vertically down. (Note: This is lacking animation.)",
+    "zhCN": "使用该能力以设置跳跃和龙骑飞袭的动作为垂直飞上天，再垂直落下来。（注：没有合适的动画。）"
+  },
+
+  {
     "Key": "KineticLancer.DragoonLeap",
     "ProcessTemplates": false,
     "enGB": "Dragoon Leap",

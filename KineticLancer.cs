@@ -56,6 +56,7 @@ using Kingmaker.Visual;
 using Kingmaker.TurnBasedMode.Controllers;
 using Kingmaker.RuleSystem.Rules.Abilities;
 using Kingmaker.UnitLogic.ActivatableAbilities;
+using Newtonsoft.Json;
 
 namespace KineticArchetypes
 {
@@ -88,6 +89,14 @@ namespace KineticArchetypes
         internal const string DragoonDiveAbilityDescription = "KineticLancer.DragoonDiveAbility.Description";
         internal const string DragoonDiveBurnBuffName = "KineticLancer.DragoonDiveBurnBuff";
         internal const string DragoonDiveBurnBuffGuid = "C7D9AA8C-FC3E-403E-9288-34E5B796F6F0";
+
+        internal const string JumpStyle1AbilityName = "KineticLancer.JumpStyle1Ability";
+        internal const string JumpStyle1AbilityGuid = "AF6F465B-B24A-43B3-9999-3FA870886FA4";
+        internal const string JumpStyle1AbilityDescription = "KineticLancer.JumpStyle1Ability.Description";
+
+        internal const string JumpStyle2AbilityName = "KineticLancer.JumpStyle2Ability";
+        internal const string JumpStyle2AbilityGuid = "D2D0610D-D060-4C8B-848E-52CA8E7ED31D";
+        internal const string JumpStyle2AbilityDescription = "KineticLancer.JumpStyle2Ability.Description";
 
         internal const string DragoonLeapName = "KineticLancer.DragoonLeap";
         internal const string DragoonLeapGuid = "9D6CCD93-F1F5-4BB0-95CF-04320BA0DEED";
@@ -273,6 +282,26 @@ namespace KineticArchetypes
                 .AddAbilityEffectRunAction(ActionsBuilder.New().ApplyBuffWithDurationSeconds(swiftBuff, 6f, toCaster: true))
                 .Configure();
 
+            var style1Ability = AbilityConfigurator.New(JumpStyle1AbilityName, JumpStyle1AbilityGuid)
+                .SetDisplayName(JumpStyle1AbilityName)
+                .SetDescription(JumpStyle1AbilityDescription)
+                .SetIcon(AbilityRefs.Slow.Reference.Get().Icon)
+                .SetType(AbilityType.Special)
+                .SetRange(AbilityRange.Personal)
+                .SetActionType(UnitCommand.CommandType.Free)
+                .AddComponent<SetJumpStyle>()
+                .Configure();
+
+            var style2Ability = AbilityConfigurator.New(JumpStyle2AbilityName, JumpStyle2AbilityGuid)
+                .SetDisplayName(JumpStyle2AbilityName)
+                .SetDescription(JumpStyle2AbilityDescription)
+                .SetIcon(AbilityRefs.Blink.Reference.Get().Icon)
+                .SetType(AbilityType.Special)
+                .SetRange(AbilityRange.Personal)
+                .SetActionType(UnitCommand.CommandType.Free)
+                .AddComponent<SetJumpStyle>()
+                .Configure();
+
             return FeatureConfigurator.New(KineticLeapName, KineticLeapGuid)
                 .SetDisplayName(KineticLeapName)
                 .SetDescription(KineticLeapDescription)
@@ -281,7 +310,7 @@ namespace KineticArchetypes
                 .AddRemoveFeatureOnApply(ActivatableAbilityRefs.GatherPowerModeMedium.Reference.Get())
                 .AddRemoveFeatureOnApply(ActivatableAbilityRefs.GatherPowerModeHigh.Reference.Get())
                 .SetIsClassFeature()
-                .AddFacts(new List<Blueprint<BlueprintUnitFactReference>> { leap, swiftAbility })
+                .AddFacts(new List<Blueprint<BlueprintUnitFactReference>> { leap, swiftAbility, style1Ability, style2Ability })
                 .Configure();
         }
 
@@ -328,7 +357,6 @@ namespace KineticArchetypes
                 .AddComponent<AbilityDragoonDive>()
                 .AddComponent(new MustHaveEquippedKineticBlade())
                 .AddComponent(new DragoonDiveBurnDisplay())
-                //.AddComponent(new AbilityCustomVitalStrike()) // Maybe?
                 .Configure();
 
             return FeatureConfigurator.New(DragoonDiveName, DragoonDiveGuid)
@@ -607,11 +635,12 @@ namespace KineticArchetypes
 
         private IEnumerator Routine(AbilityExecutionContext context, UnitEntityData caster, TargetWrapper target)
         {
-            KineticLancer.Logger.Info($"Leap from {caster.Position} to {target}");
-
             UnitPartKineticist kineticist = caster.Parts.Get<UnitPartKineticist>();
             if (kineticist == null)
                 yield break;
+
+            int style = caster.Ensure<JumpStylePart>().Style;
+            KineticLancer.Logger.Info($"{caster.CharacterName} leap from {caster.Position} to {target} with style {style}");
 
             Vector3 initial = caster.Position;
             Vector3 end = target.Point;
@@ -690,14 +719,27 @@ namespace KineticArchetypes
             }
 
             // Start animation
-            float totalTime = delta.magnitude / caster.CombatSpeedMps / 4f;
+            float totalTime, padTime, fxTime;
 
-            UnitAnimationActionHandle animationHandle = caster.View.AnimationManager?.CreateHandle(UnitAnimationType.CastSpell);
-            if (animationHandle != null)
+            if (style == 0)
             {
-                animationHandle.CastStyle = UnitAnimationActionCastSpell.CastAnimationStyle.Kineticist;
-                animationHandle.CastingTime = totalTime + 1f;
-                caster.View.AnimationManager.Execute(animationHandle);
+                totalTime = delta.magnitude / caster.CombatSpeedMps / 4f;
+                padTime = 0.2f;
+                fxTime = 0.5f;
+
+                UnitAnimationActionHandle animationHandle = caster.View.AnimationManager?.CreateHandle(UnitAnimationType.CastSpell);
+                if (animationHandle != null)
+                {
+                    animationHandle.CastStyle = UnitAnimationActionCastSpell.CastAnimationStyle.Kineticist;
+                    animationHandle.CastingTime = totalTime + 1f;
+                    caster.View.AnimationManager.Execute(animationHandle);
+                }
+            }
+            else
+            {
+                totalTime = 1f;
+                padTime = 0f;
+                fxTime = 0.5f;
             }
 
             // End at a closer point if target is a unit
@@ -714,24 +756,28 @@ namespace KineticArchetypes
             delta = new Vector3(x2 * cos, y2, x2 * sin);
             end = delta + initial;
 
-            // Wait for a short moment before jump starts
-            float timeSinceStart = 0f;
-            while (timeSinceStart < 0.2f)
-            {
-                timeSinceStart += Game.Instance.TimeController.GameDeltaTime;
-                yield return null;
-            }
-            timeSinceStart = 0f;
 
             // Spawn a one-shot fx
             var fx = FxHelper.SpawnFxOnPoint(BuffRefs.GatherPowerAirBuff.Reference.Get().FxOnStart.Load(), initial, true, Quaternion.identity);
-            while (timeSinceStart < 0.5f)
+
+            // Wait for a short moment before jump starts
+            float timeSinceStart = 0f;
+            while (timeSinceStart < padTime)
             {
                 timeSinceStart += Game.Instance.TimeController.GameDeltaTime;
                 yield return null;
             }
             timeSinceStart = 0f;
-            FxHelper.Destroy(fx);
+            if (style == 0)
+            {
+                while (timeSinceStart < fxTime)
+                {
+                    timeSinceStart += Game.Instance.TimeController.GameDeltaTime;
+                    yield return null;
+                }
+                timeSinceStart = 0f;
+                FxHelper.Destroy(fx);
+            }
 
             // Add Charge buff
             caster.AddBuff(BuffRefs.ChargeBuff.Reference.Get(), caster, 5.5f.Seconds());
@@ -790,43 +836,80 @@ namespace KineticArchetypes
                 CalculateCurve(-1, initial, end, out a, out x2, out x3, out _, out y3, out sin, out cos);
             }
 
-            float leapPercent, newX, newY, newZ;
-            Vector3 newPos = Vector3.zero;
-
-            // While there is still distance to move
-            while ((end - caster.Position).magnitude > 0.1)
+            // Long jump style
+            if (style == 0)
             {
-                // Interrupt the leap if used toybox teleport
-                if (newPos != Vector3.zero && caster.Position != newPos)
+                float leapPercent, newX, newY, newZ;
+                Vector3 newPos = Vector3.zero;
+
+                // While there is still distance to move
+                while ((end - caster.Position).magnitude > 0.1)
                 {
-                    caster.View.AnimationManager?.StopActions(UnitAnimationType.CastSpell);
-                    yield break;
+                    // Interrupt the leap if used toybox teleport
+                    if (newPos != Vector3.zero && caster.Position != newPos)
+                    {
+                        caster.View.AnimationManager?.StopActions(UnitAnimationType.CastSpell);
+                        yield break;
+                    }
+
+                    // Finish the leap on exceeding totalTime, just in case frame rate is too low
+                    if (timeSinceStart > totalTime)
+                        yield break;
+
+                    timeSinceStart += Game.Instance.TimeController.GameDeltaTime;
+
+                    // Use a non-linear percentage for faster start and slower end
+                    leapPercent = timeSinceStart / totalTime;
+                    newX = x2 / 7f * ((leapPercent - 2f) * (leapPercent - 2f) * (leapPercent - 2f) + 8f);
+                    newY = a * (newX - x3) * (newX - x3) + y3;
+                    newZ = newX * sin;
+                    newX *= cos;
+
+                    // Translocate
+                    newPos = new Vector3(newX, newY, newZ) + initial;
+                    caster.Position = newPos;
+                    caster.CombatState.PreventAttacksOfOpporunityNextFrame = true;
+                    caster.View.transform.position = newPos;
+
+                    yield return null;
                 }
-
-                // Finish the leap on exceeding totalTime, just in case frame rate is too low
-                if (timeSinceStart > totalTime)
-                    yield break;
-
-                timeSinceStart += Game.Instance.TimeController.GameDeltaTime;
-
-                // Use a non-linear percentage for faster start and slower end
-                leapPercent = timeSinceStart / totalTime;
-                newX = x2 / 7f * ((leapPercent - 2f) * (leapPercent - 2f) * (leapPercent - 2f) + 8f);
-                newY = a * (newX - x3) * (newX - x3) + y3;
-                newZ = newX * sin;
-                newX *= cos;
-
-                // Translocate
-                newPos = new Vector3(newX, newY, newZ) + initial;
-                caster.Position = newPos;
+            }
+            // Vertical style
+            else
+            {
+                var verticalUp = Vector3.up * 0.5f;
+                var takeoffTime = 0.3f;
+                var landingTime = 0.3f;
+                timeSinceStart = 0f;
+                while (timeSinceStart < takeoffTime)
+                {
+                    timeSinceStart += Game.Instance.TimeController.GameDeltaTime;
+                    caster.Position += verticalUp * timeSinceStart / takeoffTime;
+                    caster.CombatState.PreventAttacksOfOpporunityNextFrame = true;
+                    caster.View.transform.position = caster.Position;
+                    yield return null;
+                }
+                caster.Position += end - initial;
                 caster.CombatState.PreventAttacksOfOpporunityNextFrame = true;
-                caster.View.transform.position = newPos;
-
+                caster.View.transform.position = caster.Position;
                 yield return null;
+                FxHelper.Destroy(fx);
+                timeSinceStart = 0f;
+                while (timeSinceStart < landingTime)
+                {
+                    timeSinceStart += Game.Instance.TimeController.GameDeltaTime;
+                    caster.Position -= verticalUp * timeSinceStart / landingTime;
+                    caster.CombatState.PreventAttacksOfOpporunityNextFrame = true;
+                    caster.View.transform.position = caster.Position;
+                    yield return null;
+                }
             }
 
             // Force the position to be the end
             caster.Position = end;
+
+            // Force character to be on the ground
+            UnitPlaceOnGroundController.ForcedTick(caster);
 
             // Land in prone if DC fails by 5 or more
             if (DC - checkResult > 4)
@@ -841,15 +924,18 @@ namespace KineticArchetypes
             // Make attack if it's dragoon dive
             else if (target.Unit != null && context.Ability.Blueprint.ToString().Equals(KineticLancer.DragoonDiveAbilityName))
             {
-                UnitAttack attack = new(target.Unit);
+                UnitAttack attack = new(target.Unit)
+                {
+                    IsCharge = true
+                };
                 attack.IgnoreCooldown();
                 attack.Init(caster);
-                attack.IsCharge = true;
 
                 // Full attack for dragoon frenzy | Don't full attack if using Vital Blade
                 attack.ForceFullAttack = caster.GetFeature(BlueprintTool.Get<BlueprintFeature>(KineticLancer.DragoonFrenzyGuid)) != null && caster.Buffs.GetBuff(BlueprintTool.Get<BlueprintBuff>(KineticistGeneral.VitalBladeRealBuffGuid)) == null;
-                //caster.Commands.AddToQueueFirst(attack);
-                caster.Commands.Run(attack);
+                KineticLancer.Logger.Info($"Unit {caster.CharacterName} makes attack (full attack {attack.ForceFullAttack}) to {target.Unit.CharacterName}");
+                caster.Commands.AddToQueueFirst(attack);
+                // caster.Commands.Run(attack);
             }
 
             // If using vital blade and Dragoon Dive
@@ -942,6 +1028,33 @@ namespace KineticArchetypes
             
             failReason = null;
             return true;
+        }
+    }
+
+    internal class JumpStylePart : UnitPart
+    {
+        [JsonProperty]
+        public int Style { get; set; } = 0;
+    }
+
+    internal class SetJumpStyle : AbilityCustomLogic
+    {
+        public override void Cleanup(AbilityExecutionContext context)
+        {
+        }
+
+        public override IEnumerator<AbilityDeliveryTarget> Deliver(AbilityExecutionContext context, TargetWrapper target)
+        {
+            var caster = context.MaybeCaster;
+            if (caster is null)
+                yield break;
+
+            if (context.Ability.Blueprint.ToString().Equals(KineticLancer.JumpStyle1AbilityName))
+                caster.Parts.Ensure<JumpStylePart>().Style = 0;
+            else
+                caster.Parts.Ensure<JumpStylePart>().Style = 1;
+            
+            yield break;
         }
     }
 

@@ -31,7 +31,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="ILRepack.MSBuild.Task" Version="*" />
-    <PackageReference Include="WW-Blueprint-Core" Version="2.8.5" />
+    <PackageReference Include="WW-Blueprint-Core" Version="2.8.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,6 +67,9 @@
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>$(WrathPath)\Wrath_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>..\..\..\Unity 2020.3.33f1\Editor\Data\Managed\UnityEngine\UnityEngine.AnimationModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>$(WrathPath)\Wrath_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
